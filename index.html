@@ -305,6 +305,12 @@ ul{margin:6px 0}
   <h2>Resultaten — meet wat werkt</h2>
   <p class="hint">Log na het posten je cijfers, óf sluit je live site-analytics hieronder in.</p>
   <div class="card" style="border-left-color:var(--teal)">
+    <h3>🔗 Klik-teller — kliks &amp; downloads per bron</h3>
+    <div class="meta">Zelfgemaakt en gratis, geen account. Werkt zodra je de VoxClip-tracking op voxclip.it hebt geplakt (zie de instructie die ik je geef). Elke klik op een tracking-link en elke download wordt hier per bron geteld.</div>
+    <div class="btnrow"><button class="btn" onclick="loadCounters()">Ververs cijfers</button></div>
+    <div id="ct-out"></div>
+  </div>
+  <div class="card" style="border-left-color:var(--teal)">
     <h3>📊 Live dashboard (van je site-analytics)</h3>
     <div class="meta">Plak de openbare/deel-link van je analytics-dashboard (Plausible, Simple Analytics, Umami…). Dan zie je je klikken, UTM-bronnen en downloads hier op marketing.voxclip.it. Tip: bij Plausible voeg je <b>&embed=true</b> toe aan de deel-link.</div>
     <div class="field"><label>Dashboard-deel-link (URL)</label><input id="dash-url" placeholder="https://plausible.io/share/voxclip.it?auth=...&embed=true"></div>
@@ -456,7 +462,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');
  const tb=b.dataset.tab;
  if(tb==='saved')renderSaved();
- if(tb==='results')renderResults();
+ if(tb==='results'){renderResults();loadCounters();}
  if(tb==='dash')dashStats();
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
@@ -922,6 +928,19 @@ function buildEmail(){
 }
 
 // ================= RESULTS TRACKER =================
+const CT_NS='voxclip';
+const CT_SRC=[['tiktok','TikTok'],['instagram','Instagram'],['linkedin','LinkedIn'],['youtube','YouTube'],['blog','Blog'],['direct','Direct']];
+async function ctGet(key){try{const r=await fetch('https://api.counterapi.dev/v1/'+CT_NS+'/'+encodeURIComponent(key),{cache:'no-store'});if(!r.ok)return null;const j=await r.json();return (typeof j.count==='number')?j.count:(typeof j.value==='number'?j.value:0);}catch(e){return null;}}
+async function loadCounters(){const el=document.getElementById('ct-out');if(!el)return;el.innerHTML='<div class="load">Cijfers laden…</div>';
+ let res;try{res=await Promise.all(CT_SRC.map(async s=>({label:s[1],clicks:await ctGet('click_'+s[0]),dl:await ctGet('dl_'+s[0])})));}catch(e){res=null;}
+ if(!res||res.every(r=>r.clicks===null)){el.innerHTML='<div class="callout warm">Nog geen cijfers. Dit vult zich zodra (1) de VoxClip-tracking op voxclip.it staat en (2) er via je tracking-links geklikt wordt. Kon de teller niet uitgelezen worden, dan blokkeert je browser mogelijk de verbinding — de kliks worden dan wél geteld, alleen dit overzicht laadt niet.</div>';return;}
+ const maxC=Math.max(1,...res.map(r=>r.clicks||0));
+ const totC=res.reduce((s,r)=>s+(r.clicks||0),0),totD=res.reduce((s,r)=>s+(r.dl||0),0);
+ let h='<div class="stat-row"><div class="statbox"><div class="n">'+totC+'</div><div class="l">totale kliks</div></div><div class="statbox"><div class="n">'+totD+'</div><div class="l">totale downloads</div></div></div>';
+ h+='<table><tr><th>Bron</th><th>Kliks</th><th>Verdeling</th><th>Downloads</th></tr>';
+ res.forEach(r=>{const c=r.clicks||0,d=r.dl||0,w=Math.round(100*c/maxC);h+='<tr><td>'+r.label+'</td><td><b>'+c+'</b></td><td style="min-width:120px"><div style="background:var(--teal);height:10px;border-radius:5px;width:'+w+'%"></div></td><td>'+d+'</td></tr>';});
+ h+='</table>';el.innerHTML=h;
+}
 function saveDashUrl(){const i=document.getElementById('dash-url');const u=i?i.value.trim():'';if(!u){return;}try{localStorage.setItem('voxDashUrl',u);}catch(e){}renderDashEmbed();}
 function clearDashUrl(){try{localStorage.removeItem('voxDashUrl');}catch(e){}const i=document.getElementById('dash-url');if(i)i.value='';renderDashEmbed();}
 function renderDashEmbed(){const el=document.getElementById('dash-embed');if(!el)return;let u='';try{u=localStorage.getItem('voxDashUrl')||'';}catch(e){}
