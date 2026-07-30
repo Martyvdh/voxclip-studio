@@ -303,7 +303,15 @@ ul{margin:6px 0}
 <!-- RESULTS -->
 <section id="results" class="tab">
   <h2>Resultaten — meet wat werkt</h2>
-  <p class="hint">Log na het posten je cijfers. De studio berekent welke pijler en stijl het best presteren, zodat je daar meer van maakt. (Blijft lokaal opgeslagen op je computer.)</p>
+  <p class="hint">Log na het posten je cijfers, óf sluit je live site-analytics hieronder in.</p>
+  <div class="card" style="border-left-color:var(--teal)">
+    <h3>📊 Live dashboard (van je site-analytics)</h3>
+    <div class="meta">Plak de openbare/deel-link van je analytics-dashboard (Plausible, Simple Analytics, Umami…). Dan zie je je klikken, UTM-bronnen en downloads hier op marketing.voxclip.it. Tip: bij Plausible voeg je <b>&embed=true</b> toe aan de deel-link.</div>
+    <div class="field"><label>Dashboard-deel-link (URL)</label><input id="dash-url" placeholder="https://plausible.io/share/voxclip.it?auth=...&embed=true"></div>
+    <div class="btnrow"><button class="btn" onclick="saveDashUrl()">Insluiten</button><button class="btn ghost" onclick="clearDashUrl()">Wissen</button></div>
+    <div id="dash-embed"></div>
+  </div>
+  <h3 style="margin-top:22px">Handmatig / import</h3>
   <div class="grid4">
     <div class="field"><label>Datum</label><input id="r-date" type="date"></div>
     <div class="field"><label>Platform</label><select id="r-plat"><option>TikTok</option><option>Instagram</option><option>LinkedIn</option><option>YouTube</option><option>Blog</option></select></div>
@@ -914,6 +922,14 @@ function buildEmail(){
 }
 
 // ================= RESULTS TRACKER =================
+function saveDashUrl(){const i=document.getElementById('dash-url');const u=i?i.value.trim():'';if(!u){return;}try{localStorage.setItem('voxDashUrl',u);}catch(e){}renderDashEmbed();}
+function clearDashUrl(){try{localStorage.removeItem('voxDashUrl');}catch(e){}const i=document.getElementById('dash-url');if(i)i.value='';renderDashEmbed();}
+function renderDashEmbed(){const el=document.getElementById('dash-embed');if(!el)return;let u='';try{u=localStorage.getItem('voxDashUrl')||'';}catch(e){}
+ const inp=document.getElementById('dash-url');if(inp&&!inp.value&&u)inp.value=u;
+ if(!u){el.innerHTML='<div class="callout" style="margin-top:10px">Nog geen dashboard gekoppeld. Zet analytics op voxclip.it, maak het dashboard openbaar en plak de deel-link hierboven — dan verschijnt \'ie hier.</div>';return;}
+ const safe=u.replace(/"/g,'&quot;');
+ el.innerHTML='<iframe src="'+safe+'" style="width:100%;height:680px;border:1px solid var(--line);border-radius:12px;margin-top:12px;background:#fff" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'+
+  '<p class="small" style="margin-top:6px">Als hier niets laadt, staat het delen/insluiten van je dashboard mogelijk uit, of blokkeert de tool insluiten. Bij Plausible: zet ‘Public dashboard’ aan en gebruik de share-link met <b>&embed=true</b>.</p>';}
 function results(){try{return JSON.parse(localStorage.getItem('voxResults')||'[]');}catch(e){return [];}}
 function setResults(a){localStorage.setItem('voxResults',JSON.stringify(a));}
 function addResult(){
@@ -938,6 +954,7 @@ function renderResults(){
   h+='</table>';}
  document.getElementById('r-out').innerHTML=h;
  drawResultsChart();
+ renderDashEmbed();
 }
 function drawResultsChart(){
  const cv=document.getElementById('r-chart');if(!cv)return;const a=results();
