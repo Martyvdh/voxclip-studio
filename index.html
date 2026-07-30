@@ -299,6 +299,14 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 .advcontrols input:not([type=range]):not([type=color]){background:#161d27;border:1px solid rgba(255,255,255,.1);color:#e7ecf3;border-radius:9px}
 .advcontrols input:not([type=range]):not([type=color]):focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(18,179,166,.18)}
 .advbtns{display:flex;gap:10px;margin-top:18px}
+.advcontrols select{background:#161d27;border:1px solid rgba(255,255,255,.1);color:#e7ecf3;border-radius:9px}
+.advcontrols input[type=range]{accent-color:var(--teal)}
+.advcontrols .field label span{color:#12B3A6;font-variant-numeric:tabular-nums;font-weight:700}
+.fxchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.fxchip{background:#161d27;color:#c7cfdb;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.fxchip:hover{border-color:var(--teal);color:#fff;background:#19222e}
+.fxtog{display:flex;align-items:center;gap:9px;color:#c7cfdb;font-size:13px;font-weight:600;margin:8px 0;cursor:pointer}
+.fxtog input{width:auto;accent-color:var(--teal)}
 @media(max-width:820px){
   .advmodal{padding:0}
   .advbox{width:100vw;height:100vh;border-radius:0}
@@ -640,6 +648,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
           <input id="adv-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('adv-durlbl').textContent=(+this.value).toFixed(1);advDirty()"></div>
         <div class="field"><label>Accentkleur</label>
           <input id="adv-accent" type="color" value="#12B3A6" style="height:46px;padding:4px;cursor:pointer"></div>
+        <div id="adv-fx"></div>
         <div class="advbtns">
           <button class="btn" onclick="applyAdvanced()" style="flex:1;text-align:center">✓ Toepassen &amp; sluiten</button>
         </div>
@@ -1092,11 +1101,11 @@ function vFrameDemo(ctx,t,c){
  if(p>0.35){ctx.fillStyle=INKc;ctx.font="700 70px Arial";ctx.fillText(c.pay,W/2,1130);}
  if(p>0.6){ctx.fillStyle=GREYc;ctx.font="500 40px Arial";ctx.fillText("free  ·  Mac & Windows",W/2,1250);}
 }
-function vDrawStatic(){const cv=document.getElementById('vcanvas');if(!cv)return;vFrame(cv.getContext('2d'),0.05,vCfg());}
+function vDrawStatic(){const cv=document.getElementById('vcanvas');if(!cv)return;vFrameFX(cv.getContext('2d'),0.05,vCfg());}
 let vAnim=null,vPaused=false;
 function vAutoPlay(){const cv=document.getElementById('vcanvas');if(!cv)return;const ctx=cv.getContext('2d');cancelAnimationFrame(vAnim);let st=null;vPaused=false;
  const pb=document.getElementById('v-playbtn');if(pb)pb.textContent='⏸ Pauze';
- function loop(now){if(vPaused)return;if(st===null)st=now;const c=vCfg();const t=((now-st)/1000)%c.dur;vFrame(ctx,t,c);const p=document.getElementById('v-prog');if(p)p.style.width=(100*t/c.dur)+'%';vAnim=requestAnimationFrame(loop);}
+ function loop(now){if(vPaused)return;if(st===null)st=now;const c=vCfg();const t=((now-st)/1000)%c.dur;vFrameFX(ctx,t,c);const p=document.getElementById('v-prog');if(p)p.style.width=(100*t/c.dur)+'%';vAnim=requestAnimationFrame(loop);}
  vAnim=requestAnimationFrame(loop);}
 function vTogglePlay(){const b=document.getElementById('v-playbtn');if(vPaused){vAutoPlay();}else{vPaused=true;cancelAnimationFrame(vAnim);if(b)b.textContent='▶ Afspelen';}}
 function vPreview(){vAutoPlay();}
@@ -1112,7 +1121,7 @@ function vRecord(){
  let mime='';['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].forEach(m=>{if(!mime&&MediaRecorder.isTypeSupported(m))mime=m;});
  if(!mime){alert('Deze browser kan geen video opnemen. Gebruik Chrome of Edge.');return;}
  let stream,rec;
- try{stream=cv.captureStream(30);rec=new MediaRecorder(stream,{mimeType:mime});}
+ try{stream=cv.captureStream(VFX.fps||30);rec=new MediaRecorder(stream,{mimeType:mime});}
  catch(e){alert('Opname kon niet starten. Open het bestand in Chrome of Edge, dan werkt de download.');vAutoPlay();return;}
  const chunks=[];const msg=document.getElementById('v-msg');
  rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
@@ -1120,11 +1129,68 @@ function vRecord(){
  btn.textContent='● opnemen…';btn.disabled=true;if(msg)msg.innerHTML='<b>Bezig met opnemen…</b> even geduld, de download start vanzelf als de video klaar is.';
  const st=performance.now();
  try{rec.start();}catch(e){alert('Opname mislukt. Gebruik Chrome of Edge.');btn.textContent='🎬 Genereer video';btn.disabled=false;vAutoPlay();return;}
- (function loop(now){const t=(now-st)/1000;if(t>=c.dur){vFrame(ctx,c.dur-0.001,c);try{rec.stop();}catch(e){}return;}vFrame(ctx,t,c);btn.textContent='● opnemen… '+Math.ceil(c.dur-t)+'s';requestAnimationFrame(loop);})(performance.now());
+ (function loop(now){const t=(now-st)/1000;if(t>=c.dur){vFrameFX(ctx,c.dur-0.001,c);try{rec.stop();}catch(e){}return;}vFrameFX(ctx,t,c);btn.textContent='● opnemen… '+Math.ceil(c.dur-t)+'s';requestAnimationFrame(loop);})(performance.now());
 }
 
 // ================= ADVANCED VIDEO EDITOR (popup) =================
 let advAnim=0,advPaused=false,advManualT=null,ADV_STYLE='kinetic';
+// ---- FX engine (color grade, effects, motion) ----
+let VFX=fxDefaults();let _vfxBackup=null,_fxCanvas=null,_fxNoise=null;
+function fxDefaults(){return {bright:100,contrast:100,sat:100,hue:0,blur:0,sepia:0,gray:0,vignette:0,grain:0,scan:false,glow:false,upper:false,reverse:false,inA:'none',outA:'none',fps:30};}
+function _fxGet(){if(!_fxCanvas){_fxCanvas=document.createElement('canvas');_fxCanvas.width=1080;_fxCanvas.height=1920;}return _fxCanvas;}
+function _fxNoiseTile(){if(_fxNoise)return _fxNoise;const n=document.createElement('canvas');n.width=n.height=160;const c=n.getContext('2d');const img=c.createImageData(160,160);for(let i=0;i<img.data.length;i+=4){const v=Math.random()*255;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255;}c.putImageData(img,0,0);_fxNoise=n;return n;}
+function fxActive(){return VFX.bright!=100||VFX.contrast!=100||VFX.sat!=100||VFX.hue||VFX.blur||VFX.sepia||VFX.gray||VFX.vignette||VFX.grain||VFX.scan||VFX.glow||VFX.upper||VFX.reverse||VFX.inA!=='none'||VFX.outA!=='none';}
+function fxFilterStr(){const f=[];if(VFX.bright!=100)f.push('brightness('+(VFX.bright/100)+')');if(VFX.contrast!=100)f.push('contrast('+(VFX.contrast/100)+')');if(VFX.sat!=100)f.push('saturate('+(VFX.sat/100)+')');if(VFX.hue)f.push('hue-rotate('+VFX.hue+'deg)');if(VFX.blur)f.push('blur('+VFX.blur+'px)');if(VFX.sepia)f.push('sepia('+VFX.sepia+')');if(VFX.gray)f.push('grayscale('+VFX.gray+')');return f.length?f.join(' '):'none';}
+function fxAnim(t,dur){let alpha=1,scale=1,tx=0;const inD=0.55;if(VFX.inA!=='none'&&t<inD){const p=sm(t/inD);if(VFX.inA==='fade')alpha=p;if(VFX.inA==='zoom'){alpha=p;scale=lerp(1.12,1,p);}if(VFX.inA==='slide'){alpha=p;tx=lerp(140,0,p);}}const outD=0.5;if(VFX.outA!=='none'&&t>dur-outD){const p=sm((dur-t)/outD);if(VFX.outA==='fade')alpha=Math.min(alpha,p);if(VFX.outA==='zoom'){alpha=Math.min(alpha,p);scale=lerp(1.12,1,p);}}return {alpha:alpha,scale:scale,tx:tx};}
+function fxOverlays(octx){const W=1080,H=1920;
+ if(VFX.grain){octx.save();octx.globalAlpha=Math.min(.5,VFX.grain/100*.6);const nt=_fxNoiseTile();const ox=Math.random()*160,oy=Math.random()*160;for(let x=-160;x<W;x+=160)for(let y=-160;y<H;y+=160)octx.drawImage(nt,x-ox,y-oy);octx.restore();}
+ if(VFX.scan){octx.save();octx.globalAlpha=.12;octx.fillStyle='#000';for(let y=0;y<H;y+=4)octx.fillRect(0,y,W,2);octx.restore();}
+ if(VFX.vignette){octx.save();const g=octx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,H*0.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+(VFX.vignette/100*0.85)+')');octx.fillStyle=g;octx.fillRect(0,0,W,H);octx.restore();}}
+function vFrameFX(ctx,t,c){if(!fxActive())return vFrame(ctx,t,c);const W=1080,H=1920;let tt=VFX.reverse?Math.max(0,c.dur-t):t;let cc=c;
+ if(VFX.upper){cc=Object.assign({},c);['h1','h2','hw','i1','i2','i3','pay','p1','p2','p3','p4','q','res','tag','big','sub','title','quote','a','trigger','expanded','badge','head'].forEach(k=>{if(cc[k])cc[k]=String(cc[k]).toUpperCase();});}
+ const off=_fxGet(),octx=off.getContext('2d');octx.setTransform(1,0,0,1,0,0);octx.globalAlpha=1;octx.filter='none';octx.clearRect(0,0,W,H);
+ if(VFX.glow){octx.save();octx.shadowColor=TEALc;octx.shadowBlur=26;vFrame(octx,tt,cc);octx.restore();}else{vFrame(octx,tt,cc);}
+ fxOverlays(octx);
+ ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.filter='none';ctx.clearRect(0,0,W,H);
+ const a=fxAnim(t,c.dur);ctx.save();ctx.filter=fxFilterStr();ctx.globalAlpha=a.alpha;
+ if(a.scale!==1){ctx.translate(W/2,H/2);ctx.scale(a.scale,a.scale);ctx.translate(-W/2,-H/2);}
+ if(a.tx)ctx.translate(a.tx,0);
+ ctx.drawImage(off,0,0);ctx.restore();ctx.filter='none';ctx.globalAlpha=1;}
+function fxControlsHTML(){
+ const chip=(id,l)=>'<button type="button" class="fxchip" onclick="fxPreset(\''+id+'\')">'+l+'</button>';
+ const sl=(id,l,min,max,step,v)=>'<div class="field"><label>'+l+' <span id="fxl-'+id+'">'+v+'</span></label><input id="fx-'+id+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+v+'" oninput="fxSync()"></div>';
+ const tog=(id,l,on)=>'<label class="fxtog"><input id="fx-'+id+'" type="checkbox" '+(on?'checked':'')+' onchange="fxSync()"> '+l+'</label>';
+ const opt=(id,l,opts,cur)=>'<div class="field"><label>'+l+'</label><select id="fx-'+id+'" onchange="fxSync()">'+opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div>';
+ return '<div class="advsec">🎨 Kleur &amp; filters</div>'
+  +'<div class="fxchips">'+chip('none','Geen')+chip('bw','Zwart-wit')+chip('warm','Warm')+chip('cool','Koel')+chip('film','Film')+chip('neon','Neon')+'</div>'
+  +sl('bright','Helderheid',50,150,1,VFX.bright)+sl('contrast','Contrast',50,150,1,VFX.contrast)+sl('sat','Verzadiging',0,200,1,VFX.sat)+sl('hue','Kleurtoon / warmte',-40,40,1,VFX.hue)+sl('blur','Vervaging',0,12,0.5,VFX.blur)
+  +'<div class="advsec">✨ Effecten</div>'
+  +sl('vignette','Vignet',0,100,1,VFX.vignette)+sl('grain','Filmkorrel',0,100,1,VFX.grain)+tog('scan','Scanlines (VHS)',VFX.scan)+tog('glow','Tekst-gloed (accent)',VFX.glow)
+  +'<div class="advsec">🎞️ Beweging</div>'
+  +opt('inA','In-animatie',[['none','Geen'],['fade','Fade in'],['zoom','Zoom in'],['slide','Slide in']],VFX.inA)
+  +opt('outA','Uit-animatie',[['none','Geen'],['fade','Fade out'],['zoom','Zoom out']],VFX.outA)
+  +tog('reverse','Achteruit afspelen',VFX.reverse)
+  +'<div class="advsec">🔤 Tekst</div>'
+  +tog('upper','HOOFDLETTERS',VFX.upper)
+  +'<div class="advsec">⚙️ Export</div>'
+  +opt('fps','Framerate',[['24','24 fps (film)'],['30','30 fps (standaard)'],['60','60 fps (vloeiend)']],String(VFX.fps))
+  +'<div class="advbtns" style="margin-top:8px"><button type="button" class="btn ghost" onclick="fxReset()" style="flex:1;text-align:center">↺ Effecten resetten</button></div>';
+}
+function fxSync(){const g=id=>document.getElementById('fx-'+id);const num=(id,d)=>{const e=g(id);return e?+e.value:d;};const bl=id=>{const e=g(id);return e?e.checked:false;};const sv=(id,d)=>{const e=g(id);return e?e.value:d;};
+ VFX.bright=num('bright',100);VFX.contrast=num('contrast',100);VFX.sat=num('sat',100);VFX.hue=num('hue',0);VFX.blur=num('blur',0);VFX.vignette=num('vignette',0);VFX.grain=num('grain',0);VFX.scan=bl('scan');VFX.glow=bl('glow');VFX.reverse=bl('reverse');VFX.upper=bl('upper');VFX.inA=sv('inA','none');VFX.outA=sv('outA','none');VFX.fps=+sv('fps','30');
+ ['bright','contrast','sat','hue','blur','vignette','grain'].forEach(id=>{const l=document.getElementById('fxl-'+id),e=g(id);if(l&&e)l.textContent=e.value;});
+ advDirty();}
+function fxPreset(p){const set=o=>{VFX.sepia=0;VFX.gray=0;VFX.glow=false;Object.assign(VFX,o);};
+ if(p==='none')set({bright:100,contrast:100,sat:100,hue:0,blur:0,sepia:0,gray:0});
+ if(p==='bw')set({gray:1,sat:100,contrast:106});
+ if(p==='warm')set({sepia:.28,sat:120,bright:103,hue:-6});
+ if(p==='cool')set({hue:14,sat:110,bright:100,contrast:104});
+ if(p==='film')set({contrast:110,sat:90,sepia:.16,grain:Math.max(VFX.grain,28),vignette:Math.max(VFX.vignette,30)});
+ if(p==='neon')set({sat:150,contrast:112,glow:true});
+ fxWriteControls();advDirty();}
+function fxWriteControls(){const s=(id,v)=>{const e=document.getElementById('fx-'+id);if(e){if(e.type==='checkbox')e.checked=!!v;else e.value=v;}const l=document.getElementById('fxl-'+id);if(l&&e&&e.type!=='checkbox')l.textContent=e.value;};
+ s('bright',VFX.bright);s('contrast',VFX.contrast);s('sat',VFX.sat);s('hue',VFX.hue);s('blur',VFX.blur);s('vignette',VFX.vignette);s('grain',VFX.grain);s('scan',VFX.scan);s('glow',VFX.glow);s('reverse',VFX.reverse);s('upper',VFX.upper);s('inA',VFX.inA);s('outA',VFX.outA);s('fps',String(VFX.fps));}
+function fxReset(){VFX=fxDefaults();fxWriteControls();advDirty();}
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
  if(st==='kinetic')return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
@@ -1153,12 +1219,14 @@ function openAdvanced(){
  document.getElementById('adv-fields').innerHTML=html;
  const dur=+(val('v-dur')||9);document.getElementById('adv-dur').value=dur;document.getElementById('adv-durlbl').textContent=dur.toFixed(1);
  const ac=document.getElementById('adv-accent');ac.value=(TEALc&&TEALc[0]==='#')?TEALc:'#12B3A6';ac.oninput=function(){setAccent(this.value);advDirty();};
+ _vfxBackup={vfx:JSON.parse(JSON.stringify(VFX)),teal:TEALc,teald:TEALDc};
+ document.getElementById('adv-fx').innerHTML=fxControlsHTML();
  document.getElementById('advmodal').classList.add('open');
  advManualT=null;advPlay();
 }
 function advPlay(){const cv=document.getElementById('advcanvas');if(!cv)return;const ctx=cv.getContext('2d');cancelAnimationFrame(advAnim);advPaused=false;advManualT=null;let st=null;
  const pb=document.getElementById('adv-playbtn');if(pb)pb.textContent='⏸';
- function loop(now){if(advPaused)return;if(st===null)st=now;const c=advCfg();const t=((now-st)/1000)%c.dur;vFrame(ctx,t,c);
+ function loop(now){if(advPaused)return;if(st===null)st=now;const c=advCfg();const t=((now-st)/1000)%c.dur;vFrameFX(ctx,t,c);
    const s=document.getElementById('adv-scrub');if(s)s.value=(100*t/c.dur);
    const tm=document.getElementById('adv-time');if(tm)tm.textContent=t.toFixed(1)+'s';
    advAnim=requestAnimationFrame(loop);}
@@ -1167,16 +1235,17 @@ function advTogglePlay(){const b=document.getElementById('adv-playbtn');if(advPa
 function advRestart(){advManualT=null;advPlay();}
 function advScrub(v){advPaused=true;cancelAnimationFrame(advAnim);const b=document.getElementById('adv-playbtn');if(b)b.textContent='▶';
  const c=advCfg();const t=(v/100)*c.dur;advManualT=t;
- vFrame(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);
+ vFrameFX(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);
  const tm=document.getElementById('adv-time');if(tm)tm.textContent=t.toFixed(1)+'s';}
-function advDirty(){if(advPaused){const c=advCfg();const t=(advManualT!==null?advManualT:0);vFrame(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);}}
-function closeAdvanced(){cancelAnimationFrame(advAnim);advPaused=true;document.getElementById('advmodal').classList.remove('open');}
+function advDirty(){if(advPaused){const c=advCfg();const t=(advManualT!==null?advManualT:0);vFrameFX(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);}}
+function hideAdv(){cancelAnimationFrame(advAnim);advPaused=true;const m=document.getElementById('advmodal');if(m)m.classList.remove('open');}
+function closeAdvanced(){if(_vfxBackup){VFX=_vfxBackup.vfx;TEALc=_vfxBackup.teal;TEALDc=_vfxBackup.teald;_vfxBackup=null;}hideAdv();if(document.getElementById('vcanvas'))vAutoPlay();}
 function applyAdvanced(){
  advFieldDefs(ADV_STYLE).forEach(([id])=>{const a=document.getElementById('adv-'+id),b=document.getElementById('v-'+id);if(a&&b)b.value=a.value;});
  const dur=+(document.getElementById('adv-dur').value||9),bd=document.getElementById('v-dur');
  if(bd){bd.value=dur;const dl2=document.getElementById('v-durlbl');if(dl2)dl2.textContent=dur.toFixed(1);}
  setAccent(document.getElementById('adv-accent').value);
- closeAdvanced();vAutoPlay();
+ _vfxBackup=null;hideAdv();vAutoPlay();
  const msg=document.getElementById('v-msg');if(msg)msg.innerHTML='<span class="ok">✓ Geavanceerde bewerkingen toegepast</span> — je ziet ze nu in de preview. Klik 🎬 Genereer video om te downloaden.';
 }
 function advDownload(){applyAdvanced();setTimeout(function(){const b=document.getElementById('vrecbtn');if(b)b.scrollIntoView({block:'center'});vRecord();},90);}
