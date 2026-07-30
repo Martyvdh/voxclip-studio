@@ -276,6 +276,38 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 .step .num{font-family:var(--display)}
 .daytag,.chan,.pill{font-family:var(--sans)}
 
+/* ===== Advanced video editor popup (CapCut-style) ===== */
+.advmodal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;background:rgba(8,10,14,.66);backdrop-filter:blur(3px);padding:22px;animation:riseIn .2s ease}
+.advmodal.open{display:flex}
+.advbox{background:#0f131a;color:#e7ecf3;width:min(1180px,96vw);height:min(90vh,940px);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.08)}
+.advhead{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#141a24;border-bottom:1px solid rgba(255,255,255,.07);flex:0 0 auto}
+.advtitle{font-family:var(--display);font-weight:600;font-size:16px;color:#fff}
+.advx{background:rgba(255,255,255,.08);color:#fff;border:none;width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:14px;transition:background .15s}
+.advx:hover{background:rgba(255,255,255,.18)}
+.advbody{display:grid;grid-template-columns:minmax(0,1fr) 380px;flex:1;min-height:0}
+.advpreview{background:radial-gradient(600px 400px at 50% -10%,#1b2430,#0c1015);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;gap:16px;min-height:0}
+.advcanvas-wrap{background:#000;border-radius:16px;overflow:hidden;box-shadow:0 14px 44px rgba(0,0,0,.55);height:100%;display:flex;align-items:center;justify-content:center}
+.advcanvas-wrap canvas{height:100%;width:auto;max-height:58vh;border-radius:16px;display:block}
+.advtransport{display:flex;align-items:center;gap:12px;width:100%;max-width:540px}
+.advscrub{flex:1;accent-color:var(--teal);cursor:pointer}
+.advtime{font-variant-numeric:tabular-nums;font-size:12.5px;color:#9aa4b2;min-width:46px;text-align:right}
+.advcontrols{background:#0f131a;padding:20px;overflow-y:auto;border-left:1px solid rgba(255,255,255,.07)}
+.advsec{font-size:10.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#6b7688;margin:4px 0 12px}
+.advsec:not(:first-child){margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.advcontrols .field{margin-bottom:13px}
+.advcontrols label{color:#9aa4b2;text-transform:none;letter-spacing:0;font-size:12px;font-weight:600}
+.advcontrols input:not([type=range]):not([type=color]){background:#161d27;border:1px solid rgba(255,255,255,.1);color:#e7ecf3;border-radius:9px}
+.advcontrols input:not([type=range]):not([type=color]):focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(18,179,166,.18)}
+.advbtns{display:flex;gap:10px;margin-top:18px}
+@media(max-width:820px){
+  .advmodal{padding:0}
+  .advbox{width:100vw;height:100vh;border-radius:0}
+  .advbody{grid-template-columns:1fr;overflow-y:auto}
+  .advpreview{padding:16px}
+  .advcanvas-wrap canvas{max-height:42vh}
+  .advcontrols{border-left:none;border-top:1px solid rgba(255,255,255,.07)}
+}
+
 /* ===== Hamburger drawer on DESKTOP too (mobile unchanged) ===== */
 #navscrim{position:fixed;inset:0;background:rgba(10,12,16,.48);opacity:0;visibility:hidden;transition:opacity .25s ease;z-index:1100}
 @media(min-width:761px){
@@ -582,6 +614,43 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 </section>
 </main>
 </div><!-- /shell -->
+
+<!-- ADVANCED VIDEO EDITOR (popup) -->
+<div id="advmodal" class="advmodal" onclick="if(event.target===this)closeAdvanced()">
+  <div class="advbox">
+    <div class="advhead">
+      <div class="advtitle">⚙ Geavanceerde video-editor</div>
+      <button class="advx" onclick="closeAdvanced()" aria-label="Sluiten">✕</button>
+    </div>
+    <div class="advbody">
+      <div class="advpreview">
+        <div class="advcanvas-wrap"><canvas id="advcanvas" width="1080" height="1920"></canvas></div>
+        <div class="advtransport">
+          <button class="vctrl" id="adv-playbtn" onclick="advTogglePlay()">⏸</button>
+          <button class="vctrl" onclick="advRestart()">↺</button>
+          <input id="adv-scrub" class="advscrub" type="range" min="0" max="100" step="0.1" value="0" oninput="advScrub(this.value)">
+          <span id="adv-time" class="advtime">0.0s</span>
+        </div>
+      </div>
+      <div class="advcontrols">
+        <div class="advsec">Tekst — sleep de tijdlijn om elk moment te zien</div>
+        <div id="adv-fields"></div>
+        <div class="advsec">Timing &amp; stijl</div>
+        <div class="field"><label>Snelheid / duur — <span id="adv-durlbl">9.0</span>s</label>
+          <input id="adv-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('adv-durlbl').textContent=(+this.value).toFixed(1);advDirty()"></div>
+        <div class="field"><label>Accentkleur</label>
+          <input id="adv-accent" type="color" value="#12B3A6" style="height:46px;padding:4px;cursor:pointer"></div>
+        <div class="advbtns">
+          <button class="btn" onclick="applyAdvanced()" style="flex:1;text-align:center">✓ Toepassen &amp; sluiten</button>
+        </div>
+        <div class="advbtns" style="margin-top:8px">
+          <button class="btn ghost" onclick="advDownload()" style="flex:1;text-align:center">⬇ Toepassen &amp; download</button>
+          <button class="btn ghost" onclick="closeAdvanced()">Annuleren</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <footer>VoxClip Campagnestudio · offline · English content · gebouwd op je merkboek, contentbank, doelgroeponderzoek en playbook.</footer>
 
 <script>
@@ -749,6 +818,7 @@ function videoEditorHTML(){
    <div><div class="vlabel">9:16 · vertical preview</div><div class="vcanvas-wrap"><canvas id="vcanvas" width="1080" height="1920"></canvas></div>
      <div class="vbar"><button class="vctrl" id="v-playbtn" onclick="vTogglePlay()">⏸ Pauze</button><button class="vctrl" onclick="vAutoPlay()">↺ Opnieuw</button><div class="vprogwrap"><div id="v-prog" class="vprog"></div></div></div>
      <div class="btnrow" style="margin-top:12px"><button class="btn" id="vrecbtn" onclick="vRecord()" style="width:100%;text-align:center">🎬 Genereer video</button></div>
+     <div class="btnrow" style="margin-top:8px"><button class="btn ghost" onclick="openAdvanced()" style="width:100%;text-align:center">⚙ Geavanceerd bewerken</button></div>
    </div>
    <div>
      <div class="field"><label>Videostijl (9 opties)</label><select id="v-style" onchange="vStyleChange()">
@@ -838,7 +908,7 @@ function vCfg(){return {style:val('v-style')||'kinetic',dur:+(val('v-dur')||9),
  p1:val('v-p1'),p2:val('v-p2'),p3:val('v-p3'),p4:val('v-p4'),q:val('v-q'),res:val('v-res'),tag:val('v-tag'),
  big:val('v-big'),sub:val('v-sub'),title:val('v-title'),quote:val('v-quote'),a:val('v-a'),trigger:val('v-trigger'),expanded:val('v-expanded'),badge:val('v-badge'),head:val('v-head')};}
 function val(id){const e=document.getElementById(id);return e?e.value:'';}
-const INKc="#1C2230",PAPERc="#F7F7F5",WHITEc="#FFFFFF",TEALc="#12B3A6",TEALDc="#0B7A6E",GREYc="#5A6272",LINEc="#E2E5E9",BANDc="#EAF6F4";
+let INKc="#1C2230",PAPERc="#F7F7F5",WHITEc="#FFFFFF",TEALc="#12B3A6",TEALDc="#0B7A6E",GREYc="#5A6272",LINEc="#E2E5E9",BANDc="#EAF6F4";
 function rr(ctx,x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);}else{ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
 function lerp(a,b,t){return a+(b-a)*t;}
@@ -1052,6 +1122,66 @@ function vRecord(){
  try{rec.start();}catch(e){alert('Opname mislukt. Gebruik Chrome of Edge.');btn.textContent='🎬 Genereer video';btn.disabled=false;vAutoPlay();return;}
  (function loop(now){const t=(now-st)/1000;if(t>=c.dur){vFrame(ctx,c.dur-0.001,c);try{rec.stop();}catch(e){}return;}vFrame(ctx,t,c);btn.textContent='● opnemen… '+Math.ceil(c.dur-t)+'s';requestAnimationFrame(loop);})(performance.now());
 }
+
+// ================= ADVANCED VIDEO EDITOR (popup) =================
+let advAnim=0,advPaused=false,advManualT=null,ADV_STYLE='kinetic';
+function advFieldDefs(st){
+ const F=(id,l)=>[id,l];
+ if(st==='kinetic')return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
+ if(st==='before')return [F('q','Zoekopdracht'),F('res','Resultaat'),F('tag','Outro-tagline')];
+ if(st==='stat')return [F('big','Grote tekst'),F('sub','Ondertekst'),F('tag','Outro-tagline')];
+ if(st==='list')return [F('title','Titel'),F('i1','Punt 1'),F('i2','Punt 2'),F('i3','Punt 3'),F('tag','Outro-tagline')];
+ if(st==='quote')return [F('quote','Quote'),F('tag','Outro-tagline')];
+ if(st==='qa')return [F('q','Vraag'),F('a','Antwoord (accent)'),F('tag','Outro-tagline')];
+ if(st==='typed')return [F('trigger','Trigger (typen)'),F('expanded','Klapt uit naar'),F('tag','Outro-tagline')];
+ if(st==='compare')return [F('tag','Outro-tagline')];
+ if(st==='announce')return [F('badge','Badge'),F('head','Kop'),F('sub','Ondertekst'),F('tag','Outro-tagline')];
+ if(st==='comingsoon')return [F('head','Kop'),F('sub','Teaser / ondertekst'),F('tag','Outro-tagline')];
+ return [F('h1','Hook 1'),F('h2','Hook 2'),F('hw','Slotwoord'),F('i1','Copied item'),F('i2','Dictated note'),F('pay','Payoff')];
+}
+function advCfg(){const g=id=>{const e=document.getElementById('adv-'+id);return e?e.value:'';};
+ return {style:ADV_STYLE,dur:+((document.getElementById('adv-dur')||{}).value||9),
+  h1:g('h1'),h2:g('h2'),hw:g('hw'),i1:g('i1'),i2:g('i2'),i3:g('i3'),pay:g('pay'),
+  p1:g('p1'),p2:g('p2'),p3:g('p3'),p4:g('p4'),q:g('q'),res:g('res'),tag:g('tag'),
+  big:g('big'),sub:g('sub'),title:g('title'),quote:g('quote'),a:g('a'),trigger:g('trigger'),expanded:g('expanded'),badge:g('badge'),head:g('head')};}
+function openAdvanced(){
+ const cv=document.getElementById('vcanvas');
+ if(!cv){alert('Genereer eerst een TikTok- of Instagram-post, dan kun je de video geavanceerd bewerken.');return;}
+ ADV_STYLE=val('v-style')||'kinetic';
+ let html='';
+ advFieldDefs(ADV_STYLE).forEach(([id,l])=>{const cur=val('v-'+id);html+='<div class="field"><label>'+l+'</label><input id="adv-'+id+'" value="'+((cur||'').replace(/"/g,'&quot;'))+'" oninput="advDirty()"></div>';});
+ document.getElementById('adv-fields').innerHTML=html;
+ const dur=+(val('v-dur')||9);document.getElementById('adv-dur').value=dur;document.getElementById('adv-durlbl').textContent=dur.toFixed(1);
+ const ac=document.getElementById('adv-accent');ac.value=(TEALc&&TEALc[0]==='#')?TEALc:'#12B3A6';ac.oninput=function(){setAccent(this.value);advDirty();};
+ document.getElementById('advmodal').classList.add('open');
+ advManualT=null;advPlay();
+}
+function advPlay(){const cv=document.getElementById('advcanvas');if(!cv)return;const ctx=cv.getContext('2d');cancelAnimationFrame(advAnim);advPaused=false;advManualT=null;let st=null;
+ const pb=document.getElementById('adv-playbtn');if(pb)pb.textContent='⏸';
+ function loop(now){if(advPaused)return;if(st===null)st=now;const c=advCfg();const t=((now-st)/1000)%c.dur;vFrame(ctx,t,c);
+   const s=document.getElementById('adv-scrub');if(s)s.value=(100*t/c.dur);
+   const tm=document.getElementById('adv-time');if(tm)tm.textContent=t.toFixed(1)+'s';
+   advAnim=requestAnimationFrame(loop);}
+ advAnim=requestAnimationFrame(loop);}
+function advTogglePlay(){const b=document.getElementById('adv-playbtn');if(advPaused){advPlay();}else{advPaused=true;cancelAnimationFrame(advAnim);if(b)b.textContent='▶';}}
+function advRestart(){advManualT=null;advPlay();}
+function advScrub(v){advPaused=true;cancelAnimationFrame(advAnim);const b=document.getElementById('adv-playbtn');if(b)b.textContent='▶';
+ const c=advCfg();const t=(v/100)*c.dur;advManualT=t;
+ vFrame(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);
+ const tm=document.getElementById('adv-time');if(tm)tm.textContent=t.toFixed(1)+'s';}
+function advDirty(){if(advPaused){const c=advCfg();const t=(advManualT!==null?advManualT:0);vFrame(document.getElementById('advcanvas').getContext('2d'),Math.min(t,c.dur-0.001),c);}}
+function closeAdvanced(){cancelAnimationFrame(advAnim);advPaused=true;document.getElementById('advmodal').classList.remove('open');}
+function applyAdvanced(){
+ advFieldDefs(ADV_STYLE).forEach(([id])=>{const a=document.getElementById('adv-'+id),b=document.getElementById('v-'+id);if(a&&b)b.value=a.value;});
+ const dur=+(document.getElementById('adv-dur').value||9),bd=document.getElementById('v-dur');
+ if(bd){bd.value=dur;const dl2=document.getElementById('v-durlbl');if(dl2)dl2.textContent=dur.toFixed(1);}
+ setAccent(document.getElementById('adv-accent').value);
+ closeAdvanced();vAutoPlay();
+ const msg=document.getElementById('v-msg');if(msg)msg.innerHTML='<span class="ok">✓ Geavanceerde bewerkingen toegepast</span> — je ziet ze nu in de preview. Klik 🎬 Genereer video om te downloaden.';
+}
+function advDownload(){applyAdvanced();setTimeout(function(){const b=document.getElementById('vrecbtn');if(b)b.scrollIntoView({block:'center'});vRecord();},90);}
+function setAccent(hex){if(!hex||hex[0]!=='#')return;TEALc=hex;TEALDc=darken(hex,.30);}
+function darken(hex,amt){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.round(r*(1-amt));g=Math.round(g*(1-amt));b=Math.round(b*(1-amt));return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
 
 // ================= SAVE / LOAD =================
 function saved(){try{return JSON.parse(localStorage.getItem('voxSaved')||'[]');}catch(e){return [];}}
