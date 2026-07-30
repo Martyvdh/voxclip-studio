@@ -98,6 +98,28 @@ ul{margin:6px 0}
 #voxgate .btn{width:100%}
 .logoutbtn{margin-left:auto;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 .logoutbtn:hover{background:rgba(255,255,255,.2)}
+.navtoggle{display:none;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:9px;padding:8px 13px;font-size:18px;line-height:1;cursor:pointer;margin-left:auto}
+@media(max-width:760px){
+ header{flex-wrap:wrap;gap:10px;padding:14px 16px}
+ header .brand{font-size:20px}
+ header .sub{display:none}
+ .navtoggle{display:inline-block;order:3}
+ .logoutbtn{order:4;margin-left:8px}
+ nav{display:none;flex-direction:column;align-items:stretch;padding:8px;gap:2px}
+ nav.open{display:flex}
+ nav button{width:100%;text-align:left;font-size:15px;padding:13px 14px}
+ main{max-width:100%;padding:16px 12px 90px}
+ h2{font-size:19px}
+ .grid,.grid4,.dash{grid-template-columns:1fr !important}
+ table{display:block;overflow-x:auto;white-space:nowrap}
+ .veditor{grid-template-columns:1fr}
+ .statbox{min-width:calc(50% - 8px)}
+ .hero{flex-direction:column;text-align:left}
+ .hero img{width:52px;height:52px}
+ .filters input,.filters select{width:100% !important;min-width:0 !important}
+ .btnrow{gap:8px}.btn,.btn.big{width:100%;text-align:center}
+ .btnrow .copy,.copy{width:auto}
+}
 .vbar{display:flex;align-items:center;gap:10px;margin-top:12px}
 .vctrl{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
 .vctrl:hover{background:#2a3142}
@@ -124,9 +146,10 @@ ul{margin:6px 0}
     <div class="brand">Vox<b>Clip</b> Studio</div>
     <div class="sub">Je complete marketingteam — content, video, advertenties, e-mail, planning en meten. English content, kalm en gewoon. Offline.</div>
   </div>
+  <button class="navtoggle" onclick="toggleNav()">☰</button>
   <button class="logoutbtn" onclick="voxLogout()">Uitloggen</button>
 </header>
-<nav>
+<nav id="mainnav">
   <button data-tab="dash" class="active">Dashboard</button>
   <button data-tab="coach">▶ Mijn week</button>
   <button data-tab="camp">★ 1 Campagne</button>
@@ -138,6 +161,7 @@ ul{margin:6px 0}
   <button data-tab="lib">Bibliotheek</button>
   <button data-tab="plan">Planner</button>
   <button data-tab="track">Tracking-links</button>
+  <button data-tab="research">🔎 Onderzoek</button>
   <button data-tab="check">Merk-check</button>
   <button data-tab="help">Uitleg</button>
 </nav>
@@ -343,6 +367,26 @@ ul{margin:6px 0}
   <div id="r-out"></div>
 </section>
 
+<!-- RESEARCH -->
+<section id="research" class="tab">
+  <h2>🔎 Onderzoek — concurrentie &amp; doelgroep</h2>
+  <p class="hint">Je marktkennis op één plek: wie de concurrenten zijn, wat ze goed/fout doen, waar jouw kans ligt, en wie je doelgroep is. Met directe volg-links om ze in de gaten te houden.</p>
+  <div id="rs-personas"></div>
+  <h3 style="margin-top:20px">Concurrenten (klik door om te volgen)</h3>
+  <div id="rs-compets"></div>
+  <div class="card" style="border-left-color:var(--teal-deep)">
+    <h3>👀 Snel de markt monitoren</h3>
+    <div class="meta">Handige plekken om trends en klachten van concurrenten te spotten (opent in nieuw tabblad).</div>
+    <div id="rs-monitor"></div>
+  </div>
+  <div class="card">
+    <h3>📝 Jouw observaties</h3>
+    <div class="meta">Zie je iets bij een concurrent of in de markt? Noteer het hier (blijft lokaal bewaard).</div>
+    <textarea id="rs-notes" placeholder="Bijv. 'Wispr Flow lanceerde teams-plan — kans om onze privacy/solo-hoek te benadrukken.'" oninput="saveResearchNotes()"></textarea>
+  </div>
+  <div class="callout warm"><b>Wil je dit automatisch?</b> Ik kan als je marketingteam maandelijks het web afstruinen (concurrent-updates, prijzen, nieuwe reviews, doelgroep-signalen) en je een korte digest sturen. Zeg ‘zet de maandelijkse concurrentie-scan aan’, dan richt ik dat in.</div>
+</section>
+
 <!-- CHECK -->
 <section id="check" class="tab">
   <h2>Merk-check</h2>
@@ -472,6 +516,8 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='dash')dashStats();
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
+ if(tb==='research')renderResearch();
+ const mn=document.getElementById('mainnav');if(mn)mn.classList.remove('open');
 });
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function sample(a,n){const c=[...a],o=[];while(o.length<n&&c.length)o.push(c.splice(Math.floor(Math.random()*c.length),1)[0]);return o;}
@@ -881,6 +927,48 @@ function reDownload(id){
 
 // ================= NAV HELPER + DASHBOARD =================
 function go(tab){const b=document.querySelector('nav button[data-tab="'+tab+'"]');if(b)b.click();window.scrollTo(0,0);}
+function toggleNav(){const n=document.getElementById('mainnav');if(n)n.classList.toggle('open');}
+
+// ================= RESEARCH =================
+const RS_PERSONAS=[
+ {n:'Sanne — de zelfstandige (omzet)',d:'Privacy-bewuste zelfstandige prof (consultant, coach/therapeut, advocaat, freelance schrijver). Mac, solo. Leeft in tekst + vertrouwelijke info. Kanaal: LinkedIn. Overtuigt: ‘alles op één plek’ + ‘je stem verlaat je toestel nooit’ + eerlijke pricing.'},
+ {n:'Mees — de maker (bereik)',d:'Freelance schrijver / contentmaker / student, mogelijk ADHD. Ideeën die verdampen; typen voelt traag. Kanaal: TikTok/Reels/IG. Overtuigt: ‘vang je idee voordat het weg is’ + spreek je eerste versie in + het is gratis.'}
+];
+const RS_COMPETS=[
+ {n:'Raycast',cat:'Clipboard + launcher',price:'Gratis → ~$10/mnd Pro',sterk:'Platform met AI + sync; sterke community-content (“What’s in My Raycast”); $30M funding.',zwak:'Overweldigend voor niet-technische mensen; clipboard is 1 van vele features; dictation geen kernverhaal.',kans:'Jij: één kalm verhaal voor de niet-technische kenniswerker; kopieer de UGC-mechaniek (“wat zit er in jouw stash?”).',links:[['Site','https://raycast.com'],['Pricing','https://raycast.com/pricing'],['Reddit','https://www.reddit.com/search/?q=raycast']]},
+ {n:'Paste',cat:'Clipboard manager',price:'~$2-3/mnd of via Setapp',sterk:'Mooiste design, iCloud-sync, sterke reviews.',zwak:'Duur voor “alleen clipboard”; terugkerende sync-klachten.',kans:'Jij: merged Timeline + stem; eerlijke E2E-sync waar je open over bent.',links:[['Site','https://pasteapp.io'],['Pricing','https://pasteapp.io/pricing'],['Reviews','https://alternativeto.net/software/paste-for-mac/']]},
+ {n:'Maccy',cat:'Clipboard (gratis)',price:'Gratis / $9.99 App Store',sterk:'Reddit-favoriet; “de snelste gratis optie”; open-source.',zwak:'Mac-only; geen stem, geen sync, geen zoeken-op-betekenis, geen iPhone.',kans:'“Gratis én je stem erbij, in dezelfde Timeline.” Maak een ‘vs Maccy’-pagina.',links:[['Site','https://maccy.app'],['GitHub','https://github.com/p0deje/Maccy']]},
+ {n:'Wispr Flow',cat:'AI-dictation',price:'Gratis → $12-15/mnd',sterk:'Categoriekoning; ~$315M funding; snelheid; Command Mode.',zwak:'Cloud-only, stuurt scherm-context weg (privacy); Trustpilot ~2.7; duurste; gratis snel op.',kans:'Jouw scherpste wig: “je stem verlaat je toestel nooit — op elk plan.”',links:[['Site','https://wisprflow.ai'],['Reviews','https://www.trustpilot.com/review/wisprflow.ai'],['Reddit','https://www.reddit.com/search/?q=wispr%20flow']]},
+ {n:'superwhisper',cat:'Lokale dictation',price:'Gratis → $8.49/mnd of $249 lifetime',sterk:'Privacy/lokaal-favoriet; model-flexibiliteit; lifetime-optie bindt kostenbewusten.',zwak:'Alleen dictation; geen clipboard/Timeline.',kans:'Verkoop nooit puur op privacy tegen superwhisper — verkoop de merged Timeline.',links:[['Site','https://superwhisper.com'],['Reddit','https://www.reddit.com/search/?q=superwhisper']]},
+ {n:'Aqua Voice',cat:'AI-dictation',price:'Betaald (trial)',sterk:'5.0 op Product Hunt; snel; buzz zonder Wispr-budget.',zwak:'Volledig cloud; geen offline; geen iOS/Linux.',kans:'Lokaal = jouw kracht; PH-launch met “talk to your stash” + één quotable claim.',links:[['Product Hunt','https://www.producthunt.com/products/aqua']]},
+ {n:'Ingebouwd (Apple / Win+V)',cat:'Referentie',price:'Gratis',sterk:'Al aanwezig, geen installatie.',zwak:'Apple Dictation + klembord staan los; Win+V: 25 items, 4MB-cap, geen betekenis-zoeken.',kans:'“Waarom niet de ingebouwde?” → één doorzoekbare Timeline mét je copies én stem.',links:[]}
+];
+const RS_MONITOR=[
+ ['r/macapps (Reddit)','https://www.reddit.com/r/macapps/'],
+ ['r/productivity (Reddit)','https://www.reddit.com/r/productivity/'],
+ ['Product Hunt — productivity','https://www.producthunt.com/topics/productivity'],
+ ['G2 — clipboard managers','https://www.g2.com/categories/other-productivity-software'],
+ ['Hacker News — zoek “dictation”','https://hn.algolia.com/?q=dictation'],
+ ['Google Trends — clipboard manager','https://trends.google.com/trends/explore?q=clipboard%20manager']
+];
+function renderResearch(){
+ const p=document.getElementById('rs-personas');
+ if(p)p.innerHTML='<div class="grid">'+RS_PERSONAS.map(x=>'<div class="card"><h3>'+x.n+'</h3><div class="rw"><div class="v">'+x.d+'</div></div></div>').join('')+'</div>';
+ const c=document.getElementById('rs-compets');
+ if(c)c.innerHTML=RS_COMPETS.map(x=>{
+  const links=x.links.map(l=>'<a href="'+l[1]+'" target="_blank" rel="noopener" style="margin-right:10px">'+l[0]+' ↗</a>').join('')||'<span class="small">geen links</span>';
+  return '<div class="card"><h3>'+x.n+' <span class="pill">'+x.cat+'</span></h3>'+
+   '<div class="rw"><span class="k">Prijs</span><div class="v">'+x.price+'</div></div>'+
+   '<div class="rw"><span class="k">Wat ze goed doen</span><div class="v">'+x.sterk+'</div></div>'+
+   '<div class="rw"><span class="k">Zwak / hun probleem</span><div class="v">'+x.zwak+'</div></div>'+
+   '<div class="rw"><span class="k">Jouw kans</span><div class="v" style="color:var(--teal-deep);font-weight:600">'+x.kans+'</div></div>'+
+   '<div class="rw"><span class="k">Volgen</span><div class="v">'+links+'</div></div></div>';
+ }).join('');
+ const m=document.getElementById('rs-monitor');
+ if(m)m.innerHTML='<div class="btnrow" style="margin-top:6px">'+RS_MONITOR.map(l=>'<a class="btn ghost" href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+' ↗</a>').join('')+'</div>';
+ const n=document.getElementById('rs-notes');if(n){try{n.value=localStorage.getItem('voxResearchNotes')||'';}catch(e){}}
+}
+function saveResearchNotes(){const n=document.getElementById('rs-notes');if(n){try{localStorage.setItem('voxResearchNotes',n.value);}catch(e){}}}
 function dashStats(){
  const el=document.getElementById('dash-stats');if(!el)return;
  const posts=saved().length, res=results().length;
