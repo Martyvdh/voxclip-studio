@@ -13,11 +13,15 @@ header img.logo{width:44px;height:44px;border-radius:11px;display:block}
 header .brand{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
 header .brand b{color:var(--teal)}
 header .sub{color:#aeb6c2;font-size:12.5px;margin-top:3px;max-width:640px}
-nav{display:flex;gap:4px;background:var(--ink);padding:8px 12px;flex-wrap:wrap;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.15)}
-nav button{background:none;border:none;color:#aab2c0;padding:8px 13px;font-size:13.5px;cursor:pointer;border-radius:8px;font-weight:600;transition:all .12s}
+.shell{display:flex;align-items:flex-start;max-width:1320px;margin:0 auto}
+nav{flex:0 0 236px;width:236px;align-self:stretch;box-sizing:border-box;background:var(--ink);padding:16px 12px 40px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:20;border-right:1px solid rgba(255,255,255,.06)}
+.navgroup{font-size:10.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#5f6b7e;padding:16px 12px 6px}
+.navgroup:first-child{padding-top:2px}
+nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:#c3cbd7;padding:9px 12px;font-size:14px;cursor:pointer;border-radius:10px;font-weight:600;transition:all .14s}
+nav button .ni{width:20px;text-align:center;font-size:15px;flex:0 0 20px}
 nav button.active{color:#fff;background:rgba(18,179,166,.18);box-shadow:inset 0 0 0 1px rgba(18,179,166,.4)}
 nav button:hover{color:#fff;background:rgba(255,255,255,.06)}
-main{max-width:1040px;margin:0 auto;padding:26px 20px 96px}
+main{flex:1;min-width:0;max-width:1060px;margin:0;padding:28px 34px 96px}
 .tab{display:none;animation:fade .25s ease}.tab.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 h2{font-size:22px;margin:4px 0 4px;letter-spacing:-.3px}h3{margin:0 0 2px;font-size:15px}
@@ -105,9 +109,11 @@ ul{margin:6px 0}
  header .sub{display:none}
  .navtoggle{display:inline-block;order:3}
  .logoutbtn{order:4;margin-left:8px}
- nav{display:none;flex-direction:column;align-items:stretch;padding:8px;gap:2px}
+ .shell{flex-direction:column;max-width:100%}
+ nav{display:none;position:static;height:auto;width:100%;flex:0 0 auto;align-self:stretch;flex-direction:column;align-items:stretch;padding:8px;gap:2px;border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
  nav.open{display:flex}
  nav button{width:100%;text-align:left;font-size:15px;padding:13px 14px}
+ .navgroup{padding:12px 12px 4px}
  main{max-width:100%;padding:16px 12px 90px}
  h2{font-size:19px}
  .grid,.grid4,.dash{grid-template-columns:1fr !important}
@@ -189,21 +195,31 @@ h2{background:linear-gradient(90deg,#1C2230,#0b7a6e);-webkit-background-clip:tex
   <button class="navtoggle" onclick="toggleNav()">☰</button>
   <button class="logoutbtn" onclick="voxLogout()">Uitloggen</button>
 </header>
+<div class="shell">
 <nav id="mainnav">
-  <button data-tab="dash" class="active">Dashboard</button>
-  <button data-tab="coach">▶ Mijn week</button>
-  <button data-tab="camp">★ 1 Campagne</button>
-  <button data-tab="gen">Generator + video</button>
-  <button data-tab="ads">Advertenties</button>
-  <button data-tab="email">E-mail</button>
-  <button data-tab="saved">Opgeslagen</button>
-  <button data-tab="results">Resultaten</button>
-  <button data-tab="lib">Bibliotheek</button>
-  <button data-tab="plan">Planner</button>
-  <button data-tab="track">Tracking-links</button>
-  <button data-tab="research">🔎 Onderzoek</button>
-  <button data-tab="check">Merk-check</button>
-  <button data-tab="help">Uitleg</button>
+  <div class="navgroup">Start</div>
+  <button data-tab="dash" class="active"><span class="ni">🏠</span>Dashboard</button>
+
+  <div class="navgroup">1 · Maken</div>
+  <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
+  <button data-tab="coach"><span class="ni">🗓️</span>Mijn week</button>
+  <button data-tab="gen"><span class="ni">🎬</span>Video maken</button>
+  <button data-tab="ads"><span class="ni">📣</span>Advertenties</button>
+  <button data-tab="email"><span class="ni">✉️</span>E-mail</button>
+
+  <div class="navgroup">2 · Plannen &amp; bewaren</div>
+  <button data-tab="plan"><span class="ni">📅</span>Planner</button>
+  <button data-tab="saved"><span class="ni">💾</span>Opgeslagen</button>
+  <button data-tab="lib"><span class="ni">📚</span>Bibliotheek</button>
+  <button data-tab="track"><span class="ni">🔗</span>Tracking-links</button>
+
+  <div class="navgroup">3 · Meten</div>
+  <button data-tab="results"><span class="ni">📊</span>Resultaten</button>
+
+  <div class="navgroup">Kennis &amp; merk</div>
+  <button data-tab="research"><span class="ni">🔎</span>Onderzoek</button>
+  <button data-tab="check"><span class="ni">✓</span>Merk-check</button>
+  <button data-tab="help"><span class="ni">❔</span>Uitleg</button>
 </nav>
 <main>
 
@@ -453,6 +469,7 @@ h2{background:linear-gradient(90deg,#1C2230,#0b7a6e);-webkit-background-clip:tex
   <div class="callout"><b>Video downloaden lukt niet?</b> Open dit bestand in <b>Google Chrome</b> of <b>Microsoft Edge</b> — daar werkt de video-export het best. De studio toont een melding als je browser het niet ondersteunt. Merkregels zitten ingebouwd: kalm, nooit hype · één claim per post · ‘your stuff’ niet ‘data’ · VoxClip = één woord · geen uitroeptekens · privacy nooit overclaimen.</div>
 </section>
 </main>
+</div><!-- /shell -->
 <footer>VoxClip Campagnestudio · offline · English content · gebouwd op je merkboek, contentbank, doelgroeponderzoek en playbook.</footer>
 
 <script>
