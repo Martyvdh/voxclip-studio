@@ -96,6 +96,8 @@ ul{margin:6px 0}
 #voxgate input{width:100%;margin-bottom:10px;text-align:center}
 #voxgate .err{color:var(--warn);font-size:12.5px;min-height:18px;margin-bottom:6px}
 #voxgate .btn{width:100%}
+.logoutbtn{margin-left:auto;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.logoutbtn:hover{background:rgba(255,255,255,.2)}
 .vbar{display:flex;align-items:center;gap:10px;margin-top:12px}
 .vctrl{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
 .vctrl:hover{background:#2a3142}
@@ -122,6 +124,7 @@ ul{margin:6px 0}
     <div class="brand">Vox<b>Clip</b> Studio</div>
     <div class="sub">Je complete marketingteam — content, video, advertenties, e-mail, planning en meten. English content, kalm en gewoon. Offline.</div>
   </div>
+  <button class="logoutbtn" onclick="voxLogout()">Uitloggen</button>
 </header>
 <nav>
   <button data-tab="dash" class="active">Dashboard</button>
@@ -356,6 +359,7 @@ async function voxLogin(){const c=document.getElementById('gatecode').value;cons
  if(h===null){err.textContent='Beveiligde login werkt alleen op de online (https) versie.';return;}
  if(h===VOXHASH){try{localStorage.setItem('voxAuth','1');}catch(e){}document.getElementById('voxgate').style.display='none';}
  else{err.textContent='Onjuiste code. Probeer opnieuw.';document.getElementById('gatecode').value='';}}
+function voxLogout(){try{localStorage.removeItem('voxAuth');}catch(e){}const g=document.getElementById('voxgate');if(g)g.style.display='flex';const c=document.getElementById('gatecode');if(c)c.value='';const er=document.getElementById('gateerr');if(er)er.textContent='';window.scrollTo(0,0);}
 (function(){try{if(localStorage.getItem('voxAuth')==='1'){const g=document.getElementById('voxgate');if(g)g.style.display='none';}}catch(e){}})();
 
 // ================= DATA (English content) =================
