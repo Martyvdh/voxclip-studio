@@ -275,6 +275,17 @@ label{font-weight:600;letter-spacing:.4px}
 table{border-radius:12px;box-shadow:var(--shadow-sm)}
 .step .num{font-family:var(--display)}
 .daytag,.chan,.pill{font-family:var(--sans)}
+
+/* ===== Hamburger drawer on DESKTOP too (mobile unchanged) ===== */
+#navscrim{position:fixed;inset:0;background:rgba(10,12,16,.48);opacity:0;visibility:hidden;transition:opacity .25s ease;z-index:1100}
+@media(min-width:761px){
+  .navtoggle{display:inline-flex;align-items:center;justify-content:center;order:-1;margin-left:0;margin-right:8px;width:44px;height:40px;font-size:20px}
+  .shell{display:block;max-width:1200px;margin:0 auto}
+  nav{position:fixed;top:0;left:0;height:100vh;width:280px;flex:none;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:1200;box-shadow:0 0 46px rgba(0,0,0,.34);border-right:none;padding-top:22px}
+  nav.open{transform:translateX(0)}
+  nav.open ~ #navscrim{opacity:1;visibility:visible}
+  main{max-width:100%;padding:34px 44px 100px}
+}
 </style>
 </head>
 <body>
@@ -321,6 +332,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <button data-tab="check"><span class="ni">✓</span>Merk-check</button>
   <button data-tab="help"><span class="ni">❔</span>Uitleg</button>
 </nav>
+<div id="navscrim" onclick="toggleNav()" aria-hidden="true"></div>
 <main>
 
 <!-- DASHBOARD -->
