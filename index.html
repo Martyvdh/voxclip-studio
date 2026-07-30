@@ -310,6 +310,12 @@ ul{margin:6px 0}
     <div class="btnrow"><button class="btn" onclick="loadCounters()">Ververs cijfers</button></div>
     <div id="ct-out"></div>
   </div>
+  <div class="card" style="border-left-color:var(--teal-deep)">
+    <h3>🎯 Per campagne — wat slaat aan?</h3>
+    <div class="meta">Kliks en downloads per campagne (utm_campaign), best presterende bovenaan. Campagnes die je in Tracking-links maakt komen hier vanzelf; handmatig toevoegen kan ook.</div>
+    <div class="btnrow"><input id="cc-add" placeholder="campagnenaam (bijv. week-1)" style="max-width:240px;width:auto"><button class="btn ghost" onclick="addCampaignManual()">+ Toevoegen</button><button class="btn" onclick="loadCampaignStats()">Ververs</button></div>
+    <div id="cc-out"></div>
+  </div>
   <div class="card" style="border-left-color:var(--teal)">
     <h3>📊 Live dashboard (van je site-analytics)</h3>
     <div class="meta">Plak de openbare/deel-link van je analytics-dashboard (Plausible, Simple Analytics, Umami…). Dan zie je je klikken, UTM-bronnen en downloads hier op marketing.voxclip.it. Tip: bij Plausible voeg je <b>&embed=true</b> toe aan de deel-link.</div>
@@ -462,7 +468,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');
  const tb=b.dataset.tab;
  if(tb==='saved')renderSaved();
- if(tb==='results'){renderResults();loadCounters();}
+ if(tb==='results'){renderResults();loadCounters();loadCampaignStats();}
  if(tb==='dash')dashStats();
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
@@ -941,6 +947,24 @@ async function loadCounters(){const el=document.getElementById('ct-out');if(!el)
  res.forEach(r=>{const c=r.clicks||0,d=r.dl||0,w=Math.round(100*c/maxC);h+='<tr><td>'+r.label+'</td><td><b>'+c+'</b></td><td style="min-width:120px"><div style="background:var(--teal);height:10px;border-radius:5px;width:'+w+'%"></div></td><td>'+d+'</td></tr>';});
  h+='</table>';el.innerHTML=h;
 }
+function ctClean(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function campList(){try{return JSON.parse(localStorage.getItem('voxCampaigns')||'[]');}catch(e){return [];}}
+function addCampaign(name){name=ctClean(name);if(!name)return;const a=campList();if(!a.includes(name)){a.push(name);try{localStorage.setItem('voxCampaigns',JSON.stringify(a));}catch(e){}}}
+function removeCampaign(n){try{localStorage.setItem('voxCampaigns',JSON.stringify(campList().filter(x=>x!==n)));}catch(e){}loadCampaignStats();}
+function addCampaignManual(){const i=document.getElementById('cc-add');addCampaign(i?i.value:'');if(i)i.value='';loadCampaignStats();}
+async function loadCampaignStats(){const el=document.getElementById('cc-out');if(!el)return;const list=campList();
+ if(!list.length){el.innerHTML='<div class="callout" style="margin-top:10px">Nog geen campagnes. Maak tracking-links met een campagnenaam (tab Tracking-links) of voeg er hierboven één toe — dan zie je hier per campagne wat aanslaat.</div>';return;}
+ el.innerHTML='<div class="load">Laden…</div>';
+ let res;try{res=await Promise.all(list.map(async n=>({name:n,clicks:await ctGet('camp_'+n),dl:await ctGet('campdl_'+n)})));}catch(e){res=null;}
+ if(!res||res.every(r=>r.clicks===null)){el.innerHTML='<div class="callout warm" style="margin-top:10px">Nog geen cijfers. Dit vult zich zodra er via je campagne-links (met utm_campaign) geklikt wordt op voxclip.it.</div>';return;}
+ res.sort((a,b)=>(b.clicks||0)-(a.clicks||0));
+ const best=res[0];const maxC=Math.max(1,...res.map(r=>r.clicks||0));
+ let h='';
+ if(best&&best.clicks)h+='<div class="callout" style="margin-top:10px"><b>Best presterende campagne:</b> '+best.name+' — '+best.clicks+' kliks'+(best.dl?', '+best.dl+' downloads':'')+'. Maak hier meer van; wat onderaan staat kun je laten vallen.</div>';
+ h+='<table><tr><th>Campagne</th><th>Kliks</th><th>Verdeling</th><th>Downloads</th><th></th></tr>';
+ res.forEach(r=>{const c=r.clicks||0,d=r.dl||0,w=Math.round(100*c/maxC);h+='<tr><td>'+r.name+'</td><td><b>'+c+'</b></td><td style="min-width:120px"><div style="background:var(--teal-deep);height:10px;border-radius:5px;width:'+w+'%"></div></td><td>'+d+'</td><td><button class="copy" onclick="removeCampaign(\''+r.name+'\')">x</button></td></tr>';});
+ h+='</table>';el.innerHTML=h;
+}
 function saveDashUrl(){const i=document.getElementById('dash-url');const u=i?i.value.trim():'';if(!u){return;}try{localStorage.setItem('voxDashUrl',u);}catch(e){}renderDashEmbed();}
 function clearDashUrl(){try{localStorage.removeItem('voxDashUrl');}catch(e){}const i=document.getElementById('dash-url');if(i)i.value='';renderDashEmbed();}
 function renderDashEmbed(){const el=document.getElementById('dash-embed');if(!el)return;let u='';try{u=localStorage.getItem('voxDashUrl')||'';}catch(e){}
@@ -1130,6 +1154,7 @@ let LINKS=[];
 function utm(base,s,m,c,ct){const sep=base.includes('?')?'&':'?';return base+sep+`utm_source=${s}&utm_medium=${m}&utm_campaign=${encodeURIComponent(c)}&utm_content=${encodeURIComponent(ct)}`;}
 function buildLinks(){
  const base=val('t-base').trim()||'https://voxclip.it';const camp=(val('t-camp').trim()||'campaign').toLowerCase().replace(/\s+/g,'-');
+ addCampaign(camp);
  const cfg=[['tiktok','social',+val('t-tt')],['instagram','social',+val('t-ig')],['linkedin','social',+val('t-li')],['blog','referral',+val('t-bl')]];LINKS=[];
  cfg.forEach(([s,m,n])=>{for(let i=1;i<=n;i++){const ct=s+'-post-'+i;LINKS.push([s,m,camp,ct,utm(base,s,m,camp,ct)]);}});
  let h=`<div class="callout"><b>${LINKS.length} tagged links.</b> Plak de juiste link in elke post.</div><table><tr><th>Channel</th><th>Post</th><th>Tagged link</th><th></th></tr>`;
