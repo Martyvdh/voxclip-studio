@@ -129,6 +129,46 @@ ul{margin:6px 0}
 .vlabel{font-size:11px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;text-align:center;margin-bottom:8px}
 .editor-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .editor-head .dot{width:10px;height:10px;border-radius:50%;background:var(--teal)}
+/* ============ MODERN THEME v2 ============ */
+:root{--radius:16px;--ring:0 0 0 3px rgba(18,179,166,.20)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes sheen{0%,100%{transform:translateX(-12%)}50%{transform:translateX(12%)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(16px)}}
+@keyframes pop{0%{transform:scale(.96);opacity:0}100%{transform:scale(1);opacity:1}}
+body{background:radial-gradient(1100px 560px at 108% -12%, rgba(18,179,166,.12), transparent 60%),radial-gradient(820px 480px at -12% 8%, rgba(11,122,110,.09), transparent 55%),#F3F5F9;min-height:100vh}
+header{position:relative;overflow:hidden;background:linear-gradient(120deg,#0f131a 0%,#1c2230 52%,#124238 128%)}
+header::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(560px 200px at 22% -50%, rgba(18,179,166,.40), transparent 62%);opacity:.55;animation:sheen 9s ease-in-out infinite}
+header>*{position:relative;z-index:1}
+#hdrlogo{box-shadow:0 8px 22px rgba(0,0,0,.4)}
+nav{background:linear-gradient(180deg,#161b24,#11151c)}
+nav button{transition:transform .18s cubic-bezier(.2,.7,.3,1),background .18s,box-shadow .18s,color .18s}
+nav button:hover{transform:translateY(-1px)}
+nav button.active{background:linear-gradient(135deg,#12b3a6,#0b7a6e);color:#fff;box-shadow:0 7px 18px rgba(18,179,166,.38),inset 0 0 0 1px rgba(255,255,255,.08)}
+.btn{background:linear-gradient(135deg,#12b3a6,#0b7a6e);box-shadow:0 9px 22px rgba(11,122,110,.30);transition:transform .18s cubic-bezier(.2,.7,.3,1),box-shadow .18s,filter .18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 13px 28px rgba(11,122,110,.38);filter:brightness(1.05)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{background:#fff;box-shadow:0 2px 8px rgba(20,24,31,.06)}
+.btn.rec{background:linear-gradient(135deg,#e5484d,#b3322f)}
+.card{border-radius:var(--radius);box-shadow:0 8px 26px rgba(20,24,31,.08),0 1px 3px rgba(20,24,31,.05);transition:transform .22s ease,box-shadow .22s ease;animation:fadeUp .45s ease both}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(20,24,31,.13)}
+.step{border-radius:var(--radius);box-shadow:0 8px 26px rgba(20,24,31,.07);animation:fadeUp .45s ease both}
+.tile{border-radius:var(--radius);transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s ease;animation:pop .4s ease both}
+.tile:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 20px 44px rgba(20,24,31,.14)}
+.tile .ic{display:inline-flex;width:48px;height:48px;align-items:center;justify-content:center;border-radius:13px;background:linear-gradient(135deg,rgba(18,179,166,.18),rgba(11,122,110,.12));font-size:23px;margin-bottom:12px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(120deg,#e9faf6,#f3f5f9 72%);animation:fadeUp .5s ease both}
+.hero::after{content:"";position:absolute;width:300px;height:300px;right:-70px;top:-90px;background:radial-gradient(circle,rgba(18,179,166,.26),transparent 70%);border-radius:50%;animation:floaty 7s ease-in-out infinite;pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.statbox{border-radius:14px;transition:transform .2s ease,box-shadow .2s ease;animation:fadeUp .5s ease both}
+.statbox:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(20,24,31,.10)}
+.statbox .n{background:linear-gradient(135deg,#12b3a6,#0b7a6e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+select:focus,input:focus,textarea:focus{box-shadow:var(--ring)}
+.pill{background:linear-gradient(135deg,rgba(18,179,166,.15),rgba(11,122,110,.10))}
+.tab.active{animation:fadeUp .42s ease}
+.copy{transition:transform .15s,background .15s}.copy:hover{transform:translateY(-1px)}
+.navtoggle{transition:transform .18s,background .18s}.navtoggle:hover{transform:translateY(-1px)}
+.vcanvas-wrap{border-radius:20px}
+.saved-item{border-radius:var(--radius);animation:fadeUp .4s ease both}
+h2{background:linear-gradient(90deg,#1C2230,#0b7a6e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 </head>
 <body>
