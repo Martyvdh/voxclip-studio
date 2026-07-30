@@ -88,6 +88,14 @@ ul{margin:6px 0}
 .statbox{flex:1;min-width:130px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
 .statbox .n{font-size:26px;font-weight:800;color:var(--teal-deep)}
 .statbox .l{font-size:12px;color:var(--grey)}
+#voxgate{position:fixed;inset:0;background:linear-gradient(120deg,#14181F,#1C2230 60%,#153a37 140%);z-index:99999;display:flex;align-items:center;justify-content:center}
+#voxgate .gbox{background:#fff;border-radius:18px;padding:30px 28px;width:330px;max-width:90vw;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.45)}
+#voxgate img{width:60px;height:60px;border-radius:14px;margin-bottom:12px}
+#voxgate h2{margin:0 0 4px;font-size:20px}
+#voxgate p{color:var(--grey);font-size:13px;margin:0 0 16px}
+#voxgate input{width:100%;margin-bottom:10px;text-align:center}
+#voxgate .err{color:var(--warn);font-size:12.5px;min-height:18px;margin-bottom:6px}
+#voxgate .btn{width:100%}
 .vbar{display:flex;align-items:center;gap:10px;margin-top:12px}
 .vctrl{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
 .vctrl:hover{background:#2a3142}
@@ -100,6 +108,14 @@ ul{margin:6px 0}
 </style>
 </head>
 <body>
+<div id="voxgate"><div class="gbox">
+  <img id="gatelogo" alt="">
+  <h2>VoxClip Studio</h2>
+  <p>Alleen voor het team. Voer de gedeelde teamcode in.</p>
+  <input id="gatecode" type="password" placeholder="Teamcode" autocomplete="off" onkeydown="if(event.key==='Enter')voxLogin()">
+  <div class="err" id="gateerr"></div>
+  <button class="btn" onclick="voxLogin()">Inloggen</button>
+</div></div>
 <header>
   <img class="logo" id="hdrlogo" alt="VoxClip">
   <div>
@@ -333,6 +349,15 @@ ul{margin:6px 0}
 <footer>VoxClip Campagnestudio · offline · English content · gebouwd op je merkboek, contentbank, doelgroeponderzoek en playbook.</footer>
 
 <script>
+// ================= LOGIN GATE (light) =================
+const VOXHASH="ce0f5d79a986bd42b4b7ff5ed4c54af6521a574fd77fdbf607ab9d5d48e5ffc8";
+async function voxSha(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return null;}}
+async function voxLogin(){const c=document.getElementById('gatecode').value;const h=await voxSha(c);const err=document.getElementById('gateerr');
+ if(h===null){err.textContent='Beveiligde login werkt alleen op de online (https) versie.';return;}
+ if(h===VOXHASH){try{localStorage.setItem('voxAuth','1');}catch(e){}document.getElementById('voxgate').style.display='none';}
+ else{err.textContent='Onjuiste code. Probeer opnieuw.';document.getElementById('gatecode').value='';}}
+(function(){try{if(localStorage.getItem('voxAuth')==='1'){const g=document.getElementById('voxgate');if(g)g.style.display='none';}}catch(e){}})();
+
 // ================= DATA (English content) =================
 const FEATURES={
  P1:[["merged","the Timeline — copy and voice in one place"],["search","the searchable Timeline"],["overview","all your loose copies together"]],
@@ -1090,7 +1115,7 @@ generateOne();loadWeek();renderLib();cmFill();loadCampaign();buildAds();buildEma
 document.getElementById('p-date').valueAsDate=new Date();
 try{document.getElementById('r-date').valueAsDate=new Date();}catch(e){}
 buildLinks();
-try{const L=VOXLOGO.src;document.getElementById('hdrlogo').src=L;document.getElementById('herologo').src=L;}catch(e){}
+try{const L=VOXLOGO.src;document.getElementById('hdrlogo').src=L;document.getElementById('herologo').src=L;var gl=document.getElementById('gatelogo');if(gl)gl.src=L;}catch(e){}
 </script>
 </body>
 </html>
