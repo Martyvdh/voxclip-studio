@@ -316,6 +316,24 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   .advcontrols{border-left:none;border-top:1px solid rgba(255,255,255,.07)}
 }
 
+/* ===== Voice assistant (agent) ===== */
+.ag-setup{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ag-wrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden}
+.ag-log{height:min(52vh,520px);overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.ag-msg{max-width:82%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.5;white-space:pre-wrap;animation:riseIn .25s ease both}
+.ag-msg.user{align-self:flex-end;background:var(--teal-deep);color:#fff;border-bottom-right-radius:4px}
+.ag-msg.assistant{align-self:flex-start;background:var(--row);color:var(--ink);border-bottom-left-radius:4px}
+.ag-msg.thinking{opacity:.6;font-style:italic}
+.ag-bar{display:flex;gap:10px;align-items:center;padding:12px;border-top:1px solid var(--line);background:#fafbfc}
+.ag-input{flex:1}
+.ag-mic{width:46px;height:46px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:20px;cursor:pointer;flex:0 0 46px;transition:background .15s,box-shadow .15s}
+.ag-mic:hover{background:#2a3142}
+.ag-mic.live{background:var(--warn);animation:agpulse 1s ease-in-out infinite}
+@keyframes agpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}50%{box-shadow:0 0 0 12px rgba(229,72,77,0)}}
+.ag-name{position:absolute;inset:0;background:rgba(247,247,245,.96);display:none;align-items:center;justify-content:center;z-index:5}
+.ag-namebox{text-align:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 32px;box-shadow:var(--shadow-md)}
+.ag-q{font-family:var(--display);font-weight:600;font-size:20px;margin-bottom:16px}
+
 /* ===== Hamburger drawer on DESKTOP too (mobile unchanged) ===== */
 #navscrim{position:fixed;inset:0;background:rgba(10,12,16,.48);opacity:0;visibility:hidden;transition:opacity .25s ease;z-index:1100}
 @media(min-width:761px){
@@ -350,6 +368,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <nav id="mainnav">
   <div class="navgroup">Start</div>
   <button data-tab="dash" class="active"><span class="ni">🏠</span>Dashboard</button>
+  <button data-tab="agent"><span class="ni">🎙️</span>Praat met assistent</button>
 
   <div class="navgroup">1 · Maken</div>
   <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
@@ -596,6 +615,30 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 </section>
 
 <!-- CHECK -->
+<section id="agent" class="tab">
+  <h2>🎙️ Praat met je assistent</h2>
+  <p class="hint">Praat of typ — ze denkt mee én voert taken uit in de studio: video's, weekschema, concurrentie, advertenties, e-mail. Spraak werkt het best in Chrome of Edge. Bij het openen vraagt ze eerst of ze met Arend of Marty spreekt.</p>
+  <div class="ag-setup">
+    <div class="field" style="flex:2;margin:0"><label>AI-verbinding (Worker-URL)</label><input id="ag-proxy" placeholder="https://voxclip-ai.<jouw>.workers.dev" oninput="agentSaveProxy()"></div>
+    <div class="field" style="flex:1;margin:0"><label>Stem</label><select id="ag-voice" onchange="agentVoicePick()"></select></div>
+  </div>
+  <div class="ag-wrap">
+    <div id="ag-log" class="ag-log"></div>
+    <div id="ag-name" class="ag-name">
+      <div class="ag-namebox">
+        <div class="ag-q">Met wie spreek ik?</div>
+        <div class="btnrow" style="justify-content:center"><button class="btn" onclick="agentSetUser('Arend')">Arend</button><button class="btn ghost" onclick="agentSetUser('Marty')">Marty</button></div>
+      </div>
+    </div>
+    <div class="ag-bar">
+      <button id="ag-mic" class="ag-mic" onclick="agentMic()" title="Spreek">🎤</button>
+      <input id="ag-text" class="ag-input" placeholder="Typ of spreek je bericht…" onkeydown="if(event.key==='Enter')agentSend()">
+      <button class="btn" onclick="agentSend()">Stuur</button>
+    </div>
+  </div>
+  <p class="small" style="margin-top:10px">Nog geen AI-verbinding? Volg het setup-bestand dat ik je gaf: haal een AI-sleutel, plak de Worker, en zet de Worker-URL hierboven. Je sleutel blijft geheim — ik zie 'm nooit.</p>
+</section>
+
 <section id="check" class="tab">
   <h2>Merk-check</h2>
   <p class="hint">Plak een tekst; het markeert hype-woorden en merkfouten.</p>
@@ -764,6 +807,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
  if(tb==='research')renderResearch();
+ if(tb==='agent')agentEnter();
  const mn=document.getElementById('mainnav');if(mn)mn.classList.remove('open');
 });
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
@@ -1243,6 +1287,69 @@ function startTune(preset,dests){audioEnsure();if(!AC)return function(){};
 function musicToggle(){const b=document.getElementById('fx-musicbtn');if(_musicPrev){_musicPrev();_musicPrev=null;if(b)b.textContent='▶ Beluister';return;}if(MUSIC.tune==='none'||MUSIC.tune==null)return;audioEnsure();_musicPrev=startTune(TUNES[+MUSIC.tune],[AC.destination]);if(b)b.textContent='⏸ Stop';}
 function musicPick(){const s=document.getElementById('fx-music');const wasOn=!!_musicPrev;musicStopPrev();MUSIC.tune=s.value;if(wasOn&&MUSIC.tune!=='none')musicToggle();}
 function musicStopPrev(){if(_musicPrev){_musicPrev();_musicPrev=null;const b=document.getElementById('fx-musicbtn');if(b)b.textContent='▶ Beluister';}}
+
+// ================= VOICE ASSISTANT (agent — variant B) =================
+let AGENT={user:null,proxy:localStorage.getItem('voxAgentProxy')||'',messages:[],voice:null,rec:null,listening:false};
+function agentEnter(){const pf=document.getElementById('ag-proxy');if(pf&&!pf.value)pf.value=AGENT.proxy;agentLoadVoices();if(!AGENT.user)agentAskName();}
+function agentSaveProxy(){const v=(document.getElementById('ag-proxy').value||'').trim();AGENT.proxy=v;localStorage.setItem('voxAgentProxy',v);}
+function agentAskName(){const n=document.getElementById('ag-name');if(n)n.style.display='flex';setTimeout(()=>agentSpeak('Hoi! Met wie spreek ik — Arend of Marty?'),300);}
+function agentSetUser(name){AGENT.user=name;AGENT.messages=[];const n=document.getElementById('ag-name');if(n)n.style.display='none';
+ document.getElementById('ag-log').innerHTML='';
+ agentLog('assistant','Hoi '+name+'! Fijn dat je er bent. Waarmee kan ik je helpen? Zeg bijvoorbeeld: "maak een Insta-video over privacy", "wat doen mijn concurrenten?" of "maak mijn weekschema".');
+ agentSpeak('Hoi '+name+'! Waarmee kan ik je helpen?');}
+function agentLoadVoices(){const sel=document.getElementById('ag-voice');if(!sel||!window.speechSynthesis)return;const vs=speechSynthesis.getVoices();if(!vs.length){speechSynthesis.onvoiceschanged=agentLoadVoices;return;}
+ sel.innerHTML=vs.map((v,i)=>'<option value="'+i+'">'+v.name+' ('+v.lang+')</option>').join('');
+ let idx=vs.findIndex(v=>/nl/i.test(v.lang)&&/(female|vrouw|ellen|fenna|lotte|saskia|lisa|colette|google nederlands)/i.test(v.name));
+ if(idx<0)idx=vs.findIndex(v=>/nl/i.test(v.lang));
+ if(idx<0)idx=vs.findIndex(v=>/(female|samantha|victoria|karen|zira|fiona)/i.test(v.name));
+ if(idx<0)idx=0;
+ const saved=localStorage.getItem('voxAgentVoice');if(saved!==null&&vs[+saved])idx=+saved;
+ sel.value=idx;AGENT.voice=vs[idx];}
+function agentVoicePick(){const sel=document.getElementById('ag-voice'),vs=speechSynthesis.getVoices();AGENT.voice=vs[+sel.value]||null;localStorage.setItem('voxAgentVoice',sel.value);if(AGENT.voice)agentSpeak('Zo klink ik nu.');}
+function agentSpeak(text){try{if(!window.speechSynthesis||!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);if(AGENT.voice)u.voice=AGENT.voice;u.lang=(AGENT.voice&&AGENT.voice.lang)||'nl-NL';u.rate=1.03;u.pitch=1.15;speechSynthesis.speak(u);}catch(e){}}
+function agentLog(role,text){const log=document.getElementById('ag-log');const d=document.createElement('div');d.className='ag-msg '+role;d.textContent=text;log.appendChild(d);log.scrollTop=log.scrollHeight;return d;}
+function agentMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert('Spraakherkenning werkt in Chrome of Edge. Typ zolang je bericht in het tekstvak.');return;}
+ if(AGENT.listening){try{AGENT.rec.stop();}catch(e){}return;}
+ const r=new SR();AGENT.rec=r;r.lang='nl-NL';r.interimResults=true;r.continuous=false;let finalT='';
+ r.onstart=()=>{AGENT.listening=true;document.getElementById('ag-mic').classList.add('live');};
+ r.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalT+=t;else interim+=t;}document.getElementById('ag-text').value=finalT||interim;};
+ r.onerror=()=>{};
+ r.onend=()=>{AGENT.listening=false;document.getElementById('ag-mic').classList.remove('live');if(document.getElementById('ag-text').value.trim())agentSend();};
+ try{r.start();}catch(e){}}
+function agentSystemPrompt(){return 'Je bent de spraakassistent van VoxClip Studio, het marketingteam-hulpje van Marty en Arend (makers van VoxClip). Je spreekt nu met '+AGENT.user+'. Spreek '+AGENT.user+' altijd bij de voornaam aan. Antwoord ALTIJD in het Nederlands, kort, warm en rustig — nooit hype, geen uitroeptekens-marketing.\n'
+ +'VoxClip: gratis desktop-app (Mac & Windows) die alles wat je kopieert én dicteert in één doorzoekbare Timeline zet en terugplakt met een sneltoets of je stem. Lokaal en privé; cloud-functies (sync, "talk to your stash", AI-transforms) zijn betaald (Plus, €6,99/mnd of €59/jaar). Merkstem: kalm en gewoon.\n'
+ +'Concurrenten (voor als ernaar gevraagd wordt): Raycast, Paste, Maccy (clipboard-managers); Wispr Flow, superwhisper, Aqua Voice (dictatie). VoxClips hoek: clipboard én dictatie samen in één Timeline, lokaal-eerst.\n'
+ +'Je kunt taken uitvoeren in de studio. Als '+AGENT.user+' om een concrete taak vraagt, zet dan HELEMAAL AAN HET EIND van je antwoord precies één regel in dit formaat (niets erna):\n'
+ +'@@ACTION {"do":"video","channel":"instagram","topic":"privacy"}\n'
+ +'Geldige "do": "video" (channel: tiktok of instagram; topic optioneel), "post" (channel: tiktok/instagram/linkedin/blog), "week", "ads", "email", "research", "open" (tab: dash/coach/camp/gen/ads/email/results/research/help). Gebruik de ACTION-regel ALLEEN bij een echte taak; bij een gewoon gesprek of vraag laat je hem weg. Zeg in gewone taal wat je gaat doen vóór de ACTION-regel.';}
+async function agentSend(){const inp=document.getElementById('ag-text');const text=(inp.value||'').trim();if(!text)return;inp.value='';
+ if(!AGENT.user){agentAskName();return;}
+ agentLog('user',text);AGENT.messages.push({role:'user',content:text});
+ if(!AGENT.proxy){const w='Ik ben nog niet verbonden met mijn AI-brein. Vul bovenaan de Worker-URL in (zie het setup-bestand), dan denk ik echt met je mee.';agentLog('assistant',w);agentSpeak(w);return;}
+ const bubble=agentLog('assistant','…');bubble.classList.add('thinking');
+ try{const res=await fetch(AGENT.proxy,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:agentSystemPrompt(),messages:AGENT.messages.slice(-20)})});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const data=await res.json();let full=(data.reply||data.content||'').toString();
+  let action=null;const m=full.match(/@@ACTION\s*(\{[\s\S]*\})\s*$/);
+  if(m){try{action=JSON.parse(m[1]);}catch(e){}}
+  const shown=full.replace(/@@ACTION[\s\S]*$/,'').trim()||'Oké.';
+  bubble.classList.remove('thinking');bubble.textContent=shown;document.getElementById('ag-log').scrollTop=1e9;
+  AGENT.messages.push({role:'assistant',content:full});
+  agentSpeak(shown);
+  if(action)setTimeout(()=>agentDo(action,text),400);
+ }catch(e){bubble.classList.remove('thinking');const w='Er ging iets mis met de verbinding ('+e.message+'). Check de Worker-URL en of je AI-sleutel klopt.';bubble.textContent=w;}}
+function agentPillar(t){t=(t||'').toLowerCase();if(/privac|lokaal|device|veilig|data|eigen/.test(t))return 'P3';if(/gratis|free|prijs|kosten|geld/.test(t))return 'P4';if(/snel|recall|hotkey|terugvind|zoek|sneltoets/.test(t))return 'P2';return 'P1';}
+function agentSetChannel(ch){const s=document.getElementById('g-channel');if(!s)return;ch=(ch||'').toLowerCase();const v=(ch==='blog')?'blog':(ch==='linkedin')?'linkedin':(ch==='instagram'||ch==='insta')?'instagram':'tiktok';s.value=v;}
+function agentDo(a,userText){try{const pil=agentPillar(a.topic||userText);
+ if(a.do==='video'){agentSetChannel(a.channel==='tiktok'?'tiktok':'instagram');const ps=document.getElementById('g-pillar');if(ps){ps.value=pil;fillFeatures();}generateOne();go('gen');if(a.topic){const f=document.getElementById('v-p1');if(f){f.value=a.topic;if(typeof vAutoPlay==='function')vAutoPlay();}}}
+ else if(a.do==='post'){agentSetChannel(a.channel);const ps=document.getElementById('g-pillar');if(ps){ps.value=pil;fillFeatures();}generateOne();go('gen');}
+ else if(a.do==='week'){go('coach');if(typeof buildWeek==='function')buildWeek();}
+ else if(a.do==='ads'){go('ads');if(typeof buildAds==='function')buildAds();}
+ else if(a.do==='email'){go('email');if(typeof buildEmail==='function')buildEmail();}
+ else if(a.do==='research'){go('research');if(typeof renderResearch==='function')renderResearch();}
+ else if(a.do==='open'&&a.tab){go(a.tab);}
+ }catch(e){}}
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
  if(st==='kinetic')return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
