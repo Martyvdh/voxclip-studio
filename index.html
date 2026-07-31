@@ -368,7 +368,6 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <nav id="mainnav">
   <div class="navgroup">Start</div>
   <button data-tab="dash" class="active"><span class="ni">🏠</span>Dashboard</button>
-  <button data-tab="agent"><span class="ni">🎙️</span>Praat met assistent</button>
 
   <div class="navgroup">1 · Maken</div>
   <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
@@ -615,30 +614,6 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 </section>
 
 <!-- CHECK -->
-<section id="agent" class="tab">
-  <h2>🎙️ Praat met je assistent</h2>
-  <p class="hint">Werkt meteen en gratis: praat of typ, ze voert je opdrachten uit in de studio — video's, weekschema, posts, advertenties, e-mail, concurrentie. Spraak werkt het best in Chrome of Edge. Bij het openen vraagt ze of ze met Arend of Marty spreekt. Het veld hieronder is optioneel: alleen nodig als je haar ook vrij over van alles wil laten praten.</p>
-  <div class="ag-setup">
-    <div class="field" style="flex:2;margin:0"><label>AI-verbinding (optioneel — voor vrij gesprek)</label><input id="ag-proxy" placeholder="Leeg laten = gratis modus" oninput="agentSaveProxy()"></div>
-    <div class="field" style="flex:1;margin:0"><label>Stem</label><select id="ag-voice" onchange="agentVoicePick()"></select></div>
-  </div>
-  <div class="ag-wrap">
-    <div id="ag-log" class="ag-log"></div>
-    <div id="ag-name" class="ag-name">
-      <div class="ag-namebox">
-        <div class="ag-q">Met wie spreek ik?</div>
-        <div class="btnrow" style="justify-content:center"><button class="btn" onclick="agentSetUser('Arend')">Arend</button><button class="btn ghost" onclick="agentSetUser('Marty')">Marty</button></div>
-      </div>
-    </div>
-    <div class="ag-bar">
-      <button id="ag-mic" class="ag-mic" onclick="agentMic()" title="Spreek">🎤</button>
-      <input id="ag-text" class="ag-input" placeholder="Typ of spreek je bericht…" onkeydown="if(event.key==='Enter')agentSend()">
-      <button class="btn" onclick="agentSend()">Stuur</button>
-    </div>
-  </div>
-  <p class="small" style="margin-top:10px">Gratis modus staat aan — geen sleutel nodig. Ze herkent je opdrachten en voert ze uit. Wil je dat ze óók vrij over van alles kan praten? Dan kun je later een (gratis) AI-brein koppelen via de URL hierboven.</p>
-</section>
-
 <section id="check" class="tab">
   <h2>Merk-check</h2>
   <p class="hint">Plak een tekst; het markeert hype-woorden en merkfouten.</p>
@@ -807,7 +782,6 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
  if(tb==='research')renderResearch();
- if(tb==='agent')agentEnter();
  const mn=document.getElementById('mainnav');if(mn)mn.classList.remove('open');
 });
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
