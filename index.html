@@ -1207,36 +1207,38 @@ function audioEnsure(){if(!AC){try{AC=new (window.AudioContext||window.webkitAud
 function _n2f(n){return 440*Math.pow(2,(n-69)/12);}
 function P(s){return s.split('').map(c=>c==='x'?1:0);}
 function AP(s){return s.split('').map(c=>c==='.'?null:parseInt(c,36));}
-function mkVoice(dest,freq,t0,dur,wave,peak,atk,rel){const o=AC.createOscillator(),g=AC.createGain();o.type=wave;o.frequency.value=freq;g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(peak,t0+atk);const s=Math.max(t0+atk,t0+dur-rel);g.gain.setValueAtTime(peak,s);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);o.connect(g).connect(dest);o.start(t0);o.stop(t0+dur+0.03);}
-function mkHat(dest,t0,peak){const n=AC.createBufferSource(),len=Math.floor(AC.sampleRate*0.035),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;n.buffer=b;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=AC.createGain();g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.035);n.connect(f).connect(g).connect(dest);n.start(t0);n.stop(t0+0.05);}
-function mkKick(dest,t0,peak){const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(140,t0);o.frequency.exponentialRampToValueAtTime(45,t0+0.12);g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.16);o.connect(g).connect(dest);o.start(t0);o.stop(t0+0.18);}
+function mkVoice(dry,wet,freq,t0,dur,wave,peak,atk,rel,cut){const o1=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();o1.type=wave;o2.type=wave;o1.frequency.value=freq;o2.frequency.value=freq;o1.detune.value=-7;o2.detune.value=7;f.type='lowpass';f.frequency.value=cut||2400;f.Q.value=0.3;g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(peak,t0+atk);const s=Math.max(t0+atk,t0+dur-rel);g.gain.setValueAtTime(peak,s);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);o1.connect(f);o2.connect(f);f.connect(g);g.connect(dry);if(wet)g.connect(wet);o1.start(t0);o2.start(t0);o1.stop(t0+dur+0.05);o2.stop(t0+dur+0.05);}
+function mkHat(dry,t0,peak){const n=AC.createBufferSource(),len=Math.floor(AC.sampleRate*0.03),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;n.buffer=b;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=9000;f.Q.value=1.2;const g=AC.createGain();g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.05);n.connect(f).connect(g).connect(dry);n.start(t0);n.stop(t0+0.07);}
+function makeIR(dur,decay){const rate=AC.sampleRate,len=Math.max(1,Math.floor(rate*dur)),b=AC.createBuffer(2,len,rate);for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return b;}
 const TUNES=[
- {name:'Kalm',bpm:80,master:.5,prog:[[60,64,67],[62,67,71],[57,60,64],[53,57,60]],pad:{wave:'sine',gain:.10},arp:{wave:'triangle',gain:.06,len:.9,pat:AP('0..1..2..a..1..2')},bass:{wave:'sine',gain:.06,pat:P('x.......x.......')}},
- {name:'Lofi',bpm:74,master:.5,prog:[[57,60,64],[53,57,60],[60,64,67],[55,59,62]],pad:{wave:'sine',gain:.09},arp:{wave:'triangle',gain:.06,len:.5,pat:AP('0.1.2.1.0.1.a.1.')},bass:{wave:'sine',gain:.06,pat:P('x.......x.......')},kick:{gain:.5,pat:P('x.....x.x.....x.')},hat:{gain:.05,pat:P('..x..x...x..x...')}},
- {name:'Tech minimal',bpm:112,master:.45,prog:[[57,60,64],[60,64,67],[55,59,62],[57,60,64]],pad:{wave:'triangle',gain:.05},arp:{wave:'sawtooth',gain:.035,len:.16,pat:AP('02a202a202a202a2')},bass:{wave:'square',gain:.05,pat:P('x...x...x...x...')},kick:{gain:.55,pat:P('x...x...x...x...')},hat:{gain:.03,pat:P('x.x.x.x.x.x.x.x.')}},
- {name:'Opbeat',bpm:120,master:.48,prog:[[60,64,67],[62,67,71],[57,60,64],[53,57,60]],pad:{wave:'triangle',gain:.07},arp:{wave:'triangle',gain:.06,len:.3,pat:AP('0a1a2a1a0a1a2a1a')},bass:{wave:'sine',gain:.06,pat:P('x.......x.......')},kick:{gain:.5,pat:P('x...x...x...x...')},hat:{gain:.045,pat:P('..x...x...x...x.')}},
- {name:'Dromerig',bpm:68,master:.45,prog:[[53,57,60,64],[55,59,62,65],[57,60,64,67],[52,55,59,62]],pad:{wave:'sine',gain:.12},arp:{wave:'sine',gain:.05,len:1.2,pat:AP('0...a...1...b...')},bass:{wave:'sine',gain:.05,pat:P('x.......x.......')}},
- {name:'Focus',bpm:100,master:.48,prog:[[55,59,62],[59,62,66],[55,59,62],[62,66,69]],pad:{wave:'triangle',gain:.05},arp:{wave:'triangle',gain:.06,len:.22,pat:AP('0.0.1.1.2.2.a.a.')},bass:{wave:'sine',gain:.05,pat:P('x.......x.......')},kick:{gain:.4,pat:P('x.......x.......')}},
- {name:'Warm',bpm:86,master:.5,prog:[[62,66,69,73],[57,61,64,68],[59,62,66,69],[54,58,61,65]],pad:{wave:'sine',gain:.09},arp:{wave:'triangle',gain:.05,len:.8,pat:AP('0..1..2..3..a..b')},bass:{wave:'sine',gain:.05,pat:P('x.......x.......')}},
- {name:'Modern',bpm:116,master:.47,prog:[[52,55,59],[55,59,62],[57,60,64],[59,62,66]],pad:{wave:'triangle',gain:.06},arp:{wave:'triangle',gain:.05,len:.2,pat:AP('0.a.1.a.2.a.1.a.')},bass:{wave:'square',gain:.07,pat:P('x...x...x...x...')},kick:{gain:.5,pat:P('x...x...x...x...')},hat:{gain:.04,pat:P('..x...x...x...x.')}},
- {name:'Speels',bpm:126,master:.47,prog:[[60,64,67],[65,69,72],[62,67,71],[57,60,64]],pad:{wave:'triangle',gain:.06},arp:{wave:'triangle',gain:.06,len:.18,pat:AP('0a1a2a0a1a2a0a1a')},bass:{wave:'sine',gain:.06,pat:P('x.......x.......')},kick:{gain:.5,pat:P('x..x..x.x..x..x.')},hat:{gain:.04,pat:P('..x...x...x...x.')}},
- {name:'Cinematic',bpm:62,master:.5,prog:[[45,57,60,64],[41,53,57,60],[43,55,59,62],[40,52,55,59]],pad:{wave:'sine',gain:.12},arp:{wave:'sine',gain:.06,len:1.5,pat:AP('a.......b.......')},bass:{wave:'sine',gain:.06,pat:P('x.......x.......')}}
+ {name:'Kalm',bpm:72,master:.42,rvb:.30,cut:5200,prog:[[60,64,67],[55,59,62],[57,60,64],[53,57,60]],pad:{wave:'sine',gain:.085,cut:1900},arp:{wave:'triangle',gain:.045,len:.5,cut:3000,pat:AP('0...2...a...1...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
+ {name:'Lofi',bpm:70,master:.42,rvb:.32,cut:4600,prog:[[57,60,64],[53,57,60],[60,64,67],[55,59,62]],pad:{wave:'sine',gain:.085,cut:1700},arp:{wave:'triangle',gain:.045,len:.5,cut:2700,pat:AP('0..2..1..a..2...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')},hat:{gain:.012,pat:P('....x.......x...')}},
+ {name:'Dromerig',bpm:66,master:.42,rvb:.40,cut:4400,prog:[[53,57,60,64],[55,59,62,65],[57,60,64,67],[52,55,59,62]],pad:{wave:'sine',gain:.09,cut:1600},arp:{wave:'sine',gain:.04,len:.9,cut:2600,pat:AP('0.......a.......')},bass:{wave:'sine',gain:.045,cut:550,pat:P('x.......x.......')}},
+ {name:'Warm',bpm:76,master:.42,rvb:.30,cut:5000,prog:[[62,66,69,73],[57,61,64,68],[59,62,66,69],[54,58,61,65]],pad:{wave:'sine',gain:.08,cut:1900},arp:{wave:'triangle',gain:.04,len:.6,cut:3000,pat:AP('0...1...2...a...')},bass:{wave:'sine',gain:.045,cut:600,pat:P('x.......x.......')}},
+ {name:'Focus',bpm:82,master:.42,rvb:.26,cut:5400,prog:[[55,59,62],[59,62,66],[55,59,62],[62,66,69]],pad:{wave:'triangle',gain:.06,cut:2000},arp:{wave:'triangle',gain:.045,len:.32,cut:3200,pat:AP('0.0.1.1.2.2.a.a.')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
+ {name:'Cinematic',bpm:60,master:.44,rvb:.44,cut:4000,prog:[[45,57,60,64],[41,53,57,60],[43,55,59,62],[40,52,55,59]],pad:{wave:'sine',gain:.10,cut:1500},arp:{wave:'sine',gain:.05,len:1.0,cut:2400,pat:AP('a.......0.......')},bass:{wave:'sine',gain:.06,cut:500,pat:P('x.......x.......')}},
+ {name:'Helder',bpm:80,master:.42,rvb:.28,cut:5600,prog:[[60,64,67],[57,60,64],[65,69,72],[55,59,62]],pad:{wave:'triangle',gain:.06,cut:2100},arp:{wave:'triangle',gain:.045,len:.35,cut:3400,pat:AP('0..a..1..2..a...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
+ {name:'Avond',bpm:68,master:.42,rvb:.34,cut:4600,prog:[[52,55,59],[48,52,55],[50,53,57],[47,50,54]],pad:{wave:'sine',gain:.08,cut:1800},arp:{wave:'triangle',gain:.04,len:.6,cut:2800,pat:AP('0...a...1...2...')},bass:{wave:'sine',gain:.05,cut:550,pat:P('x.......x.......')}},
+ {name:'Zacht',bpm:64,master:.42,rvb:.38,cut:4400,prog:[[58,62,65],[53,57,60],[55,58,62],[50,53,57]],pad:{wave:'sine',gain:.09,cut:1700},arp:{wave:'sine',gain:.04,len:.8,cut:2600,pat:AP('0.......2...a...')},bass:{wave:'sine',gain:.045,cut:550,pat:P('x.......x.......')}},
+ {name:'Modern kalm',bpm:78,master:.42,rvb:.28,cut:5200,prog:[[57,60,64],[55,59,62],[53,57,60],[52,55,59]],pad:{wave:'triangle',gain:.06,cut:2000},arp:{wave:'triangle',gain:.045,len:.28,cut:3200,pat:AP('0..a..1..a..2..a')},bass:{wave:'sine',gain:.055,cut:500,pat:P('x.......x.......')},hat:{gain:.011,pat:P('....x.......x...')}}
 ];
 function startTune(preset,dests){audioEnsure();if(!AC)return function(){};
- const master=AC.createGain();master.gain.value=preset.master||.5;
- const dly=AC.createDelay();dly.delayTime.value=60/preset.bpm/2;const fb=AC.createGain();fb.gain.value=.22;const wet=AC.createGain();wet.gain.value=.16;
- master.connect(dly);dly.connect(fb);fb.connect(dly);dly.connect(wet);
- dests.forEach(d=>{master.connect(d);wet.connect(d);});
- const spb=60/preset.bpm/4;let step=0,bar=0,next=AC.currentTime+0.08,stopped=false;
+ const out=AC.createGain();out.gain.value=preset.master||.42;
+ const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=preset.cut||5000;lp.Q.value=0.2;
+ const comp=AC.createDynamicsCompressor();comp.threshold.value=-16;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.012;comp.release.value=.28;
+ const dry=AC.createGain(),wet=AC.createGain();wet.gain.value=preset.rvb||.3;
+ const conv=AC.createConvolver();conv.buffer=makeIR(2.8,2.4);
+ dry.connect(out);wet.connect(conv);conv.connect(out);out.connect(lp);lp.connect(comp);
+ dests.forEach(d=>comp.connect(d));
+ const spb=60/preset.bpm/4;let step=0,bar=0,next=AC.currentTime+0.1,stopped=false;
  function schedStep(t){const ch=preset.prog[bar%preset.prog.length];
-  if(preset.pad&&step===0)ch.forEach((m,k)=>mkVoice(master,_n2f(m),t,spb*16*0.97,preset.pad.wave,preset.pad.gain*(k===0?1:.7),0.08,0.5));
-  if(preset.kick&&preset.kick.pat[step])mkKick(master,t,preset.kick.gain);
-  if(preset.hat&&preset.hat.pat[step])mkHat(master,t,preset.hat.gain);
-  if(preset.bass&&preset.bass.pat[step])mkVoice(master,_n2f(ch[0]-12),t,spb*2.2,preset.bass.wave,preset.bass.gain,0.01,0.14);
-  if(preset.arp&&preset.arp.pat[step]!=null){let idx=preset.arp.pat[step],oct=0;if(idx>=10){oct=12;idx-=10;}mkVoice(master,_n2f(ch[idx%ch.length]+oct),t,spb*16*preset.arp.len*0.5+spb*preset.arp.len,preset.arp.wave,preset.arp.gain,0.005,spb*preset.arp.len*0.7+0.02);}
+  if(preset.pad&&step===0)ch.forEach((m,k)=>mkVoice(dry,wet,_n2f(m),t,spb*16*0.98,preset.pad.wave,preset.pad.gain*(k===0?1:.7),0.35,0.9,preset.pad.cut||1900));
+  if(preset.hat&&preset.hat.pat[step])mkHat(dry,t,preset.hat.gain);
+  if(preset.bass&&preset.bass.pat[step])mkVoice(dry,wet,_n2f(ch[0]-12),t,spb*2.4,preset.bass.wave,preset.bass.gain,0.02,0.2,preset.bass.cut||600);
+  if(preset.arp&&preset.arp.pat[step]!=null){let idx=preset.arp.pat[step],oct=0;if(idx>=10){oct=12;idx-=10;}const L=preset.arp.len;mkVoice(dry,wet,_n2f(ch[idx%ch.length]+12+oct),t,spb*(L*3+1),preset.arp.wave,preset.arp.gain,0.01,spb*L*2+0.05,preset.arp.cut||3000);}
   step++;if(step>=16){step=0;bar++;}}
- const timer=setInterval(()=>{if(stopped)return;while(next<AC.currentTime+0.12){schedStep(next);next+=spb;}},25);
- return function(){stopped=true;clearInterval(timer);setTimeout(()=>{try{master.disconnect();dly.disconnect();fb.disconnect();wet.disconnect();}catch(e){}},400);};
+ const timer=setInterval(()=>{if(stopped)return;while(next<AC.currentTime+0.14){schedStep(next);next+=spb;}},25);
+ return function(){stopped=true;clearInterval(timer);setTimeout(()=>{try{comp.disconnect();lp.disconnect();out.disconnect();dry.disconnect();wet.disconnect();conv.disconnect();}catch(e){}},1200);};
 }
 function musicToggle(){const b=document.getElementById('fx-musicbtn');if(_musicPrev){_musicPrev();_musicPrev=null;if(b)b.textContent='▶ Beluister';return;}if(MUSIC.tune==='none'||MUSIC.tune==null)return;audioEnsure();_musicPrev=startTune(TUNES[+MUSIC.tune],[AC.destination]);if(b)b.textContent='⏸ Stop';}
 function musicPick(){const s=document.getElementById('fx-music');const wasOn=!!_musicPrev;musicStopPrev();MUSIC.tune=s.value;if(wasOn&&MUSIC.tune!=='none')musicToggle();}
