@@ -617,9 +617,9 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <!-- CHECK -->
 <section id="agent" class="tab">
   <h2>🎙️ Praat met je assistent</h2>
-  <p class="hint">Praat of typ — ze denkt mee én voert taken uit in de studio: video's, weekschema, concurrentie, advertenties, e-mail. Spraak werkt het best in Chrome of Edge. Bij het openen vraagt ze eerst of ze met Arend of Marty spreekt.</p>
+  <p class="hint">Werkt meteen en gratis: praat of typ, ze voert je opdrachten uit in de studio — video's, weekschema, posts, advertenties, e-mail, concurrentie. Spraak werkt het best in Chrome of Edge. Bij het openen vraagt ze of ze met Arend of Marty spreekt. Het veld hieronder is optioneel: alleen nodig als je haar ook vrij over van alles wil laten praten.</p>
   <div class="ag-setup">
-    <div class="field" style="flex:2;margin:0"><label>AI-verbinding (Worker-URL)</label><input id="ag-proxy" placeholder="https://voxclip-ai.<jouw>.workers.dev" oninput="agentSaveProxy()"></div>
+    <div class="field" style="flex:2;margin:0"><label>AI-verbinding (optioneel — voor vrij gesprek)</label><input id="ag-proxy" placeholder="Leeg laten = gratis modus" oninput="agentSaveProxy()"></div>
     <div class="field" style="flex:1;margin:0"><label>Stem</label><select id="ag-voice" onchange="agentVoicePick()"></select></div>
   </div>
   <div class="ag-wrap">
@@ -636,7 +636,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
       <button class="btn" onclick="agentSend()">Stuur</button>
     </div>
   </div>
-  <p class="small" style="margin-top:10px">Nog geen AI-verbinding? Volg het setup-bestand dat ik je gaf: haal een AI-sleutel, plak de Worker, en zet de Worker-URL hierboven. Je sleutel blijft geheim — ik zie 'm nooit.</p>
+  <p class="small" style="margin-top:10px">Gratis modus staat aan — geen sleutel nodig. Ze herkent je opdrachten en voert ze uit. Wil je dat ze óók vrij over van alles kan praten? Dan kun je later een (gratis) AI-brein koppelen via de URL hierboven.</p>
 </section>
 
 <section id="check" class="tab">
@@ -1326,7 +1326,7 @@ function agentSystemPrompt(){return 'Je bent de spraakassistent van VoxClip Stud
 async function agentSend(){const inp=document.getElementById('ag-text');const text=(inp.value||'').trim();if(!text)return;inp.value='';
  if(!AGENT.user){agentAskName();return;}
  agentLog('user',text);AGENT.messages.push({role:'user',content:text});
- if(!AGENT.proxy){const w='Ik ben nog niet verbonden met mijn AI-brein. Vul bovenaan de Worker-URL in (zie het setup-bestand), dan denk ik echt met je mee.';agentLog('assistant',w);agentSpeak(w);return;}
+ if(!AGENT.proxy){const r=agentLocalReply(text);AGENT.messages.push({role:'assistant',content:r.reply});agentLog('assistant',r.reply);agentSpeak(r.reply);if(r.action)setTimeout(()=>agentDo(r.action,text),450);return;}
  const bubble=agentLog('assistant','…');bubble.classList.add('thinking');
  try{const res=await fetch(AGENT.proxy,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:agentSystemPrompt(),messages:AGENT.messages.slice(-20)})});
   if(!res.ok)throw new Error('HTTP '+res.status);
@@ -1350,6 +1350,19 @@ function agentDo(a,userText){try{const pil=agentPillar(a.topic||userText);
  else if(a.do==='research'){go('research');if(typeof renderResearch==='function')renderResearch();}
  else if(a.do==='open'&&a.tab){go(a.tab);}
  }catch(e){}}
+// gratis ingebouwd "brein" — werkt zonder AI-sleutel
+function agentExtractTopic(text){const m=text.match(/(?:\bover\b|\babout\b)\s+(.+)$/i);return m?m[1].replace(/[.?!]+$/,'').trim():'';}
+function agentLocalReply(text){const t=text.toLowerCase(),u=AGENT.user||'',has=(...ks)=>ks.some(k=>t.includes(k)),topic=agentExtractTopic(text);
+ if(has('video','filmpje','reel')){const ch=has('tiktok','tik tok')?'tiktok':'instagram';return {reply:u+', ik maak een '+(ch==='tiktok'?'TikTok':'Instagram')+'-video'+(topic?' over '+topic:'')+'. Ik open de video-editor — je preview speelt zo. Pas gerust de tekst of stijl aan.',action:{do:'video',channel:ch,topic:topic}};}
+ if(has('post','bericht','caption')){const ch=has('linkedin')?'linkedin':has('blog')?'blog':has('tiktok','tik tok')?'tiktok':'instagram';return {reply:u+', ik zet een '+ch+'-post'+(topic?' over '+topic:'')+' klaar in de generator.',action:{do:'post',channel:ch}};}
+ if(has('week','schema','planning','kalender'))return {reply:u+', ik genereer je weekschema — je hele week aan content in één keer.',action:{do:'week'}};
+ if(has('advertentie','advertenties','ads','adverteren'))return {reply:u+', ik zet advertenties voor je klaar, klaar om in te plakken.',action:{do:'ads'}};
+ if(has('mail','e-mail','email','nieuwsbrief'))return {reply:u+', ik maak e-mails in je merkstem — launch, onboarding en updates.',action:{do:'email'}};
+ if(has('concurrent','competitor','markt','vergelijk'))return {reply:u+', kort: je directe concurrenten zijn clipboard-managers als Raycast, Paste en Maccy, en dictatie-apps als Wispr Flow, superwhisper en Aqua Voice. Jouw hoek die niemand pakt: clipboard én dictatie samen in één doorzoekbare Timeline, lokaal-eerst. Ik open de onderzoek-tab.',action:{do:'research'}};
+ if(has('wat kan je','wat kun je','help','hoe werkt','opties'))return {reply:u+', ik kan video’s en posts maken, je weekschema genereren, advertenties en e-mails opstellen, en je concurrentie bespreken. Zeg bijvoorbeeld: "maak een insta-video over privacy" of "maak mijn weekschema".',action:null};
+ if(has('dank','bedankt','thanks','top','mooi','perfect','goed zo'))return {reply:'Graag gedaan, '+u+'.',action:null};
+ if(has('hoi','hallo','hey','goeie','goedemorgen','goedemiddag','goedenavond'))return {reply:'Hoi '+u+'! Waarmee kan ik je helpen?',action:null};
+ return {reply:u+', dat snap ik in de gratis modus nog niet helemaal. Probeer bijvoorbeeld: "maak een insta-video over privacy", "maak mijn weekschema", "schrijf een linkedin-post" of "wat doen mijn concurrenten?".',action:null};}
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
  if(st==='kinetic')return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
