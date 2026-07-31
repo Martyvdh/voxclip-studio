@@ -333,6 +333,12 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 .ag-name{position:absolute;inset:0;background:rgba(247,247,245,.96);display:none;align-items:center;justify-content:center;z-index:5}
 .ag-namebox{text-align:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 32px;box-shadow:var(--shadow-md)}
 .ag-q{font-family:var(--display);font-weight:600;font-size:20px;margin-bottom:16px}
+/* ===== Launch-playbook checklist ===== */
+.lc-phase{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--teal-deep);margin:14px 0 6px}
+.lc-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:14px}
+.lc-item:hover{background:var(--row)}
+.lc-item input{width:auto;margin-top:2px;accent-color:var(--teal-deep);flex:0 0 auto}
+.lc-item.done span{text-decoration:line-through;color:var(--grey)}
 
 /* ===== Hamburger drawer on DESKTOP too (mobile unchanged) ===== */
 #navscrim{position:fixed;inset:0;background:rgba(10,12,16,.48);opacity:0;visibility:hidden;transition:opacity .25s ease;z-index:1100}
@@ -377,6 +383,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <button data-tab="email"><span class="ni">✉️</span>E-mail</button>
 
   <div class="navgroup">2 · Plannen &amp; bewaren</div>
+  <button data-tab="launch"><span class="ni">🚀</span>Launch-playbook</button>
   <button data-tab="plan"><span class="ni">📅</span>Planner</button>
   <button data-tab="saved"><span class="ni">💾</span>Opgeslagen</button>
   <button data-tab="lib"><span class="ni">📚</span>Bibliotheek</button>
@@ -614,6 +621,12 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 </section>
 
 <!-- CHECK -->
+<section id="launch" class="tab">
+  <h2>🚀 Launch-playbook</h2>
+  <p class="hint">Je draaiboek om VoxClip te lanceren en aan je eerste gebruikers te komen. Afvinkbare checklist (blijft bewaard) + kant-en-klare teksten per kanaal — in je merkstem, eerlijk, klaar om te plakken.</p>
+  <div id="launch-out"></div>
+</section>
+
 <section id="check" class="tab">
   <h2>Merk-check</h2>
   <p class="hint">Plak een tekst; het markeert hype-woorden en merkfouten.</p>
@@ -782,6 +795,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
  if(tb==='research')renderResearch();
+ if(tb==='launch')renderLaunch();
  const mn=document.getElementById('mainnav');if(mn)mn.classList.remove('open');
 });
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
@@ -1441,6 +1455,69 @@ function reDownload(id){
 
 // ================= NAV HELPER + DASHBOARD =================
 function go(tab){const b=document.querySelector('nav button[data-tab="'+tab+'"]');if(b)b.click();window.scrollTo(0,0);}
+
+// ================= LAUNCH-PLAYBOOK =================
+const LAUNCH_ENTITY="VoxClip is a free desktop app for Mac and Windows that captures everything you copy and everything you dictate into one searchable Timeline, and pastes it back the instant you need it — by hotkey or by voice. Everything free runs entirely on your device; nothing leaves it unless you turn on a paid cloud feature, and VoxClip tells you plainly before anything is sent.";
+const LAUNCH_STEPS={
+ 'Voor de launch':[
+  ['pl1','Zet een simpele landingspagina/wachtlijst live met de download-knop.'],
+  ['pl2','Maak 3–5 korte demo-video’s klaar (Generator) voor launchdag.'],
+  ['pl3','Screenshot-set + het "chip"-logo klaarzetten.'],
+  ['pl4','Kies een launchdatum (di–do) en plan Product Hunt op 00:01 PST.'],
+  ['pl5','Regel 5–10 echte mensen die op launchdag reageren/upvoten (geen fake).'],
+  ['pl6','Check de download-eerlijkheid: Gatekeeper/SmartScreen-melding = "onbekende maker", niet "schadelijk".']
+ ],
+ 'Launchdag':[
+  ['ld1','Plaats op Product Hunt (00:01 PST) en zet je maker-comment eronder.'],
+  ['ld2','Plaats "Show HN" op Hacker News.'],
+  ['ld3','Post in 2–3 relevante subreddits (lees eerst de regels).'],
+  ['ld4','Deel op je eigen LinkedIn / TikTok / Instagram met een demo-video.'],
+  ['ld5','Reageer de hele dag binnen ~15 min op elke comment.']
+ ],
+ 'Na de launch':[
+  ['na1','Voeg VoxClip toe aan directories (AlternativeTo, SaaSHub, Uneed…).'],
+  ['na2','Mail 5–10 micro-creators/bloggers met de pitch hieronder.'],
+  ['na3','Log in de Resultaten-tab welke bron downloads opleverde.'],
+  ['na4','Bedank iedereen die meedeed.']
+ ]
+};
+const LAUNCH_CH=[
+ {n:'Product Hunt',why:'De klassieke launchdag voor nieuwe tools. Kies di–do, ga live om 00:01 PST, blijf de hele dag reageren.',tip:'Geen bot-upvotes — dat straft PH af. Echte mensen, echte reacties.',blocks:[
+   ['Tagline (max ~60 tekens)','Your clipboard and your voice, one keystroke away.'],
+   ['Beschrijving','VoxClip keeps everything you copy and everything you say in one searchable Timeline — and pastes it back by hotkey or by voice. Local-first: everything free runs on your device. Free for Mac and Windows.'],
+   ['Maker’s eerste comment',"Hi PH! I built VoxClip because copying something and saying something are the same habit — it crossed your mind or your screen and you'll need it again in a minute. So VoxClip puts your clipboard history and your dictation in one searchable Timeline, and pastes it back with a hotkey or your voice.\n\nHonest bit: everything free runs entirely on your device — nothing leaves it unless you turn on a paid cloud feature, and the app tells you before anything is sent. The installer isn't code-signed yet, so you'll see an \"unknown developer\" warning — that means unverified, not harmful (signing is on the roadmap).\n\nWould love your honest feedback. What would make this a daily habit for you?"]
+ ]},
+ {n:'Hacker News — Show HN',why:'Technisch, eerlijk publiek. Werkt als je open bent over hoe het werkt en wat nog niet af is.',tip:'Titel begint met "Show HN:". Geen marketingtaal — recht door zee.',blocks:[
+   ['Titel','Show HN: VoxClip – clipboard history + dictation in one searchable timeline'],
+   ['Tekst',"VoxClip is a free Mac/Windows app that merges clipboard history and voice dictation into one searchable Timeline, and pastes results back by hotkey or voice.\n\nWhy: copying and dictating are the same \"I'll need this again\" habit, but they normally live in two apps. One Timeline, one search, one hotkey.\n\nLocal-first: everything free runs on-device; dictation audio never leaves the machine. Optional paid cloud features (sync, ask-your-history) are clearly opt-in. The installer isn't code-signed yet (unsigned = unverified, not harmful); signing is planned.\n\nHappy to answer anything about the approach and trade-offs."]
+ ]},
+ {n:'Reddit',why:'Waarde-eerst posten in relevante subs. Nooit puur promoten — lees de regels, reageer eerst elders in de sub.',tip:'Subs om te overwegen: r/productivity, r/macapps, r/windowsapps, r/SideProject, r/privacy. Elke sub heeft eigen zelfpromo-regels.',blocks:[
+   ['Post-titel','I merged my clipboard history and voice dictation into one searchable timeline — free for Mac & Windows'],
+   ['Post-tekst',"I kept bouncing between a clipboard manager and a dictation app, and realized they're the same habit: something I'll need again in a minute. So I built VoxClip — everything you copy and everything you dictate lands in one searchable Timeline, and you paste it back with a hotkey or your voice.\n\nIt's local-first: everything free runs on your device, nothing leaves it unless you turn on a paid cloud feature. Free on Mac and Windows.\n\nNot trying to spam — genuinely curious what clipboard/dictation setup you use now and what annoys you about it. Happy to answer anything."]
+ ]},
+ {n:'Directories',why:'Gratis, blijvende vindbaarheid + backlinks. Doe dit de week na de launch.',tip:'Denk aan: AlternativeTo, SaaSHub, Uneed, Toolfinder en "alternatives"-lijsten.',blocks:[
+   ['Korte listing-tekst','VoxClip — clipboard history + voice dictation in one searchable Timeline. Recall anything by hotkey or voice. Local-first and free for Mac & Windows; optional paid cloud sync.'],
+   ['Als "alternatief voor"','A calmer alternative to running a clipboard manager (Paste, Maccy) and a dictation app (Wispr Flow, superwhisper) separately — VoxClip does both in one local-first Timeline.']
+ ]},
+ {n:'Uitreik naar creators & pers',why:'Micro-creators (productiviteit, Mac, privacy) leveren gerichte, betaalbare aandacht.',tip:'Kort, persoonlijk, geen bijlage. Bied een gratis blik + een duidelijk verhaal.',blocks:[
+   ['DM aan een creator',"Hi [naam] — I love your stuff on [onderwerp]. I made VoxClip: it keeps everything you copy and everything you dictate in one searchable timeline, and pastes it back with a hotkey or your voice. Local-first and free on Mac & Windows. If it's useful to you I'd be honored if you tried it — no strings. Want a 30-sec demo?"],
+   ['E-mail aan een blogger/journalist',"Subject: VoxClip — clipboard history + dictation in one place (free, local-first)\n\nHi [naam],\n\nVoxClip is a free Mac/Windows app that merges clipboard history and voice dictation into one searchable Timeline — recall anything by hotkey or voice. It's local-first: everything free runs on the device, cloud features are opt-in and clearly flagged.\n\nThe angle your readers might like: one calm tool instead of a separate clipboard manager and dictation app. Happy to send screenshots, a demo video, or answer anything.\n\nThanks for your time,\n[Marty / Arend] — VoxClip"]
+ ]},
+ {n:'Je eigen kanalen',why:'Gebruik de studio: maak voor launchdag een demo-video per platform.',tip:'Één claim per post, kalme toon. Link in bio + een tracking-link (Tracking-links-tab).',blocks:[
+   ['Korte launch-post','Today VoxClip goes live. Everything you copy and everything you say, in one searchable place — pasted back with a hotkey or your voice. Free on Mac & Windows. Link in bio.']
+ ]}
+];
+function launchDone(){try{return JSON.parse(localStorage.getItem('voxLaunchDone')||'{}');}catch(e){return {};}}
+function toggleLaunch(id,el){const d=launchDone();d[id]=el.checked;localStorage.setItem('voxLaunchDone',JSON.stringify(d));const it=el.closest('.lc-item');if(it)it.classList.toggle('done',el.checked);}
+function renderLaunch(){const out=document.getElementById('launch-out');if(!out)return;const done=launchDone();let h='';
+ h+='<div class="callout"><b>Gouden regel:</b> gebruik overal exact dezelfde één-zin-omschrijving — dat belonen AI-zoekmachines en het houdt je merk strak. '+cbtn(LAUNCH_ENTITY)+'<div class="v" style="margin-top:6px">'+LAUNCH_ENTITY+'</div></div>';
+ h+='<div class="step"><h3>✅ Checklist</h3>';
+ Object.keys(LAUNCH_STEPS).forEach(ph=>{h+='<div class="lc-phase">'+ph+'</div>';LAUNCH_STEPS[ph].forEach(function(it){const id=it[0],lab=it[1];const c=done[id]?'checked':'';const dc=done[id]?' done':'';h+='<label class="lc-item'+dc+'"><input type="checkbox" '+c+' onchange="toggleLaunch(\''+id+'\',this)"> <span>'+lab+'</span></label>';});});
+ h+='</div>';
+ LAUNCH_CH.forEach(function(c){h+='<div class="card"><h3>'+c.n+'</h3><div class="meta">'+c.why+'</div><div class="callout" style="margin:8px 0">💡 '+c.tip+'</div>';
+  c.blocks.forEach(function(b){const lab=b[0],txt=b[1];h+='<div class="rw"><span class="k">'+lab+' '+cbtn(txt)+'</span><div class="v">'+txt.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div></div>';});
+  h+='</div>';});
+ out.innerHTML=h;}
 function toggleNav(){const n=document.getElementById('mainnav');if(n)n.classList.toggle('open');}
 
 // ================= RESEARCH =================
