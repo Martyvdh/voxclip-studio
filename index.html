@@ -418,6 +418,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
   <button data-tab="coach"><span class="ni">🗓️</span>Mijn week</button>
   <button data-tab="gen"><span class="ni">🎬</span>Video maken</button>
+  <button data-tab="ideas"><span class="ni">💡</span>Video-ideeën</button>
   <button data-tab="ads"><span class="ni">📣</span>Advertenties</button>
   <button data-tab="email"><span class="ni">✉️</span>E-mail</button>
 
@@ -469,6 +470,17 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
     <button class="tile" onclick="go('results')"><div class="ic">📊</div><div class="tt">Resultaten</div><div class="td">Log je cijfers en zie welke pijler en stijl het best werken.</div></button>
   </div>
   <div class="callout"><b>Rolverdeling:</b> ik (de studio) bedenk, schrijf, animeer en plan alles. Jij neemt optioneel een échte scherm-opname op, en plaatst zelf op je accounts. Zo blijf jij de baas over je merk en je centen.</div>
+</section>
+
+<section id="ideas" class="tab">
+  <h2>💡 Video-ideeën — 32 concepten, veel demo's</h2>
+  <p class="hint">Kant-en-klare video-ideeën in je merkstem. Per idee: de <b>haak</b>, <b>wat je toont</b> (voor een scherm-opname/demo), en een <b>caption</b> — allemaal Engels, klaar om te kopiëren. Filter op demo's of zoek.</p>
+  <div class="filters" style="margin-bottom:12px">
+    <input id="idea-search" placeholder="🔎 Zoek in ideeën…" oninput="renderIdeas()" style="width:auto;min-width:180px">
+    <select id="idea-filter" onchange="renderIdeas()" style="width:auto"><option value="">Alle types</option><option value="demo">Alleen demo's</option><option value="hook">Hook / POV</option><option value="plus">Plus-features</option></select>
+    <span id="idea-count" class="count"></span>
+  </div>
+  <div id="ideas-out"></div>
 </section>
 
 <!-- DASHBOARD BORD -->
@@ -851,6 +863,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='saved')renderSaved();
  if(tb==='results')renderResults();
  if(tb==='board')renderBoard();
+ if(tb==='ideas')renderIdeas();
  if(tb==='dash')dashStats();
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
@@ -950,9 +963,10 @@ function videoEditorHTML(){
        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
          <select id="vo-gender" onchange="voPick()" style="width:auto"><option value="none">Geen</option><option value="female">Vrouw</option><option value="male">Man</option></select>
          <select id="vo-voice" style="width:auto;flex:1;min-width:130px"></select>
-         <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor</button>
+         <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor (preview)</button>
        </div>
-       <p class="small" id="vo-note" style="margin-top:6px">Kies een stem en beluister hoe je tekst klinkt (echte systeemstemmen). Voor de download plak je de voice-over in CapCut/InShot — het inbakken in de MP4 kan de browser niet betrouwbaar.</p></div>
+       <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="vo-bake" style="width:auto"> 🎬 Stem écht in de video bakken (komt mee in de download)</label>
+       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> = alleen beluisteren (natuurlijke systeemstem; die kan de browser niet opnemen). Vink je <b>“in de video bakken”</b> aan, dan komt er wél een stem in de MP4 — maar dat is een <b>computerstem</b> (wat robotachtig), want alleen die kan ingebakken worden. Wil je een natuurlijke man/vrouw-stem in de video: doe dat gratis in <b>CapCut</b> (Text-to-speech).</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
    </div>
@@ -1018,7 +1032,19 @@ function voToggle(){const btn=document.getElementById('vo-btn');if(!window.speec
  if(_voSpeaking||speechSynthesis.speaking){speechSynthesis.cancel();_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor';return;}
  const g=(document.getElementById('vo-gender')||{}).value;if(g==='none'){alert('Kies eerst Vrouw of Man.');return;}
  const txt=voText();if(!txt)return;const u=new SpeechSynthesisUtterance(txt);const vs=speechSynthesis.getVoices();const sel=document.getElementById('vo-voice');if(sel&&vs[+sel.value])u.voice=vs[+sel.value];u.rate=1.0;u.pitch=g==='female'?1.06:0.9;
- u.onend=function(){_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor';};_voSpeaking=true;if(btn)btn.textContent='⏸ Stop';speechSynthesis.speak(u);}
+ u.onend=function(){_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor (preview)';};_voSpeaking=true;if(btn)btn.textContent='⏸ Stop';speechSynthesis.speak(u);}
+// ---- Bakbare computerstem (meSpeak/eSpeak WASM) → mixt in de video-export ----
+let _msReady=null;
+function msEnsure(){if(_msReady)return _msReady;_msReady=new Promise(function(res,rej){
+ function go(){try{meSpeak.loadConfig('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/mespeak_config.json');meSpeak.loadVoice('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/voices/en/en.json',function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}}
+ if(window.meSpeak){go();return;}
+ var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/mespeak.min.js';s.onload=go;s.onerror=function(){rej(new Error('TTS laden mislukt (internet nodig)'));};document.head.appendChild(s);
+});return _msReady;}
+async function msSpeakBuffer(text,gender){await msEnsure();audioEnsure();
+ const opts={rawdata:'ArrayBuffer',speed:165,pitch:gender==='male'?26:66,variant:gender==='male'?'m3':'f2',amplitude:100};
+ let data;try{data=meSpeak.speak(text,opts);}catch(e){throw new Error('spraak genereren mislukt');}
+ if(!data)throw new Error('geen audio');
+ return await AC.decodeAudioData(data.slice?data.slice(0):data);}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
  const ch=document.getElementById('g-channel').value,per=document.getElementById('g-persona').value,pil=document.getElementById('g-pillar').value;
@@ -1284,24 +1310,35 @@ function makeVideo(){
  if(!cv){const ch=document.getElementById('g-channel').value;alert('Video is voor TikTok of Instagram. Zet het kanaal daarop, dan kun je de video genereren. (Nu staat het op '+ch+'.)');return;}
  vRecord();
 }
-function vRecord(){
+async function vRecord(){
  const cv=document.getElementById('vcanvas');if(!cv)return;const ctx=cv.getContext('2d');const c=vCfg();
  const btn=document.getElementById('vrecbtn');cancelAnimationFrame(vAnim);musicStopPrev();
+ const msg=document.getElementById('v-msg');
  if(!window.MediaRecorder){alert('Video opnemen werkt niet in deze browser. Open dit bestand in Google Chrome of Microsoft Edge — daar werkt de download wél.');return;}
+ const g=(document.getElementById('vo-gender')||{}).value||'none';
+ const bake=!!(document.getElementById('vo-bake')&&document.getElementById('vo-bake').checked)&&g!=='none';
  const hasMusic=(MUSIC.tune!=='none'&&MUSIC.tune!=null&&TUNES[+MUSIC.tune]);
- let mime='';const list=hasMusic?['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+ const needAudio=hasMusic||bake;
+ let mime='';const list=needAudio?['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
  list.forEach(m=>{if(!mime&&MediaRecorder.isTypeSupported(m))mime=m;});
  if(!mime){alert('Deze browser kan geen video opnemen. Gebruik Chrome of Edge.');return;}
+ let voiceBuf=null;
+ if(bake){btn.disabled=true;if(msg)msg.innerHTML='<b>Stem voorbereiden…</b> (eerste keer duurt even, internet nodig)';
+   try{voiceBuf=await msSpeakBuffer(voText(),g);}catch(e){voiceBuf=null;if(msg)msg.innerHTML='<span style="color:var(--warn)">Stem inbakken lukte niet: '+(e.message||e)+'. Video wordt zonder stem opgenomen.</span>';}
+ }
+ if(voiceBuf)c.dur=Math.max(c.dur,voiceBuf.duration+0.6);
  let stream,rec,stopMusic=null;
  try{const vstream=cv.captureStream(VFX.fps||30);
-   if(hasMusic){audioEnsure();const adest=AC.createMediaStreamDestination();stopMusic=startTune(TUNES[+MUSIC.tune],[adest,AC.destination]);stream=new MediaStream([...vstream.getVideoTracks(),...adest.stream.getAudioTracks()]);}
-   else{stream=vstream;}
+   if(needAudio){audioEnsure();const adest=AC.createMediaStreamDestination();
+     if(hasMusic)stopMusic=startTune(TUNES[+MUSIC.tune],[adest,AC.destination]);
+     if(voiceBuf){const src=AC.createBufferSource();src.buffer=voiceBuf;const vg=AC.createGain();vg.gain.value=1.6;src.connect(vg);vg.connect(adest);vg.connect(AC.destination);src.start(AC.currentTime+0.2);}
+     stream=new MediaStream([...vstream.getVideoTracks(),...adest.stream.getAudioTracks()]);}
+   else stream=vstream;
    rec=new MediaRecorder(stream,{mimeType:mime});}
- catch(e){alert('Opname kon niet starten. Open het bestand in Chrome of Edge, dan werkt de download.');if(stopMusic)stopMusic();vAutoPlay();return;}
- const chunks=[];const msg=document.getElementById('v-msg');
- rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
- rec.onstop=()=>{if(stopMusic)stopMusic();const ext=mime.indexOf('mp4')>=0?'mp4':'webm';const blob=new Blob(chunks,{type:mime});const ok=dl(blob,'VoxClip_video.'+ext);btn.textContent='🎬 Genereer video';btn.disabled=false;if(msg)msg.innerHTML=ok?'<span class="ok">✓ Video gedownload</span> — kijk in je Downloads-map ('+ext+').'+(hasMusic?' Met muziek 🎵.':''):'';vAutoPlay();};
- btn.textContent='● opnemen…';btn.disabled=true;if(msg)msg.innerHTML='<b>Bezig met opnemen…</b> even geduld, de download start vanzelf als de video klaar is.';
+ catch(e){alert('Opname kon niet starten. Open het bestand in Chrome of Edge.');if(stopMusic)stopMusic();btn.disabled=false;vAutoPlay();return;}
+ const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+ rec.onstop=()=>{if(stopMusic)stopMusic();const ext=mime.indexOf('mp4')>=0?'mp4':'webm';const blob=new Blob(chunks,{type:mime});const ok=dl(blob,'VoxClip_video.'+ext);btn.textContent='🎬 Genereer video';btn.disabled=false;if(msg)msg.innerHTML=ok?'<span class="ok">✓ Video gedownload</span> ('+ext+')'+(hasMusic?' · muziek 🎵':'')+(voiceBuf?' · met stem 🗣️':'')+'.':'';vAutoPlay();};
+ btn.textContent='● opnemen…';btn.disabled=true;if(msg&&!(bake&&!voiceBuf))msg.innerHTML='<b>Bezig met opnemen…</b> de download start vanzelf.';
  const st=performance.now();
  try{rec.start();}catch(e){alert('Opname mislukt. Gebruik Chrome of Edge.');if(stopMusic)stopMusic();btn.textContent='🎬 Genereer video';btn.disabled=false;vAutoPlay();return;}
  (function loop(now){const t=(now-st)/1000;if(t>=c.dur){vFrameFX(ctx,c.dur-0.001,c);try{rec.stop();}catch(e){}return;}vFrameFX(ctx,t,c);btn.textContent='● opnemen… '+Math.ceil(c.dur-t)+'s';requestAnimationFrame(loop);})(performance.now());
@@ -1755,6 +1792,52 @@ function buildEmail(){
   <div class="rw"><span class="k">Body ${cbtn(T.b)}</span><div class="v">${T.b}</div></div>
   <div class="rw"><span class="k">CTA</span><div class="v">Try VoxClip free → voxclip.it</div></div></div>`;
  document.getElementById('em-out').innerHTML=h;
+}
+
+// ================= VIDEO-IDEEËN BANK =================
+const VIDEO_IDEAS=[
+ {t:"Copy three things — paste the exact right one",s:"Screen-recording: copy 3 different things fast, then hit the hotkey and pick the exact one you need.",c:"Stop losing what you just copied.",tag:"demo"},
+ {t:"Say it, don't type it",s:"Demo: dictate a note by voice; it lands in the Timeline instantly.",c:"Talk. It's saved.",tag:"demo"},
+ {t:"One search — everything you copied AND said",s:"Demo: type one search; both clipboard items and dictations show up together.",c:"One place for all of it.",tag:"demo"},
+ {t:"Two keystrokes to paste",s:"Demo: press the hotkey → Quick-picker opens → pick → pasted where the cursor is.",c:"Recall in two keys.",tag:"demo"},
+ {t:"Paste the address you copied this morning",s:"Demo: search an old copied address, paste it into a form.",c:"It's all still here.",tag:"demo"},
+ {t:"Your clipboard has a memory now",s:"Demo: scroll back through your clipboard history in the Timeline.",c:"Everything you copy, kept.",tag:"demo"},
+ {t:"Snippets with variables",s:"Demo: type a short trigger; it expands into full text with {{date}} filled in.",c:"Reusable text, instantly.",tag:"demo"},
+ {t:"Nothing leaves your device",s:"Demo: show the local badge / lock; explain data stays on-device.",c:"Local-first. Yours.",tag:"demo"},
+ {t:"From two apps to one",s:"Split screen: a clipboard app + a dictation app, then merge into VoxClip's one Timeline.",c:"One tool instead of two.",tag:"demo"},
+ {t:"The 'where did I copy that?' problem",s:"Demo: hunting through 8 tabs vs one VoxClip search.",c:"Stop hunting. Start finding.",tag:"hook"},
+ {t:"Dictate a message hands-free",s:"Demo: hands full — dictate, then paste into a chat.",c:"Hands full? Just talk.",tag:"demo"},
+ {t:"Copy an image, find it later",s:"Demo: copy an image, recall it from the Timeline minutes later.",c:"Text, images, files — all in one.",tag:"demo"},
+ {t:"Clear your history in one click",s:"Demo: one-click clear of the Timeline.",c:"Your call, always.",tag:"demo"},
+ {t:"Exclude an app from history",s:"Demo: add an app to the exclusion list so nothing is captured there.",c:"Private stays private.",tag:"demo"},
+ {t:"Paste as plain text",s:"Demo: paste copied rich text as clean plain text.",c:"Clean paste, every time.",tag:"demo"},
+ {t:"Turn a rough voice note into a prompt",s:"Demo (Plus): dictate messy thoughts; Enhance turns it into a structured, paste-ready prompt.",c:"Enhance: rough to ready.",tag:"plus"},
+ {t:"Ask your history out loud",s:"Demo (Plus): ask a question by voice; VoxClip answers from your own Timeline.",c:"Talk to your stash.",tag:"plus"},
+ {t:"Same Timeline on Mac and Windows",s:"Demo (Plus): copy on a Mac, paste on a Windows machine seconds later.",c:"Everywhere you work.",tag:"plus"},
+ {t:"Free where it's local",s:"Show the free features side by side; state the freemium line.",c:"If it runs on your machine, it's free.",tag:"feature"},
+ {t:"A whole day of copying, one Timeline",s:"Timelapse: items filling the Timeline across a workday.",c:"Your whole day, one place.",tag:"demo"},
+ {t:"Recall a tracking number instantly",s:"Demo: search a tracking number you copied, paste it.",c:"Find it in a second.",tag:"demo"},
+ {t:"The meeting link you copied is gone? Not anymore.",s:"Demo: re-find a Zoom/Meet link from history.",c:"Never re-copy again.",tag:"hook"},
+ {t:"Voice dictation that stays on your device",s:"Demo: waveform while dictating + a lock icon; audio never leaves.",c:"Your voice never leaves.",tag:"demo"},
+ {t:"Before VoxClip vs after",s:"Split: chaotic sticky-notes/tabs vs one calm searchable Timeline.",c:"Calm, not chaos.",tag:"hook"},
+ {t:"Templates for replies you send daily",s:"Demo: pick a template, fill the variables, paste.",c:"Send it in seconds.",tag:"demo"},
+ {t:"Copy from your browser, paste in your doc",s:"Demo: copy in Chrome, recall and paste in a document.",c:"Copy anywhere, paste anywhere.",tag:"demo"},
+ {t:"The Quick-picker in action",s:"Demo: open the Quick-picker overlay and pick an item.",c:"Two keys to everything.",tag:"demo"},
+ {t:"Search by meaning, not exact words",s:"Demo: search a rough phrase; the right item surfaces by meaning.",c:"Find it by what you meant.",tag:"demo"},
+ {t:"Set your own hotkey",s:"Demo: change the recall hotkey in settings.",c:"Your keys, your way.",tag:"demo"},
+ {t:"Everything you copy or say, one keystroke away",s:"Montage demo: copy, dictate, search, recall — quick cuts.",c:"One keystroke away.",tag:"hook"},
+ {t:"POV: you paste the wrong thing again",s:"Demo: paste the wrong clip → open VoxClip → paste the right one.",c:"Paste the right one.",tag:"hook"},
+ {t:"Install in under a minute (free)",s:"Demo: download + open on Mac/Windows. Be honest about the unsigned-installer warning (unverified, not harmful).",c:"Free on Mac & Windows.",tag:"demo"}
+];
+function renderIdeas(){const out=document.getElementById('ideas-out');if(!out)return;
+ const q=((document.getElementById('idea-search')||{}).value||'').toLowerCase().trim();
+ const f=(document.getElementById('idea-filter')||{}).value||'';
+ const list=VIDEO_IDEAS.filter(x=>(!f||x.tag===f)&&(!q||(x.t+' '+x.s+' '+x.c).toLowerCase().indexOf(q)>=0));
+ const cnt=document.getElementById('idea-count');if(cnt)cnt.textContent=list.length+' van '+VIDEO_IDEAS.length;
+ const badge={demo:'DEMO',hook:'HOOK',plus:'PLUS',feature:'INFO'};
+ out.innerHTML=list.map(function(x,i){const n=VIDEO_IDEAS.indexOf(x)+1;return '<div class="card"><h3><span class="pill" style="margin-right:8px">'+(badge[x.tag]||'IDEE')+'</span>'+n+'. '+x.t.replace(/</g,'&lt;')+' '+cbtn(x.t)+'</h3>'+
+   '<div class="rw"><span class="k">Wat je toont</span><div class="v">'+x.s.replace(/</g,'&lt;')+'</div></div>'+
+   '<div class="rw"><span class="k">Caption '+cbtn(x.c)+'</span><div class="v">'+x.c.replace(/</g,'&lt;')+'</div></div></div>';}).join('')||'<p class="small">Geen ideeën gevonden.</p>';
 }
 
 // ================= DASHBOARD BORD (kanban) =================
