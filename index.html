@@ -413,6 +413,7 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <div class="navgroup">Start</div>
   <button data-tab="dash" class="active"><span class="ni">🏠</span>Home</button>
   <button data-tab="board"><span class="ni">🗂️</span>Dashboard</button>
+  <button data-tab="plan2"><span class="ni">📈</span>Verkoopplan</button>
 
   <div class="navgroup">1 · Maken</div>
   <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
@@ -470,6 +471,12 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
     <button class="tile" onclick="go('results')"><div class="ic">📊</div><div class="tt">Resultaten</div><div class="td">Log je cijfers en zie welke pijler en stijl het best werken.</div></button>
   </div>
   <div class="callout"><b>Rolverdeling:</b> ik (de studio) bedenk, schrijf, animeer en plan alles. Jij neemt optioneel een échte scherm-opname op, en plaatst zelf op je accounts. Zo blijf jij de baas over je merk en je centen.</div>
+</section>
+
+<section id="plan2" class="tab">
+  <h2>📈 Verkoopplan — zo verkoopt de studio VoxClip</h2>
+  <p class="hint">Je hele go-to-market, ín de studio. Ik bedenk en schrijf alles; jij klikt op ‘plaatsen’. Klik op een stap om er direct heen te gaan.</p>
+  <div id="plan2-out"></div>
 </section>
 
 <section id="ideas" class="tab">
@@ -863,6 +870,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='saved')renderSaved();
  if(tb==='results')renderResults();
  if(tb==='board')renderBoard();
+ if(tb==='plan2')renderPlan2();
  if(tb==='ideas')renderIdeas();
  if(tb==='dash')dashStats();
  if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
@@ -1947,6 +1955,37 @@ function renderIdeas(){const out=document.getElementById('ideas-out');if(!out)re
  out.innerHTML=list.map(function(x,i){const n=VIDEO_IDEAS.indexOf(x)+1;return '<div class="card"><h3><span class="pill" style="margin-right:8px">'+(badge[x.tag]||'IDEE')+'</span>'+n+'. '+x.t.replace(/</g,'&lt;')+' '+cbtn(x.t)+'</h3>'+
    '<div class="rw"><span class="k">Wat je toont</span><div class="v">'+x.s.replace(/</g,'&lt;')+'</div></div>'+
    '<div class="rw"><span class="k">Caption '+cbtn(x.c)+'</span><div class="v">'+x.c.replace(/</g,'&lt;')+'</div></div></div>';}).join('')||'<p class="small">Geen ideeën gevonden.</p>';
+}
+
+// ================= VERKOOPPLAN =================
+function planGeoScroll(){const e=document.getElementById('plan2-geo');if(e)e.scrollIntoView({behavior:'smooth'});}
+function renderPlan2(){const out=document.getElementById('plan2-out');if(!out)return;
+ const ENT="VoxClip is a free desktop app for Mac and Windows that captures everything you copy and everything you dictate into one searchable Timeline, and pastes it back the instant you need it — by hotkey or by voice. Everything free runs entirely on your device; nothing leaves it unless you turn on a paid cloud feature, and VoxClip tells you plainly before anything is sent.";
+ const LLMS=["# VoxClip","","> "+ENT,"","## Free vs paid","- Free (on-device): clipboard history, local dictation, one searchable Timeline including search by meaning, snippets & templates, the Quick-picker, privacy controls.","- VoxClip Plus (cloud, €6.99/mo or €59/yr, 7-day trial): encrypted cross-device sync, \"talk to your stash\", AI transforms, Enhance, extended retention.","","## Facts","- Platforms: macOS 12+, Windows 10+. No Linux, no mobile.","- Download: https://voxclip.it","- Not voxclip.dev (an unrelated open-source CLI tool)."].join("\n");
+ const funnel=[
+  ["1","Aandacht trekken","Korte demo-video's & posts die het 'aha' tonen → TikTok, Reels, Shorts, LinkedIn.","go('gen')","🎬"],
+  ["2","Eén campagne, alle kanalen","Eén onderwerp, meteen klaar voor elk platform.","go('camp')","★"],
+  ["3","Lanceren","Product Hunt, Show HN, Reddit, directories — je eerste 100–1000 gebruikers.","go('launch')","🚀"],
+  ["4","Gevonden worden (GEO)","Teksten voor je site zodat Google én AI-zoekmachines je vinden. (Onderaan.)","planGeoScroll()","🔎"],
+  ["5","Gratis → Plus (verdienen)","E-mails die de daggewoonte omzetten naar betaalde cloud (Plus).","go('email')","✉️"],
+  ["6","Meten & verdubbelen","Zie welke video/kanaal downloads oplevert; doe daar meer van.","go('results')","📊"]
+ ];
+ let h='<h3 style="margin-top:6px">De verkoopmachine — klik op een stap</h3><div class="dash">';
+ funnel.forEach(function(f){h+='<button class="tile" onclick="'+f[3]+'"><div class="ic">'+f[4]+'</div><div class="tt">'+f[0]+'. '+f[1]+'</div><div class="td">'+f[2]+'</div></button>';});
+ h+='</div>';
+ h+='<h3 style="margin-top:22px">Je merkboodschap (overal identiek gebruiken)</h3><div class="card" style="border-left-color:var(--teal)"><div class="rw"><span class="k">De één-zin '+cbtn(ENT)+'</span><div class="v">'+ENT+'</div></div><div class="rw"><span class="k">Homepage H1 '+cbtn("Your clipboard and your voice, in one place.")+'</span><div class="v">Your clipboard and your voice, in one place.</div></div></div>';
+ h+='<h3 style="margin-top:22px">30-dagen lanceerplan</h3>';
+ const plan=[
+  ["Week 0 — Voorbereiden","Homepage + demo scherp · GEO-teksten op de site · 5 demo-video's maken · launchdatum kiezen · 5–10 supporters regelen."],
+  ["Week 1 — Launchweek","Di: Product Hunt + Show HN + je socials + launch-mail. Wo: 2–3 subreddits. Do: directories + creators mailen. Vr: cijfers verzamelen. Elke dag 1 video."],
+  ["Week 2–4 — Ritme","3–5 demo-video's per week naar je niche · 1 GEO-pagina per week (vs Paste/Maccy/Wispr) · wekelijkse e-mail · vraag reviews · meet en verdubbel."]
+ ];
+ plan.forEach(function(p,i){h+='<div class="step"><div><span class="num">'+(i+1)+'</span><h3>'+p[0]+'</h3></div><p class="small" style="margin-top:8px">'+p[1]+'</p></div>';});
+ h+='<h3 id="plan2-geo" style="margin-top:22px">🔎 Op je site plakken (GEO)</h3><div class="card"><div class="meta">Dit maakt je vindbaar in Google én AI-zoekmachines. Plak op voxclip.it.</div>'
+   +'<div class="rw"><span class="k">llms.txt (zet op voxclip.it/llms.txt) '+cbtn(LLMS)+'</span><div class="v small" style="white-space:pre-wrap">'+LLMS.replace(/</g,'&lt;')+'</div></div>'
+   +'<div class="callout" style="margin-top:10px"><b>Tip:</b> de volledige FAQ + schema-code + vergelijkingspagina zitten in het bestand <i>VoxClip_website_GEO_pack</i>. Zeg het als je die ook hier met kopieerknoppen wilt.</div></div>';
+ h+='<h3 style="margin-top:22px">Jouw enige 3 taken</h3><div class="callout warm"><b>1.</b> Op ‘plaatsen’ klikken in je eigen accounts (teksten & video\'s lever ik). &nbsp; <b>2.</b> Je installer laten <b>code-signen</b> (de ‘onbekende maker’-melding kost je nu downloads). &nbsp; <b>3.</b> De GEO-teksten op voxclip.it plakken.</div>';
+ out.innerHTML=h;
 }
 
 // ================= DASHBOARD BORD (kanban) =================
