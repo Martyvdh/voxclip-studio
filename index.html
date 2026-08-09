@@ -1959,6 +1959,8 @@ function renderIdeas(){const out=document.getElementById('ideas-out');if(!out)re
 
 // ================= VERKOOPPLAN =================
 function planGeoScroll(){const e=document.getElementById('plan2-geo');if(e)e.scrollIntoView({behavior:'smooth'});}
+function planDone(){try{return JSON.parse(localStorage.getItem('voxPlanDone')||'{}');}catch(e){return {};}}
+function planToggle(id,el){const d=planDone();d[id]=el.checked;localStorage.setItem('voxPlanDone',JSON.stringify(d));const it=el.closest('.lc-item');if(it)it.classList.toggle('done',el.checked);const boxes=document.querySelectorAll('#plan2-out .lc-item input[type=checkbox]');let n=0;boxes.forEach(function(b){if(b.checked)n++;});const pe=document.getElementById('plan-prog');if(pe)pe.textContent=n+' van '+boxes.length;}
 function renderPlan2(){const out=document.getElementById('plan2-out');if(!out)return;
  const ENT="VoxClip is a free desktop app for Mac and Windows that captures everything you copy and everything you dictate into one searchable Timeline, and pastes it back the instant you need it — by hotkey or by voice. Everything free runs entirely on your device; nothing leaves it unless you turn on a paid cloud feature, and VoxClip tells you plainly before anything is sent.";
  const LLMS=["# VoxClip","","> "+ENT,"","## Free vs paid","- Free (on-device): clipboard history, local dictation, one searchable Timeline including search by meaning, snippets & templates, the Quick-picker, privacy controls.","- VoxClip Plus (cloud, €6.99/mo or €59/yr, 7-day trial): encrypted cross-device sync, \"talk to your stash\", AI transforms, Enhance, extended retention.","","## Facts","- Platforms: macOS 12+, Windows 10+. No Linux, no mobile.","- Download: https://voxclip.it","- Not voxclip.dev (an unrelated open-source CLI tool)."].join("\n");
@@ -1974,13 +1976,25 @@ function renderPlan2(){const out=document.getElementById('plan2-out');if(!out)re
  funnel.forEach(function(f){h+='<button class="tile" onclick="'+f[3]+'"><div class="ic">'+f[4]+'</div><div class="tt">'+f[0]+'. '+f[1]+'</div><div class="td">'+f[2]+'</div></button>';});
  h+='</div>';
  h+='<h3 style="margin-top:22px">Je merkboodschap (overal identiek gebruiken)</h3><div class="card" style="border-left-color:var(--teal)"><div class="rw"><span class="k">De één-zin '+cbtn(ENT)+'</span><div class="v">'+ENT+'</div></div><div class="rw"><span class="k">Homepage H1 '+cbtn("Your clipboard and your voice, in one place.")+'</span><div class="v">Your clipboard and your voice, in one place.</div></div></div>';
- h+='<h3 style="margin-top:22px">30-dagen lanceerplan</h3>';
- const plan=[
-  ["Week 0 — Voorbereiden","Homepage + demo scherp · GEO-teksten op de site · 5 demo-video's maken · launchdatum kiezen · 5–10 supporters regelen."],
-  ["Week 1 — Launchweek","Di: Product Hunt + Show HN + je socials + launch-mail. Wo: 2–3 subreddits. Do: directories + creators mailen. Vr: cijfers verzamelen. Elke dag 1 video."],
-  ["Week 2–4 — Ritme","3–5 demo-video's per week naar je niche · 1 GEO-pagina per week (vs Paste/Maccy/Wispr) · wekelijkse e-mail · vraag reviews · meet en verdubbel."]
+ const PH=[
+  ["A","Positionering & boodschap","Wat een top-bureau eerst doet: één scherpe boodschap en één doelgroep vastnagelen.",[["pa1","Één-zin vastleggen en overal identiek gebruiken"],["pa2","Beachhead kiezen: solo-makers/zzp die veel kopiëren én dicteren"],["pa3","De 5-seconden-'aha' bepalen (\"plak wat je vanochtend kopieerde\")"]],[["Merk-check openen","go('check')"]]],
+  ["B","Merk & website","Vertrouwen en vindbaarheid: boodschap op de site, GEO, en de installer signen.",[["pb1","Homepage-H1 + antwoordblok plaatsen"],["pb2","GEO op de site: FAQ + schema + llms.txt"],["pb3","Installer laten code-signen (grootste conversie-lek)"],["pb4","Vergelijkingspagina 'vs Paste/Maccy/Wispr' live"]],[["GEO-teksten hieronder","planGeoScroll()"]]],
+  ["C","Assets maken","De content die verkoopt: video's, screenshots, one-pager.",[["pc1","5 demo-video's genereren (Timeline, Hotkey, Zoeken, Dicteren, Before/after)"],["pc2","Nette screenshots + het logo klaar"],["pc3","Korte one-pager / press-kit"]],[["Video maken","go('gen')"],["Video-ideeën","go('ideas')"]]],
+  ["D","Doelgroep & kanalen","Waar je publiek zit en hoe je het bereikt.",[["pd1","Kies je 3 kanalen (TikTok/Reels/LinkedIn)"],["pd2","Zoek 5–10 relevante communities/subreddits"],["pd3","Zet een wachtlijst/e-mailopt-in op de site"]],[["Onderzoek","go('research')"]]],
+  ["E","Pre-launch","Alles scherp zetten en momentum opbouwen vóór dag 1.",[["pe1","Launchdatum kiezen (di–do)"],["pe2","5–10 supporters opwarmen (echte mensen)"],["pe3","Product Hunt-teksten + assets klaar"]],[["Launch-playbook","go('launch')"]]],
+  ["F","Launch (de week)","Je eerste 100–1000 gebruikers in één intense week.",[["pf1","Di: Product Hunt + Show HN + socials + launch-mail"],["pf2","Wo: 2–3 subreddits (waarde-eerst)"],["pf3","Do: directories + 5–10 creators mailen"],["pf4","Vr: cijfers verzamelen + 'zo ging het'-post"]],[["Launch-playbook","go('launch')"],["Launch-mail","go('email')"]]],
+  ["G","Groei-loop","Het ritme dat je maand na maand laat groeien.",[["pg1","3–5 demo-video's per week naar je niche"],["pg2","1 GEO-pagina per week"],["pg3","Wekelijkse e-mail naar je lijst"],["pg4","Vraag blije gebruikers om reviews/shares"]],[["Planner","go('plan')"],["Video maken","go('gen')"]]],
+  ["H","Verdienen (Plus)","Van gratis gewoonte naar betaalde cloud — hier verdien je.",[["ph1","Onboarding-mails die de daggewoonte opbouwen"],["ph2","Upsell-mails over Plus (sync, talk-to-your-stash)"],["ph3","Toon de Plus-'wow' in de app op het juiste moment"]],[["E-mail","go('email')"]]],
+  ["I","Meten & optimaliseren","Zien wat werkt en verdubbelen.",[["pi1","Tracking-links per kanaal maken"],["pi2","Wekelijks: welke video/kanaal levert downloads?"],["pi3","Doe meer van de winnaars, laat de rest vallen"]],[["Resultaten","go('results')"],["Dashboard","go('board')"]]]
  ];
- plan.forEach(function(p,i){h+='<div class="step"><div><span class="num">'+(i+1)+'</span><h3>'+p[0]+'</h3></div><p class="small" style="margin-top:8px">'+p[1]+'</p></div>';});
+ let total=0;PH.forEach(function(p){total+=p[3].length;});const done=planDone();let doneN=0;PH.forEach(function(p){p[3].forEach(function(t){if(done[t[0]])doneN++;});});
+ h+='<h3 style="margin-top:22px">Lancering — van A tot Z</h3>';
+ h+='<div class="callout"><b>Voortgang:</b> <span id="plan-prog">'+doneN+' van '+total+'</span> taken afgevinkt. Werk van boven naar beneden — dit is je bureau-draaiboek.</div>';
+ PH.forEach(function(p){
+   h+='<div class="step"><div><span class="num">'+p[0]+'</span><h3>'+p[1]+'</h3></div><p class="small" style="margin:6px 0 8px">'+p[2]+'</p>';
+   p[3].forEach(function(t){const c=done[t[0]]?'checked':'',dc=done[t[0]]?' done':'';h+='<label class="lc-item'+dc+'"><input type="checkbox" '+c+' onchange="planToggle(\''+t[0]+'\',this)"> <span>'+t[1]+'</span></label>';});
+   h+='<div class="btnrow" style="margin-top:8px">';p[4].forEach(function(a){h+='<button class="btn ghost" onclick="'+a[1]+'">'+a[0]+'</button>';});h+='</div></div>';
+ });
  h+='<h3 id="plan2-geo" style="margin-top:22px">🔎 Op je site plakken (GEO)</h3><div class="card"><div class="meta">Dit maakt je vindbaar in Google én AI-zoekmachines. Plak op voxclip.it.</div>'
    +'<div class="rw"><span class="k">llms.txt (zet op voxclip.it/llms.txt) '+cbtn(LLMS)+'</span><div class="v small" style="white-space:pre-wrap">'+LLMS.replace(/</g,'&lt;')+'</div></div>'
    +'<div class="callout" style="margin-top:10px"><b>Tip:</b> de volledige FAQ + schema-code + vergelijkingspagina zitten in het bestand <i>VoxClip_website_GEO_pack</i>. Zeg het als je die ook hier met kopieerknoppen wilt.</div></div>';
