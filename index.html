@@ -955,7 +955,18 @@ function videoEditorHTML(){
        <option value="announce">Aankondiging / update</option>
        <option value="comingsoon">Coming soon (teaser)</option>
        <option value="before">Before / after (split)</option>
-       <option value="demo">Clean demo (UI)</option></select></div>
+       <option value="demo">Clean demo (UI)</option>
+       <option value="d_timeline">Demo — Timeline vult zich</option>
+       <option value="d_copy">Demo — Copy (toast)</option>
+       <option value="d_voice">Demo — Dicteren (stem)</option>
+       <option value="d_search">Demo — Zoeken</option>
+       <option value="d_hotkey">Demo — Hotkey + Quick-picker</option>
+       <option value="d_paste">Demo — Plakken</option>
+       <option value="d_snippet">Demo — Snippet uitklappen</option>
+       <option value="d_privacy">Demo — Lokaal / privacy</option>
+       <option value="d_clear">Demo — Historie wissen</option>
+       <option value="d_cross">Demo — Mac ↔ Windows (Plus)</option>
+       <option value="d_stash">Demo — Talk to your stash (Plus)</option></select></div>
      <div id="vfields"></div>
      <div class="field"><label>Snelheid — duur: <span id="v-durlbl">9.0</span>s</label>
        <input id="v-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('v-durlbl').textContent=(+this.value).toFixed(1)"></div>
@@ -1101,6 +1112,7 @@ function vFrame(ctx,t,c){
  if(c.style==='comingsoon')return vFrameComingSoon(ctx,t,c);
  if(c.style==='gradientstat')return vFrameGradientStat(ctx,t,c);
  if(KFAM.indexOf(c.style)>=0)return vFrameKineticVar(ctx,t,c);
+ if(DFAM.indexOf(c.style)>=0)return vFrameDemoScene(ctx,t,c);
  return vFrameDemo(ctx,t,c);
 }
 function vFrameComingSoon(ctx,t,c){const W=1080,H=1920,OUT=4,content=Math.max(2,c.dur-OUT);
@@ -1266,6 +1278,30 @@ function vFrameBefore(ctx,t,c){
   ctx.fillStyle=TEALc;rr(ctx,bx+16,ry+18,74,74,14);ctx.fill();ctx.fillStyle='#FFFFFF';ctx.textAlign='center';ctx.font="700 34px 'Space Grotesk',Arial";ctx.fillText("C",bx+53,ry+55);
   ctx.fillStyle=INKc;ctx.textAlign='left';ctx.font="30px 'DejaVu Sans Mono',monospace";ctx.fillText(c.res||"Prinsengracht 263, Amsterdam",bx+110,ry+55);}
  if(t>3.4){ctx.fillStyle=TEALDc;ctx.textAlign='center';ctx.font="500 40px 'Space Grotesk',Arial";ctx.fillText("found. pasted.",W/2,by+bh+210);}
+}
+const DFAM=['d_timeline','d_copy','d_voice','d_search','d_hotkey','d_paste','d_snippet','d_privacy','d_clear','d_cross','d_stash'];
+function dSearchBar(ctx,y,typed){const W=1080,X=90,w=W-180,h=100;ctx.fillStyle='#fff';rr(ctx,X,y,w,h,22);ctx.fill();ctx.strokeStyle=LINEc;ctx.lineWidth=2;rr(ctx,X,y,w,h,22);ctx.stroke();ctx.strokeStyle=GREYc;ctx.lineWidth=5;ctx.beginPath();ctx.arc(X+50,y+h/2-4,18,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(X+63,y+h/2+9);ctx.lineTo(X+78,y+h/2+24);ctx.stroke();ctx.fillStyle=INKc;ctx.textAlign='left';ctx.textBaseline='middle';ctx.font="40px 'DejaVu Sans Mono',monospace";ctx.fillText(typed||'',X+95,y+h/2);const tw=ctx.measureText(typed||'').width;if(Math.sin(Date.now()/280)>0){ctx.fillStyle=TEALc;ctx.fillRect(X+95+tw+6,y+h/2-24,4,48);}ctx.textAlign='center';}
+function dToast(ctx,txt,a){const W=1080;ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,a));ctx.font="700 40px 'Space Grotesk',Arial";const tw=ctx.measureText(txt).width,pw=tw+70;ctx.fillStyle=TEALDc;rr(ctx,W/2-pw/2,470,pw,84,42);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,W/2,512);ctx.restore();}
+function dChip(ctx,cx,cy,label){ctx.fillStyle='#fff';rr(ctx,cx-90,cy-46,180,92,18);ctx.fill();ctx.strokeStyle=LINEc;ctx.lineWidth=2;rr(ctx,cx-90,cy-46,180,92,18);ctx.stroke();ctx.fillStyle=INKc;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="700 40px 'Space Grotesk',Arial";ctx.fillText(label,cx,cy);}
+function vFrameDemoScene(ctx,t,c){
+ const W=1080,H=1920,CX=90,CW=W-180,IH=128;const OUT=3.5,content=Math.max(2,c.dur-OUT);
+ if(t>=content){vOutro(ctx,t-content,c.pay||c.tag||'One keystroke away.',true);return;}
+ const st=c.style,lt=t/content,dark=(st==='d_privacy');dark?darkBg(ctx):lightBg(ctx);brandTop(ctx);
+ const i1=c.i1||'invoice@voxclip.it',i2=c.i2||'Call the notary — 3:00 PM';
+ const rowY=[720,720+IH+28,720+2*(IH+28)];
+ function rows(n,hl){for(let k=0;k<n;k++){const ap=eo(Math.min(1,Math.max(0,(lt-k*0.12)/0.3))),off=(1-ap)*120,tag=k%2?'S':'C',col=k%2?TEALDc:TEALc,txt=k%2?i2:i1;ctx.save();ctx.globalAlpha=ap;itemC(ctx,CX+off,rowY[k],CW,IH,tag,col,txt);ctx.restore();if(hl===k){ctx.strokeStyle=TEALDc;ctx.lineWidth=6;rr(ctx,CX-6,rowY[k]-6,CW+12,IH+12,30);ctx.stroke();}}}
+ if(st==='d_timeline'){capBand(ctx,'Everything, in one Timeline');rows(3,-1);}
+ else if(st==='d_copy'){capBand(ctx,"Copy it — it's kept");dToast(ctx,'Copied ✓',lt<0.7?eo(lt/0.25):eo((1-lt)/0.3));rows(1,-1);}
+ else if(st==='d_voice'){capBand(ctx,'Or just say it');const cx=W/2,cy=1400,pulse=0.5+0.5*Math.sin(t*6),r=70+pulse*26;ctx.strokeStyle=TEALc;ctx.lineWidth=6;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();ctx.fillStyle=TEALDc;ctx.beginPath();ctx.arc(cx,cy,42,0,7);ctx.fill();ctx.fillStyle='#fff';rr(ctx,cx-14,cy-28,28,36,14);ctx.fill();if(lt>0.5){ctx.save();ctx.globalAlpha=eo((lt-0.5)/0.4);itemC(ctx,CX,rowY[0],CW,IH,'S',TEALDc,i2);ctx.restore();}}
+ else if(st==='d_search'){const q='notary',typed=q.slice(0,Math.floor(eo(Math.min(1,lt/0.4))*q.length));capBand(ctx,'One search — all of it');dSearchBar(ctx,560,typed);if(lt>0.5){ctx.save();ctx.globalAlpha=eo((lt-0.5)/0.4);itemC(ctx,CX,760,CW,IH,'S',TEALDc,i2);ctx.restore();}}
+ else if(st==='d_hotkey'){capBand(ctx,'Recall in two keys');let x=CX+40,y=620,g=18;const w1=keycapC(ctx,x,y,'⌘',44),w2=keycapC(ctx,x+w1+g,y,'⇧',44);keycapC(ctx,x+w1+w2+2*g,y,'Space',46);const p=eo(Math.min(1,Math.max(0,(lt-0.3)/0.5))),oy=lerp(1920,820,p);ctx.save();ctx.globalAlpha=p;ctx.fillStyle='#fff';rr(ctx,CX,oy,CW,IH*2+40,26);ctx.fill();ctx.strokeStyle=LINEc;ctx.lineWidth=2;rr(ctx,CX,oy,CW,IH*2+40,26);ctx.stroke();itemC(ctx,CX+16,oy+16,CW-32,IH,'C',TEALc,i1);itemC(ctx,CX+16,oy+16+IH+8,CW-32,IH,'S',TEALDc,i2);if(p>0.9){ctx.strokeStyle=TEALDc;ctx.lineWidth=6;rr(ctx,CX+10,oy+10,CW-20,IH+12,26);ctx.stroke();}ctx.restore();}
+ else if(st==='d_paste'){capBand(ctx,'Pasted where your cursor is');ctx.fillStyle='#fff';rr(ctx,CX,760,CW,150,20);ctx.fill();ctx.strokeStyle=TEALc;ctx.lineWidth=3;rr(ctx,CX,760,CW,150,20);ctx.stroke();const p=eo(Math.min(1,lt/0.7));if(p<0.9){const cy=lerp(1300,835,p);itemC(ctx,CX,cy-IH/2,CW,IH,'C',TEALc,i1);}else{ctx.fillStyle=INKc;ctx.textAlign='left';ctx.textBaseline='middle';ctx.font="40px 'DejaVu Sans Mono',monospace";ctx.fillText(i1,CX+30,835);ctx.textAlign='center';}if(Math.sin(t*10)>0){ctx.fillStyle=TEALc;ctx.fillRect(CX+30,795,4,80);}}
+ else if(st==='d_snippet'){capBand(ctx,'Snippets & templates');ctx.fillStyle='#fff';rr(ctx,CX,820,CW,150,20);ctx.fill();ctx.strokeStyle=LINEc;ctx.lineWidth=2;rr(ctx,CX,820,CW,150,20);ctx.stroke();ctx.textAlign='left';ctx.textBaseline='middle';ctx.font="40px 'DejaVu Sans Mono',monospace";if(lt<0.5){const tr=';addr',tt=tr.slice(0,Math.floor(eo(lt/0.4)*tr.length));ctx.fillStyle=TEALDc;ctx.fillText(tt,CX+30,895);}else{ctx.fillStyle=INKc;ctx.fillText(i1,CX+30,895);}ctx.textAlign='center';}
+ else if(st==='d_privacy'){capBand(ctx,'Stays on your device');const cx=W/2,cy=1150,pulse=0.5+0.5*Math.sin(t*3);ctx.save();ctx.globalAlpha=0.4+0.5*pulse;ctx.strokeStyle=TEALc;ctx.lineWidth=8;ctx.beginPath();ctx.arc(cx,cy,155+pulse*18,0,7);ctx.stroke();ctx.restore();ctx.fillStyle=TEALc;rr(ctx,cx-72,cy-24,144,120,22);ctx.fill();ctx.strokeStyle=TEALc;ctx.lineWidth=16;ctx.beginPath();ctx.arc(cx,cy-24,50,Math.PI,2*Math.PI);ctx.stroke();ctx.fillStyle='#0d1015';ctx.beginPath();ctx.arc(cx,cy+30,15,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="700 56px 'Space Grotesk',Arial";ctx.fillText('Local. Private. Yours.',cx,1440);}
+ else if(st==='d_clear'){capBand(ctx,'Clear it in one click');const fade=lt>0.55?eo(1-(lt-0.55)/0.4):1;ctx.save();ctx.globalAlpha=fade;rows(2,-1);ctx.restore();const bw=280,bx=W/2-bw/2,by=1500,active=lt>0.42;ctx.fillStyle=active?'#E5484D':'#fff';rr(ctx,bx,by,bw,90,45);ctx.fill();if(!active){ctx.strokeStyle=LINEc;ctx.lineWidth=2;rr(ctx,bx,by,bw,90,45);ctx.stroke();}ctx.fillStyle=active?'#fff':INKc;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="700 38px 'Space Grotesk',Arial";ctx.fillText('Clear history',W/2,by+45);}
+ else if(st==='d_cross'){capBand(ctx,'Same Timeline · Mac ↔ Windows');dChip(ctx,320,780,'Mac');dChip(ctx,760,780,'Win');const p=eo(Math.min(1,lt/0.7)),x=lerp(320,760,p);ctx.fillStyle=TEALDc;ctx.beginPath();ctx.arc(x,900,20,0,7);ctx.fill();itemC(ctx,CX,1050,CW,IH,'C',TEALc,i1);if(p>0.85){ctx.strokeStyle=TEALDc;ctx.lineWidth=6;rr(ctx,CX-6,1044,CW+12,IH+12,30);ctx.stroke();}ctx.fillStyle=GREYc;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="500 34px 'Space Grotesk',Arial";ctx.fillText('Plus · end-to-end encrypted',W/2,1270);}
+ else if(st==='d_stash'){capBand(ctx,'Talk to your stash');ctx.fillStyle=TEALDc;rr(ctx,CX,720,CW-140,110,24);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='left';ctx.textBaseline='middle';ctx.font="500 40px 'Space Grotesk',Arial";ctx.fillText('“What was that address?”',CX+28,775);if(lt>0.5){ctx.save();ctx.globalAlpha=eo((lt-0.5)/0.4);itemC(ctx,CX+120,900,CW-120,IH,'A',TEALc,i1);ctx.restore();}ctx.fillStyle=GREYc;ctx.textAlign='center';ctx.font="500 32px 'Space Grotesk',Arial";ctx.fillText('Plus',W/2,1120);}
+ else{rows(3,-1);}
 }
 function vFrameDemo(ctx,t,c){
  const W=1080,H=1920,CX=90,CW=W-180,IH=132,I1=760,I2=760+IH+30,dur=c.dur;
