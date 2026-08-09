@@ -372,6 +372,10 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 .bd-rm{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--grey);cursor:pointer;font-size:13px;line-height:1;padding:2px 4px;border-radius:6px}
 .bd-rm:hover{background:var(--row);color:var(--warn)}
 .bd-empty{color:var(--grey);font-size:12.5px;text-align:center;padding:22px 8px;border:1.5px dashed var(--line);border-radius:10px}
+.bd-cardtop{display:flex;justify-content:flex-end;gap:6px;margin-bottom:8px}
+.bd-mini{background:var(--row);border:1px solid var(--line);border-radius:7px;padding:3px 8px;font-size:12px;cursor:pointer;color:var(--ink);line-height:1}
+.bd-mini:hover{border-color:var(--teal)}
+.bd-mini.del:hover{color:var(--warn);border-color:var(--warn)}
 @media(max-width:760px){.bd-cols{grid-template-columns:1fr}}
 
 /* ===== Hamburger drawer on DESKTOP too (mobile unchanged) ===== */
@@ -472,7 +476,12 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <h2>🗂️ Dashboard — jouw video's per platform</h2>
   <p class="hint">Sleep een opgeslagen video naar TikTok, Instagram of LinkedIn. Eén video mag in meerdere kolommen. Vul onder elke video de resultaten in — de best presterende krijgt een ★ zodat je in één oogopslag ziet wat werkt.</p>
   <div class="bd-tray">
-    <div class="bd-tray-h">📥 Recent opgeslagen — sleep een kaart naar een kolom</div>
+    <div class="bd-tray-h" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span>📥 Opgeslagen video’s — sleep naar een kolom, ▶ bekijk, 🗑 verwijder</span>
+      <input id="bd-search" placeholder="🔎 Zoek op tekst…" oninput="renderBoard()" style="width:auto;flex:1;min-width:150px;max-width:280px;padding:7px 10px">
+      <select id="bd-filter" onchange="renderBoard()" style="width:auto"><option value="">Alle kanalen</option><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="linkedin">LinkedIn</option><option value="blog">Blog</option></select>
+      <span id="bd-count" class="small" style="color:var(--grey)"></span>
+    </div>
     <div id="bd-tray" class="bd-tray-items"></div>
   </div>
   <div class="bd-cols">
@@ -481,6 +490,14 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
     <div class="bd-col"><div class="bd-col-h"><span class="chan linkedin">LinkedIn</span></div><div class="bd-drop" id="bd-linkedin"></div></div>
   </div>
 </section>
+
+<!-- BORD VIDEO-PREVIEW -->
+<div id="bdprev" class="advmodal" onclick="if(event.target===this)bdPrevClose()">
+  <div class="advbox" style="width:min(440px,94vw);height:auto">
+    <div class="advhead"><div class="advtitle">▶ Video-preview</div><button class="advx" onclick="bdPrevClose()" aria-label="Sluiten">✕</button></div>
+    <div style="background:#0c1015;display:flex;justify-content:center;padding:16px"><canvas id="bdprevcv" width="1080" height="1920" style="height:64vh;width:auto;border-radius:12px;display:block"></canvas></div>
+  </div>
+</div>
 
 <!-- COACH -->
 <section id="coach" class="tab">
@@ -929,6 +946,13 @@ function videoEditorHTML(){
      <div id="vfields"></div>
      <div class="field"><label>Snelheid — duur: <span id="v-durlbl">9.0</span>s</label>
        <input id="v-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('v-durlbl').textContent=(+this.value).toFixed(1)"></div>
+     <div class="field"><label>Voice-over — laat je tekst voorlezen</label>
+       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+         <select id="vo-gender" onchange="voPick()" style="width:auto"><option value="none">Geen</option><option value="female">Vrouw</option><option value="male">Man</option></select>
+         <select id="vo-voice" style="width:auto;flex:1;min-width:130px"></select>
+         <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor</button>
+       </div>
+       <p class="small" id="vo-note" style="margin-top:6px">Kies een stem en beluister hoe je tekst klinkt (echte systeemstemmen). Voor de download plak je de voice-over in CapCut/InShot — het inbakken in de MP4 kan de browser niet betrouwbaar.</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
    </div>
@@ -982,6 +1006,19 @@ function vFieldsHTML(st){
  return FI('h1','Hook 1',d.h1)+FI('h2','Hook 2',d.h2)+FI('hw','Slotwoord',d.hw)+FI('i1','Copied item',d.i1)+FI('i2','Dictated note',d.i2)+FI('pay','Payoff',d.pay);
 }
 function vStyleChange(){const box=document.getElementById('vfields');if(!box)return;box.innerHTML=vFieldsHTML(val('v-style'));vAutoPlay();}
+// ---- Voice-over (echte systeemstemmen, man/vrouw) ----
+let _voSpeaking=false;
+function voLoadVoices(){const sel=document.getElementById('vo-voice');if(!sel||!window.speechSynthesis)return;const vs=speechSynthesis.getVoices();if(!vs.length){speechSynthesis.onvoiceschanged=voLoadVoices;return;}
+ const en=vs.filter(v=>/^en/i.test(v.lang));const list=en.length?en:vs;
+ sel.innerHTML=list.map(v=>'<option value="'+vs.indexOf(v)+'">'+v.name+' ('+v.lang+')</option>').join('');voPick();}
+function voGuess(gender){const vs=speechSynthesis.getVoices();const fem=/(female|vrouw|samantha|victoria|karen|moira|tessa|serena|zira|susan|fiona|allison|ava|joanna|amy|emma|salli|kendra|nicky)/i;const mal=/(male|alex|daniel|fred|tom|david|mark|george|oliver|matthew|guy|brian|arthur|rishi|aaron)/i;const re=gender==='female'?fem:mal;let i=vs.findIndex(v=>/^en/i.test(v.lang)&&re.test(v.name));if(i<0)i=vs.findIndex(v=>re.test(v.name));return i;}
+function voPick(){const g=(document.getElementById('vo-gender')||{}).value;if(g==='female'||g==='male'){const i=voGuess(g);if(i>=0){const sel=document.getElementById('vo-voice');if(sel)sel.value=i;}}}
+function voText(){const c=vCfg();const keys=['p1','p2','p3','p4','big','sub','title','i1','i2','i3','quote','q','a','head','trigger','expanded','tag'];const out=[];keys.forEach(k=>{if(c[k])out.push(String(c[k]));});return out.join('. ');}
+function voToggle(){const btn=document.getElementById('vo-btn');if(!window.speechSynthesis){alert('Voorlezen werkt in Chrome, Edge of Safari.');return;}
+ if(_voSpeaking||speechSynthesis.speaking){speechSynthesis.cancel();_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor';return;}
+ const g=(document.getElementById('vo-gender')||{}).value;if(g==='none'){alert('Kies eerst Vrouw of Man.');return;}
+ const txt=voText();if(!txt)return;const u=new SpeechSynthesisUtterance(txt);const vs=speechSynthesis.getVoices();const sel=document.getElementById('vo-voice');if(sel&&vs[+sel.value])u.voice=vs[+sel.value];u.rate=1.0;u.pitch=g==='female'?1.06:0.9;
+ u.onend=function(){_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor';};_voSpeaking=true;if(btn)btn.textContent='⏸ Stop';speechSynthesis.speak(u);}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
  const ch=document.getElementById('g-channel').value,per=document.getElementById('g-persona').value,pil=document.getElementById('g-pillar').value;
@@ -992,7 +1029,7 @@ function generateOne(){
  if(hasVideo)html+=videoEditorHTML();
  else html+=`<div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post</button></div><p class="small" id="v-msg"></p>`;
  document.getElementById('g-out').innerHTML=html;
- if(hasVideo){window.curPillar=pil;vStyleChange();}
+ if(hasVideo){window.curPillar=pil;vStyleChange();voLoadVoices();}
 }
 
 // ================= CANVAS VIDEO ENGINE =================
@@ -1727,13 +1764,18 @@ function boardStats(){try{return JSON.parse(localStorage.getItem('voxBoardStats'
 function setBoardStats(s){try{localStorage.setItem('voxBoardStats',JSON.stringify(s));}catch(e){}}
 function bdTitle(r){const t=(r.text||'').split('\n').map(x=>x.trim()).filter(Boolean)[0]||'Video';return t.replace(/^[#>\-*\s]+/,'').slice(0,52);}
 function bdCardHTML(r,plat,isTop){
+ const hasVid=!!r.video;
  const poster='<div class="bd-poster">'+bdTitle(r).replace(/</g,'&lt;')+'</div>';
- if(!plat){return '<div class="bd-card" draggable="true" data-id="'+r.id+'">'+poster+'<div class="small" style="color:var(--grey)">van '+r.channel+' · '+r.date+'</div></div>';}
+ const mm='onmousedown="event.stopPropagation()"';
+ if(!plat){return '<div class="bd-card" draggable="true" data-id="'+r.id+'">'+
+   '<div class="bd-cardtop">'+(hasVid?'<button class="bd-mini" '+mm+' onclick="bdPreview('+r.id+')" title="Bekijk">▶</button>':'')+'<button class="bd-mini del" '+mm+' onclick="bdDeleteVideo('+r.id+')" title="Definitief verwijderen">🗑</button></div>'+
+   poster+'<div class="small" style="color:var(--grey)">van '+r.channel+' · '+r.date+'</div></div>';}
  const st=boardStats(),s=st[plat+':'+r.id]||{};
  const eng=(+s.views>0)?Math.round(1000*((+s.likes||0)+(+s.comments||0))/(+s.views))/10:0;
  return '<div class="bd-card'+(isTop?' top':'')+'" draggable="true" data-id="'+r.id+'">'+
-   '<button class="bd-rm" onclick="bdRemove(\''+plat+'\','+r.id+')" title="Verwijderen">✕</button>'+
-   (isTop?'<div class="pill" style="margin-bottom:6px">★ Beste</div>':'')+poster+
+   '<button class="bd-rm" '+mm+' onclick="bdRemove(\''+plat+'\','+r.id+')" title="Uit deze kolom halen">✕</button>'+
+   (hasVid?'<button class="bd-mini" '+mm+' style="position:absolute;top:8px;left:8px" onclick="bdPreview('+r.id+')" title="Bekijk">▶</button>':'')+
+   (isTop?'<div class="pill" style="margin:22px 0 6px">★ Beste</div>':'<div style="height:14px"></div>')+poster+
    '<div class="bd-stats">'+
      '<div><label>Views</label><input type="number" min="0" value="'+(+s.views||0)+'" onchange="bdStat(\''+plat+'\','+r.id+',\'views\',this.value)"></div>'+
      '<div><label>Likes</label><input type="number" min="0" value="'+(+s.likes||0)+'" onchange="bdStat(\''+plat+'\','+r.id+',\'likes\',this.value)"></div>'+
@@ -1741,9 +1783,16 @@ function bdCardHTML(r,plat,isTop){
    '</div>'+
    '<div class="small" style="margin-top:6px;color:var(--teal-deep)">Engagement: '+eng+'%</div></div>';
 }
+let bdPrevAnim=0;
 function renderBoard(){
  const sv=saved();const tray=document.getElementById('bd-tray');if(!tray)return;
- tray.innerHTML=sv.length?sv.map(r=>bdCardHTML(r,null)).join(''):'<div class="bd-empty" style="flex:1">Nog geen opgeslagen video’s. Maak er een in de Generator en klik “💾 Bewaar post (incl. video)”.</div>';
+ const q=((document.getElementById('bd-search')||{}).value||'').toLowerCase().trim();
+ const fch=(document.getElementById('bd-filter')||{}).value||'';
+ let tsv=sv.filter(r=>(!fch||r.channel===fch)&&(!q||bdTitle(r).toLowerCase().indexOf(q)>=0||(r.channel||'').indexOf(q)>=0));
+ const cap=48,shown=tsv.slice(0,cap);
+ const cnt=document.getElementById('bd-count');if(cnt)cnt.textContent=sv.length?(tsv.length+' van '+sv.length+(tsv.length>cap?' · eerste '+cap+' getoond':'')):'';
+ if(!sv.length)tray.innerHTML='<div class="bd-empty" style="flex:1">Nog geen opgeslagen video’s. Maak er een in de Generator en klik “💾 Bewaar post (incl. video)”.</div>';
+ else tray.innerHTML=shown.length?shown.map(r=>bdCardHTML(r,null)).join(''):'<div class="bd-empty" style="flex:1">Geen video’s gevonden voor deze zoekopdracht/filter.</div>';
  const d=boardData(),st=boardStats();
  ['tiktok','instagram','linkedin'].forEach(function(p){
   const col=document.getElementById('bd-'+p);if(!col)return;
@@ -1766,6 +1815,14 @@ function bdBind(){
 function bdAdd(plat,id){const d=boardData();d[plat]=d[plat]||[];if(!d[plat].includes(id))d[plat].push(id);setBoard(d);renderBoard();}
 function bdRemove(plat,id){const d=boardData();d[plat]=(d[plat]||[]).filter(x=>x!==id);setBoard(d);const st=boardStats();delete st[plat+':'+id];setBoardStats(st);renderBoard();}
 function bdStat(plat,id,field,val){const st=boardStats(),k=plat+':'+id;st[k]=st[k]||{};st[k][field]=+val||0;setBoardStats(st);renderBoard();}
+function bdPreview(id){const r=saved().find(x=>x.id===id);if(!r||!r.video){alert('Deze post heeft geen video om te bekijken.');return;}
+ const m=document.getElementById('bdprev');if(m)m.classList.add('open');
+ const cv=document.getElementById('bdprevcv');if(!cv)return;const ctx=cv.getContext('2d');cancelAnimationFrame(bdPrevAnim);const cfg=r.video;let st=null;
+ (function loop(now){if(st===null)st=now;const dur=+cfg.dur||9;const t=((now-st)/1000)%dur;vFrameFX(ctx,t,cfg);bdPrevAnim=requestAnimationFrame(loop);})(performance.now());}
+function bdPrevClose(){cancelAnimationFrame(bdPrevAnim);const m=document.getElementById('bdprev');if(m)m.classList.remove('open');}
+function bdDeleteVideo(id){if(!confirm('Deze video definitief verwijderen uit Opgeslagen? (verdwijnt ook van het bord)'))return;
+ setSaved(saved().filter(x=>x.id!==id));const d=boardData();['tiktok','instagram','linkedin'].forEach(p=>{d[p]=(d[p]||[]).filter(x=>x!==id);});setBoard(d);
+ const bs=boardStats();['tiktok','instagram','linkedin'].forEach(p=>delete bs[p+':'+id]);setBoardStats(bs);renderBoard();}
 
 // ================= RESULTS TRACKER =================
 const CT_NS='voxclip';
