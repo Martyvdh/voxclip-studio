@@ -1012,8 +1012,7 @@ function videoEditorHTML(){
          <select id="vo-voice" style="width:auto;flex:1;min-width:130px"></select>
          <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor (preview)</button>
        </div>
-       <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="vo-bake" style="width:auto"> 🎬 Stem écht in de video bakken (komt mee in de download)</label>
-       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> = alleen beluisteren (natuurlijke systeemstem; die kan de browser niet opnemen). Vink je <b>“in de video bakken”</b> aan, dan komt er wél een stem in de MP4 — maar dat is een <b>computerstem</b> (wat robotachtig), want alleen die kan ingebakken worden. Wil je een natuurlijke man/vrouw-stem in de video: doe dat gratis in <b>CapCut</b> (Text-to-speech).</p></div>
+       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> laat je horen hoe je tekst klinkt met een natuurlijke man/vrouw-stem. Die stem in de gedownloade video krijgen kan de browser niet — plak je tekst gratis in <b>CapCut → Text-to-speech</b> (echte stemmen) voor de definitieve video.</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
    </div>
@@ -1114,6 +1113,7 @@ function vCfg(){return {style:val('v-style')||'kinetic',dur:+(val('v-dur')||9),
  big:val('v-big'),sub:val('v-sub'),title:val('v-title'),quote:val('v-quote'),a:val('v-a'),trigger:val('v-trigger'),expanded:val('v-expanded'),badge:val('v-badge'),head:val('v-head')};}
 function val(id){const e=document.getElementById(id);return e?e.value:'';}
 let INKc="#1C2230",PAPERc="#F7F7F5",WHITEc="#FFFFFF",TEALc="#12B3A6",TEALDc="#0B7A6E",GREYc="#5A6272",LINEc="#E2E5E9",BANDc="#EAF6F4";
+try{if(document.fonts&&document.fonts.load){document.fonts.load("700 120px 'Space Grotesk'");document.fonts.load("500 44px 'Space Grotesk'");document.fonts.load("800 56px 'Space Grotesk'");}}catch(e){}
 function rr(ctx,x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);}else{ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
 function eo(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,3);}
@@ -1499,7 +1499,7 @@ async function vRecord(){
 let advAnim=0,advPaused=false,advManualT=null,ADV_STYLE='kinetic';
 // ---- FX engine (color grade, effects, motion) ----
 let VFX=fxDefaults();let _vfxBackup=null,_fxCanvas=null,_fxNoise=null;
-function fxDefaults(){return {bright:100,contrast:100,sat:100,hue:0,blur:0,sepia:0,gray:0,vignette:0,grain:0,scan:false,glow:false,upper:false,reverse:false,inA:'none',outA:'none',fps:30};}
+function fxDefaults(){return {bright:100,contrast:103,sat:105,hue:0,blur:0,sepia:0,gray:0,vignette:16,grain:0,scan:false,glow:false,upper:false,reverse:false,inA:'fade',outA:'fade',fps:30};}
 function _fxGet(){if(!_fxCanvas){_fxCanvas=document.createElement('canvas');_fxCanvas.width=1080;_fxCanvas.height=1920;}return _fxCanvas;}
 function _fxNoiseTile(){if(_fxNoise)return _fxNoise;const n=document.createElement('canvas');n.width=n.height=160;const c=n.getContext('2d');const img=c.createImageData(160,160);for(let i=0;i<img.data.length;i+=4){const v=Math.random()*255;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255;}c.putImageData(img,0,0);_fxNoise=n;return n;}
 function fxActive(){return VFX.bright!=100||VFX.contrast!=100||VFX.sat!=100||VFX.hue||VFX.blur||VFX.sepia||VFX.gray||VFX.vignette||VFX.grain||VFX.scan||VFX.glow||VFX.upper||VFX.reverse||VFX.inA!=='none'||VFX.outA!=='none';}
