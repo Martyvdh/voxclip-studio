@@ -658,8 +658,11 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <section id="results" class="tab">
   <h2>Resultaten — meet wat werkt</h2>
   <p class="hint">Log na het posten je cijfers en zie in één oogopslag wat aanslaat. Alles hier werkt en blijft bewaard in je browser.</p>
-  <div class="callout"><b>Automatische TikTok/Instagram-cijfers?</b> Open het <b>live dashboard in de Cowork-zijbalk</b> — dat haalt je cijfers automatisch op via de koppeling. Deze pagina is om je posts bij te houden en te analyseren.</div>
-  <h3 style="margin-top:22px">Voeg een resultaat toe</h3>
+  <h3 style="margin-top:6px">📡 Live resultaten — automatisch bijgehouden</h3>
+  <p class="hint">TikTok, Instagram &amp; LinkedIn, rechtstreeks uit je gekoppelde accounts. Deze cijfers worden dagelijks automatisch ververst — je hoeft niets in te vullen.</p>
+  <div id="live-results"></div>
+  <h3 style="margin-top:26px">Handmatig loggen (optioneel)</h3>
+  <p class="hint">Wil je losse posts vergelijken of iets bijhouden dat hierboven niet staat? Log het hier.</p>
   <div class="grid4">
     <div class="field"><label>Datum</label><input id="r-date" type="date"></div>
     <div class="field"><label>Platform</label><select id="r-plat"><option>TikTok</option><option>Instagram</option><option>LinkedIn</option><option>YouTube</option><option>Blog</option></select></div>
@@ -2178,7 +2181,37 @@ function addResult(){
   views:+val('r-views')||0,likes:+val('r-likes')||0,comments:+val('r-comments')||0,downloads:+val('r-downloads')||0};
  const a=results();a.unshift(r);setResults(a);renderResults();dashStats();
 }
+/*LIVE_RESULTS_START*/
+const LIVE_RESULTS={
+ updated:"2026-08-10",
+ tiktok:{followers:0,views:4,engagement:0,likes:0,profileviews:0},
+ instagram:{followers:0,reach:0,impressions:0,profileviews:0},
+ linkedin:{followers:0,impressions:0,engagements:0}
+};
+/*LIVE_RESULTS_END*/
+function lrNum(n){n=Number(n)||0;return n>=1000?n.toLocaleString('nl-NL'):String(n);}
+function lrCard(title,color,tag,tiles){
+ let t=tiles.map(x=>`<div class="statbox"><div class="n">${lrNum(x[0])}</div><div class="l">${x[1]}</div></div>`).join('');
+ return `<div style="border:1px solid #E6E9EE;border-top:3px solid ${color};border-radius:14px;padding:14px 16px;margin:10px 0;background:#fff">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:11px;font-weight:800;color:#fff;background:${color};padding:3px 10px;border-radius:20px">${tag}</span><b style="font-size:15px">${title}</b></div>
+  <div class="stat-row">${t}</div></div>`;
+}
+function renderLiveResults(){
+ const el=document.getElementById('live-results');if(!el)return;
+ const L=LIVE_RESULTS;
+ let h='';
+ h+=lrCard('TikTok — laatste 30 dagen','#111','TikTok',[[L.tiktok.followers,'nieuwe volgers (30d)'],[L.tiktok.views,'video views'],[L.tiktok.engagement,'engagement'],[L.tiktok.likes,'likes'],[L.tiktok.profileviews,'profielweergaven']]);
+ h+=lrCard('Instagram — laatste 30 dagen','#C13584','Instagram',[[L.instagram.followers,'volgers'],[L.instagram.reach,'bereik'],[L.instagram.impressions,'impressies'],[L.instagram.profileviews,'profielweergaven']]);
+ h+=lrCard('LinkedIn-bedrijfspagina — laatste 30 dagen','#0A66C2','LinkedIn',[[L.linkedin.followers,'volgers'],[L.linkedin.impressions,'impressies'],[L.linkedin.engagements,'engagement']]);
+ const total=(L.tiktok.views||0)+(L.instagram.reach||0)+(L.instagram.impressions||0)+(L.linkedin.impressions||0);
+ let msg;
+ if(total<=5){msg='Alle drie de accounts zijn gekoppeld ✓ — er is nog nauwelijks activiteit. Zodra je begint te posten, vullen deze cijfers zich hier vanzelf.';}
+ else{msg='Cijfers komen automatisch binnen. Post consequent (1/dag) en volg hier per platform wat aanslaat.';}
+ h+=`<div class="callout" style="margin-top:6px"><b>Bijgewerkt op ${L.updated}.</b> ${msg}</div>`;
+ el.innerHTML=h;
+}
 function renderResults(){
+ renderLiveResults();
  const a=results();
  // summary: best pillar & style by engagement rate (likes+comments)/views
  const sum=document.getElementById('r-summary');
