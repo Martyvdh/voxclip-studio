@@ -996,7 +996,13 @@ function videoEditorHTML(){
        <option value="n_percent">Cijfer — percentage (telt op)</option>
        <option value="n_countup">Cijfer — telt op</option>
        <option value="n_mono">Cijfer — mono</option>
-       <option value="n_split">Cijfer — groot + label</option></select></div>
+       <option value="n_split">Cijfer — groot + label</option>
+       <option value="pro_cinema">Pro — cinematic (letterbox)</option>
+       <option value="pro_split">Pro — split two-tone</option>
+       <option value="pro_serifq">Pro — serif quote</option>
+       <option value="pro_minimal">Pro — minimal (licht)</option>
+       <option value="pro_sweep">Pro — gradient sweep</option>
+       <option value="pro_editorial">Pro — editorial (links)</option></select></div>
      <div id="vfields"></div>
      <div class="field"><label>Snelheid — duur: <span id="v-durlbl">9.0</span>s</label>
        <input id="v-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('v-durlbl').textContent=(+this.value).toFixed(1)"></div>
@@ -1032,7 +1038,7 @@ function vDefaultsFor(style){
  const LIST={P1:['Your copies','Your voice notes','All searchable'],P2:['Hit the hotkey','Pick it','Pasted'],P3:['Runs on your device','Voice never leaves','Clear it anytime'],P4:['Clipboard history','Local dictation','Search by meaning']}[pil];
  const STAT={P1:'One place',P2:'2 keys',P3:'0 uploads',P4:'€0'}[pil];
  const QAA={P1:'One searchable Timeline.',P2:'Two keystrokes.',P3:'It never leaves your device.',P4:'Everything local is free.'}[pil];
- if(style==='kinetic'||KFAM.indexOf(style)>=0||SFAM.indexOf(style)>=0){const L=hookToLines(hook);return {p1:L[0]||'You copy this.',p2:L[1]||'You say that.',p3:L[2]||'',p4:pay,tag:pay};}
+ if(style==='kinetic'||KFAM.indexOf(style)>=0||SFAM.indexOf(style)>=0||PROFAM.indexOf(style)>=0){const L=hookToLines(hook);return {p1:L[0]||'You copy this.',p2:L[1]||'You say that.',p3:L[2]||'',p4:pay,tag:pay};}
  if(style==='before')return {q:'that address',res:'Prinsengracht 263, Amsterdam',tag:hook||pay};
  if(style==='stat'||style==='gradientstat'||NFAM.indexOf(style)>=0)return {big:STAT,sub:hook||cap,tag:pay};
  if(style==='list')return {title:hook||'3 things VoxClip does',i1:LIST[0],i2:LIST[1],i3:LIST[2],tag:pay};
@@ -1048,7 +1054,7 @@ function vDefaultsFor(style){
 function vFieldsHTML(st){
  const FI=(id,lab,v)=>`<div class="field"><label>${lab}</label><input id="v-${id}" value="${(v||'').replace(/"/g,'&quot;')}"></div>`;
  const d=vDefaultsFor(st);
- if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0)return FI('p1','Regel 1',d.p1)+FI('p2','Regel 2',d.p2)+FI('p3','Regel 3',d.p3)+FI('p4','Regel 4 (accent)',d.p4)+FI('tag','Outro-tagline',d.tag);
+ if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0)return FI('p1','Regel 1',d.p1)+FI('p2','Regel 2',d.p2)+FI('p3','Regel 3',d.p3)+FI('p4','Regel 4 (accent)',d.p4)+FI('tag','Outro-tagline',d.tag);
  if(st==='before')return FI('q','Zoekopdracht',d.q)+FI('res','Resultaat',d.res)+FI('tag','Outro-tagline',d.tag);
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return FI('big','Grote tekst',d.big)+FI('sub','Ondertekst',d.sub)+FI('tag','Outro-tagline',d.tag);
  if(st==='list')return FI('title','Titel',d.title)+FI('i1','Punt 1',d.i1)+FI('i2','Punt 2',d.i2)+FI('i3','Punt 3',d.i3)+FI('tag','Outro-tagline',d.tag);
@@ -1077,16 +1083,17 @@ function voToggle(){const btn=document.getElementById('vo-btn');if(!window.speec
 // ---- Bakbare computerstem (meSpeak/eSpeak WASM) → mixt in de video-export ----
 let _msReady=null;
 function msEnsure(){if(_msReady)return _msReady;_msReady=new Promise(function(res,rej){
- const B='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/';
- function go(){try{if(!window.meSpeak){rej(new Error('meSpeak niet geladen'));return;}meSpeak.loadConfig(B+'src/mespeak_config.json');meSpeak.loadVoice(B+'voices/en/en.json',function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}}
+ const CFG='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/src/mespeak_config.json',VOI='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/voices/en/en.json';
+ function go(){try{if(!window.meSpeak){rej(new Error('meSpeak niet geladen'));return;}meSpeak.loadConfig(CFG);meSpeak.loadVoice(VOI,function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}}
  if(window.meSpeak){go();return;}
- var s=document.createElement('script');s.src=B+'src/index.js';s.onload=go;s.onerror=function(){rej(new Error('TTS laden mislukt (internet nodig)'));};document.head.appendChild(s);
+ var s=document.createElement('script');s.src='https://www.masswerk.at/mespeak/mespeak.js';s.onload=go;s.onerror=function(){rej(new Error('TTS laden mislukt (internet nodig)'));};document.head.appendChild(s);
 });return _msReady;}
 async function msSpeakBuffer(text,gender){await msEnsure();audioEnsure();
- const opts={rawdata:'ArrayBuffer',speed:165,pitch:gender==='male'?26:66,variant:gender==='male'?'m3':'f2',amplitude:100};
+ const opts={rawdata:true,speed:165,pitch:gender==='male'?28:66,amplitude:100};
  let data;try{data=meSpeak.speak(text,opts);}catch(e){throw new Error('spraak genereren mislukt');}
  if(!data)throw new Error('geen audio');
- return await AC.decodeAudioData(data.slice?data.slice(0):data);}
+ const ab=data.buffer?data.buffer.slice(data.byteOffset||0,(data.byteOffset||0)+data.byteLength):data;
+ return await AC.decodeAudioData(ab);}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
  const ch=document.getElementById('g-channel').value,per=document.getElementById('g-persona').value,pil=document.getElementById('g-pillar').value;
@@ -1143,6 +1150,7 @@ function vFrame(ctx,t,c){
  if(c.style==='comingsoon')return vFrameComingSoon(ctx,t,c);
  if(c.style==='gradientstat')return vFrameGradientStat(ctx,t,c);
  if(SFAM.indexOf(c.style)>=0)return vFrameStatement(ctx,t,c);
+ if(PROFAM.indexOf(c.style)>=0)return vFramePro(ctx,t,c);
  if(NFAM.indexOf(c.style)>=0)return vFrameNumber(ctx,t,c);
  if(KFAM.indexOf(c.style)>=0)return vFrameKineticVar(ctx,t,c);
  if(DFAM.indexOf(c.style)>=0)return vFrameDemoScene(ctx,t,c);
@@ -1331,6 +1339,32 @@ function vFrameNumber(ctx,t,c){
  ctx.font="500 46px 'Space Grotesk',Arial";ctx.fillStyle=(light?GREYc:'rgba(255,255,255,.85)');
  wrapText(ctx,c.sub||'',W-200).forEach((ln,i)=>ctx.fillText(ln,W/2,H/2+150+i*58));
  ctx.globalAlpha=1;
+}
+const PROFAM=['pro_cinema','pro_split','pro_serifq','pro_minimal','pro_sweep','pro_editorial'];
+function vFramePro(ctx,t,c){
+ const W=1080,H=1920,OUT=4,content=Math.max(2,c.dur-OUT);const st=c.style;
+ const light=(st==='pro_minimal'||st==='pro_editorial');
+ if(t>=content){vOutro(ctx,t-content,c.tag||'',!light);return;}
+ if(st==='pro_sweep'){const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#12161d');g.addColorStop(1,'#0b7a6e');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+ else if(light)lightBg(ctx);else darkBg(ctx);
+ if(st==='pro_split'){ctx.fillStyle='rgba(18,179,166,.12)';ctx.fillRect(0,0,W,H/2);}
+ if(st==='pro_cinema'){ctx.fillStyle='#000';ctx.fillRect(0,0,W,150);ctx.fillRect(0,H-150,W,150);}
+ const phr=[c.p1,c.p2,c.p3,c.p4].filter(x=>x&&x.length);if(!phr.length)return;
+ const seg=content/phr.length,idx=Math.min(Math.floor(t/seg),phr.length-1),lts=(t-idx*seg)/seg,last=idx===phr.length-1,txt=phr[idx];
+ const serif=(st==='pro_serifq');
+ let fs=txt.length<14?116:(txt.length<26?96:76);
+ const setF=function(){ctx.font=serif?"700 "+fs+"px Georgia,serif":"700 "+fs+"px 'Space Grotesk',Arial";};setF();
+ let lines=wrapText(ctx,txt,W-180);while(lines.length>3&&fs>52){fs-=8;setF();lines=wrapText(ctx,txt,W-180);}
+ const lh=fs*1.18,y0=H/2-(lines.length*lh)/2+lh/2;
+ const ap=eo(Math.min(1,lts/0.35)),out=lts>0.85?eo(1-(lts-0.85)/0.15):1;
+ const align=(st==='pro_editorial')?'left':'center',X=align==='left'?110:W/2;
+ if(serif&&idx===0){ctx.save();ctx.globalAlpha=0.22*out;ctx.fillStyle=TEALc;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="700 240px Georgia,serif";ctx.fillText('“',W/2,H/2-280);ctx.restore();}
+ ctx.textAlign=align;ctx.textBaseline='middle';ctx.globalAlpha=ap*out;ctx.fillStyle=last?TEALc:(light?INKc:'#fff');
+ setF();lines.forEach(function(ln,i){ctx.fillText(ln,X,y0+i*lh+lerp(28,0,ap));});
+ ctx.globalAlpha=1;
+ if(st==='pro_editorial'||st==='pro_minimal'){const uw=lerp(0,300,eo(Math.min(1,(lts-0.25)/0.4)))*out;ctx.fillStyle=TEALc;rr(ctx,align==='left'?X:X-uw/2,y0+(lines.length-1)*lh+fs*0.72,uw,8,4);ctx.fill();}
+ for(let k=0;k<phr.length;k++){const cx=W/2-(phr.length*34)/2+k*34+17;ctx.fillStyle=k<=idx?TEALc:(light?'#d6dbe2':'#333c49');rr(ctx,cx-11,1750,22,6,3);ctx.fill();}
+ ctx.textAlign='center';
 }
 function vFrameBefore(ctx,t,c){
  const W=1080,H=1920,OUT=4.0,content=Math.max(2,c.dur-OUT);
@@ -1652,7 +1686,7 @@ function agentLocalReply(text){const t=text.toLowerCase(),u=AGENT.user||'',has=(
  return {reply:u+', dat snap ik in de gratis modus nog niet helemaal. Probeer bijvoorbeeld: "maak een insta-video over privacy", "maak mijn weekschema", "schrijf een linkedin-post" of "wat doen mijn concurrenten?".',action:null};}
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
- if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0)return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
+ if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0)return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
  if(st==='before')return [F('q','Zoekopdracht'),F('res','Resultaat'),F('tag','Outro-tagline')];
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return [F('big','Grote tekst'),F('sub','Ondertekst'),F('tag','Outro-tagline')];
  if(st==='list')return [F('title','Titel'),F('i1','Punt 1'),F('i2','Punt 2'),F('i3','Punt 3'),F('tag','Outro-tagline')];
