@@ -410,33 +410,22 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 </header>
 <div class="shell">
 <nav id="mainnav">
-  <div class="navgroup">Start</div>
+  <div class="navgroup">Overzicht</div>
   <button data-tab="dash" class="active"><span class="ni">🏠</span>Home</button>
-  <button data-tab="board"><span class="ni">🗂️</span>Dashboard</button>
-  <button data-tab="plan2"><span class="ni">📈</span>Verkoopplan</button>
-
-  <div class="navgroup">1 · Maken</div>
-  <button data-tab="camp"><span class="ni">★</span>1 Campagne → alles</button>
-  <button data-tab="coach"><span class="ni">🗓️</span>Mijn week</button>
-  <button data-tab="gen"><span class="ni">🎬</span>Video maken</button>
-  <button data-tab="ideas"><span class="ni">💡</span>Video-ideeën</button>
+  <button data-tab="board"><span class="ni">🗂️</span>Dashboard — posts</button>
   <button data-tab="ads"><span class="ni">📣</span>Advertenties</button>
-  <button data-tab="email"><span class="ni">✉️</span>E-mail</button>
-
-  <div class="navgroup">2 · Plannen &amp; bewaren</div>
-  <button data-tab="launch"><span class="ni">🚀</span>Launch-playbook</button>
-  <button data-tab="plan"><span class="ni">📅</span>Planner</button>
-  <button data-tab="saved"><span class="ni">💾</span>Opgeslagen</button>
-  <button data-tab="lib"><span class="ni">📚</span>Bibliotheek</button>
-  <button data-tab="track"><span class="ni">🔗</span>Tracking-links</button>
-
-  <div class="navgroup">3 · Meten</div>
   <button data-tab="results"><span class="ni">📊</span>Resultaten</button>
 
-  <div class="navgroup">Kennis &amp; merk</div>
+  <div class="navgroup">Maken</div>
+  <button data-tab="coach"><span class="ni">🗓️</span>Mijn week</button>
+  <button data-tab="gen"><span class="ni">🎬</span>Video maken</button>
+  <button data-tab="saved"><span class="ni">💾</span>Opgeslagen</button>
+  <button data-tab="email"><span class="ni">✉️</span>E-mail</button>
+
+  <div class="navgroup">Strategie</div>
+  <button data-tab="plan2"><span class="ni">📈</span>Verkoopplan</button>
+  <button data-tab="launch"><span class="ni">🚀</span>Launch-playbook</button>
   <button data-tab="research"><span class="ni">🔎</span>Onderzoek</button>
-  <button data-tab="check"><span class="ni">✓</span>Merk-check</button>
-  <button data-tab="help"><span class="ni">❔</span>Uitleg</button>
 </nav>
 <div id="navscrim" onclick="toggleNav()" aria-hidden="true"></div>
 <main>
@@ -453,22 +442,22 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <div class="roadmap">
     <div class="rm-title">Zo pak je het aan — in deze volgorde:</div>
     <div class="rm-steps">
-      <button class="rm-step" onclick="go('check')"><span class="rm-n">1</span><span class="rm-t">Merk-check</span><span class="rm-d">Stem &amp; regels op orde</span></button>
-      <button class="rm-step" onclick="go('camp')"><span class="rm-n">2</span><span class="rm-t">1 Campagne</span><span class="rm-d">Je boodschap voor alle kanalen</span></button>
-      <button class="rm-step" onclick="go('gen')"><span class="rm-n">3</span><span class="rm-t">Video’s maken</span><span class="rm-d">Strakke clips per post</span></button>
-      <button class="rm-step" onclick="go('coach')"><span class="rm-n">4</span><span class="rm-t">Plan je week</span><span class="rm-d">Wat post je wanneer</span></button>
-      <button class="rm-step" onclick="go('launch')"><span class="rm-n">5</span><span class="rm-t">Launchen</span><span class="rm-d">Playbook: eerste gebruikers</span></button>
-      <button class="rm-step" onclick="go('results')"><span class="rm-n">6</span><span class="rm-t">Meten &amp; leren</span><span class="rm-d">Zie wat werkt, herhaal</span></button>
+      <button class="rm-step" onclick="go('plan2')"><span class="rm-n">1</span><span class="rm-t">Verkoopplan</span><span class="rm-d">Je strategie van A tot Z</span></button>
+      <button class="rm-step" onclick="go('gen')"><span class="rm-n">2</span><span class="rm-t">Video’s maken</span><span class="rm-d">Strakke clips per post</span></button>
+      <button class="rm-step" onclick="go('coach')"><span class="rm-n">3</span><span class="rm-t">Plan je week</span><span class="rm-d">Wat post je wanneer</span></button>
+      <button class="rm-step" onclick="go('launch')"><span class="rm-n">4</span><span class="rm-t">Launchen</span><span class="rm-d">Playbook: eerste gebruikers</span></button>
+      <button class="rm-step" onclick="go('board')"><span class="rm-n">5</span><span class="rm-t">Dashboard</span><span class="rm-d">Je posts + cijfers per platform</span></button>
+      <button class="rm-step" onclick="go('research')"><span class="rm-n">6</span><span class="rm-t">Onderzoek</span><span class="rm-d">Doelgroep &amp; wat beter kan</span></button>
     </div>
   </div>
   <div class="stat-row" id="dash-stats"></div>
   <div class="dash">
-    <button class="tile" onclick="go('camp')"><div class="ic">★</div><div class="tt">1 Campagne → alles</div><div class="td">Eén onderwerp, klaar voor TikTok, Instagram, LinkedIn, YouTube én blog.</div></button>
-    <button class="tile" onclick="go('gen')"><div class="ic">🎬</div><div class="tt">Video maken</div><div class="td">9 stijlen, live preview, jouw hook + logo, download als video.</div></button>
+    <button class="tile" onclick="go('board')"><div class="ic">🗂️</div><div class="tt">Dashboard</div><div class="td">Al je posts per platform met echte cijfers — automatisch bijgewerkt.</div></button>
+    <button class="tile" onclick="go('gen')"><div class="ic">🎬</div><div class="tt">Video maken</div><div class="td">60+ stijlen incl. demo &amp; verkoop, live preview, jouw hook + logo.</div></button>
     <button class="tile" onclick="go('coach')"><div class="ic">🗓️</div><div class="tt">Mijn week</div><div class="td">Je hele week aan content in één klik, klaar om te posten.</div></button>
-    <button class="tile" onclick="go('ads')"><div class="ic">📣</div><div class="tt">Advertenties</div><div class="td">Google- en Meta-advertenties, klaar om in te plakken.</div></button>
-    <button class="tile" onclick="go('email')"><div class="ic">✉️</div><div class="tt">E-mail</div><div class="td">Launch-, onboarding- en update-mails in je merkstem.</div></button>
-    <button class="tile" onclick="go('results')"><div class="ic">📊</div><div class="tt">Resultaten</div><div class="td">Log je cijfers en zie welke pijler en stijl het best werken.</div></button>
+    <button class="tile" onclick="go('ads')"><div class="ic">📣</div><div class="tt">Advertenties</div><div class="td">Je betaalde posts per platform + kant-en-klare ad-teksten.</div></button>
+    <button class="tile" onclick="go('research')"><div class="ic">🔎</div><div class="tt">Onderzoek</div><div class="td">Live doelgroep-data en advies op je posts.</div></button>
+    <button class="tile" onclick="go('results')"><div class="ic">📊</div><div class="tt">Resultaten</div><div class="td">Totalen per platform, live uit je accounts.</div></button>
   </div>
   <div class="callout"><b>Rolverdeling:</b> ik (de studio) bedenk, schrijf, animeer en plan alles. Jij neemt optioneel een échte scherm-opname op, en plaatst zelf op je accounts. Zo blijf jij de baas over je merk en je centen.</div>
 </section>
@@ -479,44 +468,19 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <div id="plan2-out"></div>
 </section>
 
-<section id="ideas" class="tab">
-  <h2>💡 Video-ideeën — 32 concepten, veel demo's</h2>
-  <p class="hint">Kant-en-klare video-ideeën in je merkstem. Per idee: de <b>haak</b>, <b>wat je toont</b> (voor een scherm-opname/demo), en een <b>caption</b> — allemaal Engels, klaar om te kopiëren. Filter op demo's of zoek.</p>
-  <div class="filters" style="margin-bottom:12px">
-    <input id="idea-search" placeholder="🔎 Zoek in ideeën…" oninput="renderIdeas()" style="width:auto;min-width:180px">
-    <select id="idea-filter" onchange="renderIdeas()" style="width:auto"><option value="">Alle types</option><option value="demo">Alleen demo's</option><option value="hook">Hook / POV</option><option value="plus">Plus-features</option></select>
-    <span id="idea-count" class="count"></span>
-  </div>
-  <div id="ideas-out"></div>
-</section>
-
 <!-- DASHBOARD BORD -->
 <section id="board" class="tab">
-  <h2>🗂️ Dashboard — jouw video's per platform</h2>
-  <p class="hint">Sleep een opgeslagen video naar TikTok, Instagram of LinkedIn. Eén video mag in meerdere kolommen. Vul onder elke video de resultaten in — de best presterende krijgt een ★ zodat je in één oogopslag ziet wat werkt.</p>
-  <div class="bd-tray">
-    <div class="bd-tray-h" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span>📥 Opgeslagen video’s — sleep naar een kolom, ▶ bekijk, 🗑 verwijder</span>
-      <input id="bd-search" placeholder="🔎 Zoek op tekst…" oninput="renderBoard()" style="width:auto;flex:1;min-width:150px;max-width:280px;padding:7px 10px">
-      <select id="bd-filter" onchange="renderBoard()" style="width:auto"><option value="">Alle kanalen</option><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="linkedin">LinkedIn</option><option value="blog">Blog</option></select>
-      <span id="bd-count" class="small" style="color:var(--grey)"></span>
-    </div>
-    <div id="bd-tray" class="bd-tray-items"></div>
+  <h2>🗂️ Dashboard — je posts per platform</h2>
+  <p class="hint">Elke gepubliceerde post op TikTok, Instagram en LinkedIn, met de echte cijfers uit je gekoppelde accounts. Wordt <b>dagelijks automatisch</b> bijgewerkt. Zoek en sorteer om snel te zien wat aanslaat.</p>
+  <div class="bd-toolbar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 6px">
+    <input id="bd-search" placeholder="🔎 Zoek in posts…" oninput="renderBoard()" style="width:auto;flex:1;min-width:160px;max-width:320px;padding:9px 12px">
+    <select id="bd-filter" onchange="renderBoard()" style="width:auto"><option value="">Alle platforms</option><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="linkedin">LinkedIn</option></select>
+    <select id="bd-sort" onchange="renderBoard()" style="width:auto"><option value="date">Nieuwste eerst</option><option value="views">Meeste views</option><option value="eng">Meeste engagement</option><option value="er">Hoogste engagement-%</option></select>
+    <span id="bd-count" class="small" style="color:var(--grey)"></span>
   </div>
-  <div class="bd-cols">
-    <div class="bd-col"><div class="bd-col-h"><span class="chan tiktok">TikTok</span></div><div class="bd-drop" id="bd-tiktok"></div></div>
-    <div class="bd-col"><div class="bd-col-h"><span class="chan instagram">Instagram</span></div><div class="bd-drop" id="bd-instagram"></div></div>
-    <div class="bd-col"><div class="bd-col-h"><span class="chan linkedin">LinkedIn</span></div><div class="bd-drop" id="bd-linkedin"></div></div>
-  </div>
+  <div id="bd-summary"></div>
+  <div id="bd-out"></div>
 </section>
-
-<!-- BORD VIDEO-PREVIEW -->
-<div id="bdprev" class="advmodal" onclick="if(event.target===this)bdPrevClose()">
-  <div class="advbox" style="width:min(440px,94vw);height:auto">
-    <div class="advhead"><div class="advtitle">▶ Video-preview</div><button class="advx" onclick="bdPrevClose()" aria-label="Sluiten">✕</button></div>
-    <div style="background:#0c1015;display:flex;justify-content:center;padding:16px"><canvas id="bdprevcv" width="1080" height="1920" style="height:64vh;width:auto;border-radius:12px;display:block"></canvas></div>
-  </div>
-</div>
 
 <!-- COACH -->
 <section id="coach" class="tab">
@@ -530,24 +494,6 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   </div>
   <div class="btnrow"><button class="btn big" onclick="buildWeek()">Genereer mijn hele week</button></div>
   <div id="w-out"></div>
-</section>
-
-<!-- ONE CAMPAIGN -->
-<section id="camp" class="tab">
-  <h2>Eén campagne → klaar voor alle platforms</h2>
-  <p class="hint">Kies je onderwerp één keer. Je krijgt meteen alles: het juiste videoformat per platform, de hashtags die op dát platform werken, en de tekst afgestemd per kanaal. Alles op één plek, met export.</p>
-  <div class="grid">
-    <div class="field"><label>Pijler</label>
-      <select id="cm-pillar" onchange="cmFill()">
-        <option value="P1">P1 — One place</option><option value="P2">P2 — Instant recall</option>
-        <option value="P3">P3 — Your stuff stays yours</option><option value="P4">P4 — Free where local</option>
-      </select></div>
-    <div class="field"><label>Persona</label>
-      <select id="cm-persona"><option value="mees">Mees the maker (reach)</option><option value="sanne">Sanne the solo pro (revenue)</option></select></div>
-    <div class="field"><label>Feature / topic</label><select id="cm-feature"></select></div>
-  </div>
-  <div class="btnrow"><button class="btn big" onclick="buildCampaign()">Genereer campagne</button><button class="btn ghost" onclick="exportCampaign()">Exporteer alles</button></div>
-  <div id="cm-out"></div>
 </section>
 
 <!-- GENERATOR + VIDEO -->
@@ -582,64 +528,28 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <div id="saved-out"></div>
 </section>
 
-<!-- LIBRARY -->
-<section id="lib" class="tab">
-  <h2>Bibliotheek <span class="count" id="lib-count"></span></h2>
-  <p class="hint">Alle content-ideeën (Engels), filterbaar.</p>
-  <div class="filters">
-    <select id="f-channel" onchange="renderLib()"><option value="">All channels</option><option value="short">TikTok/IG</option><option value="linkedin">LinkedIn</option><option value="blog">Blog</option></select>
-    <select id="f-pillar" onchange="renderLib()"><option value="">All pillars</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
-    <input id="f-search" placeholder="Search…" oninput="renderLib()" style="width:auto;min-width:200px">
-  </div>
-  <div id="lib-out"></div>
-</section>
-
-<!-- PLANNER -->
-<section id="plan" class="tab">
-  <h2>Planner</h2>
-  <p class="hint">Postschema over meerdere weken. Mixt kanalen en pijlers automatisch. Exporteer naar CSV.</p>
-  <div class="grid4">
-    <div class="field"><label>Weken</label><input id="p-weeks" type="number" value="4" min="1" max="52"></div>
-    <div class="field"><label>TikTok/wk</label><input id="p-tt" type="number" value="4" min="0"></div>
-    <div class="field"><label>Instagram/wk</label><input id="p-ig" type="number" value="3" min="0"></div>
-    <div class="field"><label>LinkedIn/wk</label><input id="p-li" type="number" value="3" min="0"></div>
-  </div>
-  <div class="grid"><div class="field"><label>Blog/wk</label><input id="p-bl" type="number" value="1" min="0"></div>
-  <div class="field"><label>Startdatum</label><input id="p-date" type="date"></div></div>
-  <div class="btnrow"><button class="btn" onclick="buildPlan()">Bouw schema</button><button class="btn ghost" onclick="exportPlan()">Exporteer CSV</button></div>
-  <div id="p-out"></div>
-</section>
-
-<!-- TRACKING -->
-<section id="track" class="tab">
-  <h2>Tracking-links</h2>
-  <p class="hint">Getagde links per post, zodat je in analytics ziet welke campagne klikken én downloads oplevert.</p>
-  <div class="grid">
-    <div class="field"><label>Basis-URL</label><input id="t-base" value="https://voxclip.it"></div>
-    <div class="field"><label>Campagnenaam</label><input id="t-camp" value="week-1"></div>
-  </div>
-  <div class="grid4">
-    <div class="field"><label>TikTok-links</label><input id="t-tt" type="number" value="4" min="0"></div>
-    <div class="field"><label>Instagram-links</label><input id="t-ig" type="number" value="3" min="0"></div>
-    <div class="field"><label>LinkedIn-links</label><input id="t-li" type="number" value="3" min="0"></div>
-    <div class="field"><label>Blog-links</label><input id="t-bl" type="number" value="1" min="0"></div>
-  </div>
-  <div class="btnrow"><button class="btn" onclick="buildLinks()">Genereer tracking-links</button><button class="btn ghost" onclick="exportLinks()">Exporteer CSV</button></div>
-  <div id="t-out"></div>
-  <div class="callout warm" style="margin-top:20px"><b>Download-teller (eenmalig op je site):</b> voeg aan je downloadknop een klik-event 'download' toe in je analytics (Simple Analytics, Plausible of Fathom). Zeg me welke tool, dan geef ik de exacte code — dan verschijnt 'downloads per campagne' in je maandreview.</div>
-</section>
-
 <!-- ADS -->
 <section id="ads" class="tab">
-  <h2>Advertenties</h2>
-  <p class="hint">Kant-en-klare advertentieteksten voor Google Search en Meta (Facebook/Instagram), afgestemd op je pijler en persona.</p>
-  <div class="grid">
-    <div class="field"><label>Pijler</label><select id="ad-pillar" onchange="buildAds()"><option value="P1">P1 — One place</option><option value="P2">P2 — Instant recall</option><option value="P3">P3 — Privacy</option><option value="P4">P4 — Free where local</option></select></div>
-    <div class="field"><label>Persona</label><select id="ad-persona" onchange="buildAds()"><option value="mees">Mees (reach)</option><option value="sanne">Sanne (revenue)</option></select></div>
+  <h2>📣 Advertenties — betaalde posts per platform</h2>
+  <p class="hint">Je betaalde/gepromote posts op TikTok, Instagram (Meta) en LinkedIn, met de echte cijfers uit je advertentie-accounts: uitgaven, vertoningen, kliks en resultaat per euro. Wordt <b>dagelijks automatisch</b> bijgewerkt zodra je ad-accounts gekoppeld zijn.</p>
+  <div class="bd-toolbar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 6px">
+    <input id="ad-search" placeholder="🔎 Zoek in ads…" oninput="renderAds()" style="width:auto;flex:1;min-width:160px;max-width:320px;padding:9px 12px">
+    <select id="ad-filter" onchange="renderAds()" style="width:auto"><option value="">Alle platforms</option><option value="tiktok">TikTok</option><option value="meta">Meta (FB/IG)</option><option value="linkedin">LinkedIn</option></select>
+    <select id="ad-sort" onchange="renderAds()" style="width:auto"><option value="spend">Meeste uitgaven</option><option value="clicks">Meeste kliks</option><option value="impr">Meeste vertoningen</option><option value="cpc">Laagste kosten/klik</option></select>
+    <span id="ad-count" class="small" style="color:var(--grey)"></span>
   </div>
-  <div class="btnrow"><button class="btn" onclick="buildAds()">Genereer advertenties</button></div>
-  <div class="callout warm"><b>Timing:</b> draai betaalde ads pas als je funnel bewijst dat gratis-gebruikers activeren. Begin met Google Search (warme intentie) + kleine Meta-tests op je beste content.</div>
+  <div id="ad-summary"></div>
   <div id="ad-out"></div>
+  <div class="callout warm" style="margin-top:16px"><b>Timing-advies:</b> draai betaalde ads pas als je funnel bewijst dat gratis-gebruikers activeren. Begin klein met je best presterende organische post (zie Dashboard) en schaal wat werkt.</div>
+  <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:700">✍️ Advertentieteksten maken</summary>
+    <p class="hint" style="margin-top:8px">Kant-en-klare teksten voor Google Search en Meta, afgestemd op je pijler en persona.</p>
+    <div class="grid">
+      <div class="field"><label>Pijler</label><select id="ad-pillar" onchange="buildAds()"><option value="P1">P1 — One place</option><option value="P2">P2 — Instant recall</option><option value="P3">P3 — Privacy</option><option value="P4">P4 — Free where local</option></select></div>
+      <div class="field"><label>Persona</label><select id="ad-persona" onchange="buildAds()"><option value="mees">Mees (reach)</option><option value="sanne">Sanne (revenue)</option></select></div>
+    </div>
+    <div class="btnrow"><button class="btn" onclick="buildAds()">Genereer advertentieteksten</button></div>
+    <div id="ad-copy-out"></div>
+  </details>
 </section>
 
 <!-- EMAIL -->
@@ -684,7 +594,17 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <!-- RESEARCH -->
 <section id="research" class="tab">
   <h2>🔎 Onderzoek — concurrentie &amp; doelgroep</h2>
-  <p class="hint">Je marktkennis op één plek: wie de concurrenten zijn, wat ze goed/fout doen, waar jouw kans ligt, en wie je doelgroep is. Met directe volg-links om ze in de gaten te houden.</p>
+  <p class="hint">Je marktkennis op één plek — plus <b>live doelgroep-data</b> uit je eigen accounts en concrete verbeteradviezen op je posts.</p>
+
+  <h3 style="margin-top:6px">👥 Wie kijkt er? — je doelgroep (live)</h3>
+  <p class="hint">Automatisch uit je gekoppelde accounts: land, functie, senioriteit en sector van je LinkedIn-volgers, en leeftijd/geslacht waar Instagram/TikTok dat geven. Zo zie je of je de <b>juiste</b> mensen bereikt (solo-pro's/zzp die veel kopiëren én dicteren).</p>
+  <div id="rs-audience"></div>
+
+  <h3 style="margin-top:22px">🔬 Post-analyse &amp; advies</h3>
+  <p class="hint">De studio kijkt naar je best en minst presterende posts en zegt wat je kunt verbeteren.</p>
+  <div id="rs-postanalysis"></div>
+
+  <h3 style="margin-top:24px">🎯 Je doelgroep-profielen</h3>
   <div id="rs-personas"></div>
   <h3 style="margin-top:20px">Concurrenten (klik door om te volgen)</h3>
   <div id="rs-compets"></div>
@@ -708,30 +628,6 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
   <div id="launch-out"></div>
 </section>
 
-<section id="check" class="tab">
-  <h2>Merk-check</h2>
-  <p class="hint">Plak een tekst; het markeert hype-woorden en merkfouten.</p>
-  <textarea id="c-text" placeholder="Paste your caption, post or blog text…"></textarea>
-  <div class="btnrow"><button class="btn" onclick="voiceCheck()">Controleer</button></div>
-  <div id="c-out"></div>
-</section>
-
-<!-- HELP -->
-<section id="help" class="tab">
-  <h2>Zo werkt je marketingteam — in 5 stappen</h2>
-  <div class="step"><div><span class="num">1</span><h3>Kies je aanpak</h3></div>
-   <p class="small" style="margin-top:8px"><b>Snelste weg:</b> tab <b>★ 1 Campagne → alles</b>. Eén onderwerp kiezen = alles klaar voor TikTok, Instagram, LinkedIn, YouTube én blog, elk met het juiste format en de juiste hashtags. Of tab <b>▶ Mijn week</b> voor een hele week in één klik.</p></div>
-  <div class="step"><div><span class="num">2</span><h3>Maak de video</h3></div>
-   <p class="small" style="margin-top:8px">In <b>Generator + video</b>: kies stijl (kinetische tekst / before-after / clean demo), pas de tekst en snelheid aan, klik <b>🎬 Genereer video</b> → de download start. De video neemt automatisch de hook van je post over en eindigt met je logo + outro.</p></div>
-  <div class="step"><div><span class="num">3</span><h3>Pak de teksten</h3></div>
-   <p class="small" style="margin-top:8px">Elke post heeft kopieerknoppen voor hook, caption, hashtags, CTA en een voice-over-script. Kopiëren en plaatsen — meer niet.</p></div>
-  <div class="step"><div><span class="num">4</span><h3>Plan & bewaar</h3></div>
-   <p class="small" style="margin-top:8px"><b>Planner</b> bouwt je schema (CSV-export). <b>Opgeslagen</b> bewaart posts incl. video-instellingen. <b>Tracking-links</b> maakt getagde links zodat je ziet welke campagne downloads oplevert.</p></div>
-  <div class="step"><div><span class="num">5</span><h3>Controleer & post</h3></div>
-   <p class="small" style="margin-top:8px">Twijfel je over een zin? <b>Merk-check</b> markeert hype-woorden. Daarna plaats je zelf op je accounts.</p></div>
-  <div class="callout warm"><b>Wat bij jou blijft:</b> op ‘plaatsen’ klikken in je eigen accounts (en optioneel een échte scherm-opname toevoegen). Al het bedenken, schrijven en animeren doet de studio.</div>
-  <div class="callout"><b>Video downloaden lukt niet?</b> Open dit bestand in <b>Google Chrome</b> of <b>Microsoft Edge</b> — daar werkt de video-export het best. De studio toont een melding als je browser het niet ondersteunt. Merkregels zitten ingebouwd: kalm, nooit hype · één claim per post · ‘your stuff’ niet ‘data’ · VoxClip = één woord · geen uitroeptekens · privacy nooit overclaimen.</div>
-</section>
 </main>
 </div><!-- /shell -->
 
@@ -874,9 +770,8 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  if(tb==='results')renderResults();
  if(tb==='board')renderBoard();
  if(tb==='plan2')renderPlan2();
- if(tb==='ideas')renderIdeas();
  if(tb==='dash')dashStats();
- if(tb==='ads'&&!document.getElementById('ad-out').innerHTML)buildAds();
+ if(tb==='ads')renderAds();
  if(tb==='email'&&!document.getElementById('em-out').innerHTML)buildEmail();
  if(tb==='research')renderResearch();
  if(tb==='launch')renderLaunch();
@@ -947,65 +842,85 @@ function videoEditorHTML(){
    </div>
    <div>
      <div class="field"><label>Videostijl</label><select id="v-style" onchange="vStyleChange()">
-       <option value="kinetic">Kinetische tekst (donker)</option>
-       <option value="wordpop">Woord-pop (bold)</option>
-       <option value="typeline">Typemachine per regel</option>
-       <option value="wipe">Wipe-onthulling</option>
-       <option value="spotlight">Spotlight</option>
-       <option value="boldbg">Tekstblokken (licht)</option>
-       <option value="stack">Regels stapelen</option>
-       <option value="zoomline">Inzoom-tekst</option>
-       <option value="glowline">Neon-gloed tekst</option>
-       <option value="gradientstat">Grote stat op gradient</option>
-       <option value="stat">Grote stat / cijfer</option>
-       <option value="list">Lijst — 3 dingen</option>
-       <option value="quote">Quote-kaart (donker)</option>
-       <option value="qa">Vraag → antwoord</option>
-       <option value="typed">Typing / snippet</option>
-       <option value="compare">Vergelijking (3 kolommen)</option>
-       <option value="announce">Aankondiging / update</option>
-       <option value="comingsoon">Coming soon (teaser)</option>
-       <option value="before">Before / after (split)</option>
-       <option value="demo">Clean demo (UI)</option>
-       <option value="d_timeline">Demo — Timeline vult zich</option>
-       <option value="d_copy">Demo — Copy (toast)</option>
-       <option value="d_voice">Demo — Dicteren (stem)</option>
-       <option value="d_search">Demo — Zoeken</option>
-       <option value="d_hotkey">Demo — Hotkey + Quick-picker</option>
-       <option value="d_paste">Demo — Plakken</option>
-       <option value="d_snippet">Demo — Snippet uitklappen</option>
-       <option value="d_privacy">Demo — Lokaal / privacy</option>
-       <option value="d_clear">Demo — Historie wissen</option>
-       <option value="d_cross">Demo — Mac ↔ Windows (Plus)</option>
-       <option value="d_stash">Demo — Talk to your stash (Plus)</option>
-       <option value="d_multi">Demo — Copy many, pick one</option>
-       <option value="d_file">Demo — Tekst/beeld/bestanden</option>
-       <option value="d_exclude">Demo — App uitsluiten</option>
-       <option value="d_plain">Demo — Plain-text plakken</option>
-       <option value="d_settings">Demo — Hotkey instellen</option>
-       <option value="d_templates">Demo — Templates + variabelen</option>
-       <option value="st_dark">Statement — donker</option>
-       <option value="st_teal">Statement — teal gradient</option>
-       <option value="st_paper">Statement — licht</option>
-       <option value="st_outline">Statement — outline</option>
-       <option value="st_left">Statement — links (editorial)</option>
-       <option value="st_serif">Statement — serif</option>
-       <option value="st_mono">Statement — mono (code)</option>
-       <option value="st_underline">Statement — onderstreept</option>
-       <option value="n_dark">Cijfer — donker</option>
-       <option value="n_teal">Cijfer — teal gradient</option>
-       <option value="n_paper">Cijfer — licht</option>
-       <option value="n_ring">Cijfer — ring</option>
-       <option value="n_percent">Cijfer — percentage (telt op)</option>
-       <option value="n_countup">Cijfer — telt op</option>
-       <option value="n_mono">Cijfer — mono</option>
-       <option value="n_split">Cijfer — groot + label</option>
-       <option value="pro_cinema">Pro — cinematic (letterbox)</option>
-       <option value="pro_split">Pro — split two-tone</option>
-       <option value="pro_serifq">Pro — serif quote</option>
-       <option value="pro_minimal">Pro — minimal (licht)</option>
-       <option value="pro_sweep">Pro — gradient sweep</option>
-       <option value="pro_editorial">Pro — editorial (links)</option></select></div>
+       <optgroup label="⭐ Verkoop — laat mensen het willen">
+         <option value="sl_free">Verkoop — 'Free' onthulling</option>
+         <option value="sl_stack">Verkoop — waarde op een rij (✓)</option>
+         <option value="sl_switch">Verkoop — twee apps → één</option>
+         <option value="sl_cta">Verkoop — download-CTA (kaart)</option>
+         <option value="sl_trust">Verkoop — privacy / vertrouwen</option>
+         <option value="sl_price">Verkoop — prijs (€0 om te starten)</option>
+         <option value="before">Verkoop — before / after (split)</option>
+         <option value="comingsoon">Verkoop — coming soon (teaser)</option>
+       </optgroup>
+       <optgroup label="🖥️ Demo — toon de app">
+         <option value="demo">Clean demo (UI)</option>
+         <option value="d_hotkey">Demo — Hotkey + Quick-picker</option>
+         <option value="d_timeline">Demo — Timeline vult zich</option>
+         <option value="d_copy">Demo — Copy (toast)</option>
+         <option value="d_voice">Demo — Dicteren (stem)</option>
+         <option value="d_search">Demo — Zoeken</option>
+         <option value="d_paste">Demo — Plakken</option>
+         <option value="d_snippet">Demo — Snippet uitklappen</option>
+         <option value="d_privacy">Demo — Lokaal / privacy</option>
+         <option value="d_clear">Demo — Historie wissen</option>
+         <option value="d_cross">Demo — Mac ↔ Windows (Plus)</option>
+         <option value="d_stash">Demo — Talk to your stash (Plus)</option>
+         <option value="d_multi">Demo — Copy many, pick one</option>
+         <option value="d_file">Demo — Tekst/beeld/bestanden</option>
+         <option value="d_exclude">Demo — App uitsluiten</option>
+         <option value="d_plain">Demo — Plain-text plakken</option>
+         <option value="d_settings">Demo — Hotkey instellen</option>
+         <option value="d_templates">Demo — Templates + variabelen</option>
+       </optgroup>
+       <optgroup label="✍️ Kinetische tekst">
+         <option value="kinetic">Kinetische tekst (donker)</option>
+         <option value="wordpop">Woord-pop (bold)</option>
+         <option value="typeline">Typemachine per regel</option>
+         <option value="wipe">Wipe-onthulling</option>
+         <option value="spotlight">Spotlight</option>
+         <option value="boldbg">Tekstblokken (licht)</option>
+         <option value="stack">Regels stapelen</option>
+         <option value="zoomline">Inzoom-tekst</option>
+         <option value="glowline">Neon-gloed tekst</option>
+       </optgroup>
+       <optgroup label="💬 Statement">
+         <option value="st_dark">Statement — donker</option>
+         <option value="st_teal">Statement — teal gradient</option>
+         <option value="st_paper">Statement — licht</option>
+         <option value="st_outline">Statement — outline</option>
+         <option value="st_left">Statement — links (editorial)</option>
+         <option value="st_serif">Statement — serif</option>
+         <option value="st_mono">Statement — mono (code)</option>
+         <option value="st_underline">Statement — onderstreept</option>
+         <option value="quote">Quote-kaart (donker)</option>
+         <option value="qa">Vraag → antwoord</option>
+       </optgroup>
+       <optgroup label="🔢 Cijfer / stat">
+         <option value="gradientstat">Grote stat op gradient</option>
+         <option value="stat">Grote stat / cijfer</option>
+         <option value="n_dark">Cijfer — donker</option>
+         <option value="n_teal">Cijfer — teal gradient</option>
+         <option value="n_paper">Cijfer — licht</option>
+         <option value="n_ring">Cijfer — ring</option>
+         <option value="n_percent">Cijfer — percentage (telt op)</option>
+         <option value="n_countup">Cijfer — telt op</option>
+         <option value="n_mono">Cijfer — mono</option>
+         <option value="n_split">Cijfer — groot + label</option>
+       </optgroup>
+       <optgroup label="🎬 Filmisch (pro)">
+         <option value="pro_cinema">Pro — cinematic (letterbox)</option>
+         <option value="pro_split">Pro — split two-tone</option>
+         <option value="pro_serifq">Pro — serif quote</option>
+         <option value="pro_minimal">Pro — minimal (licht)</option>
+         <option value="pro_sweep">Pro — gradient sweep</option>
+         <option value="pro_editorial">Pro — editorial (links)</option>
+       </optgroup>
+       <optgroup label="➕ Extra">
+         <option value="list">Lijst — 3 dingen</option>
+         <option value="typed">Typing / snippet</option>
+         <option value="compare">Vergelijking (3 kolommen)</option>
+         <option value="announce">Aankondiging / update</option>
+       </optgroup></select></div>
      <div id="vfields"></div>
      <div class="field"><label>Snelheid — duur: <span id="v-durlbl">9.0</span>s</label>
        <input id="v-dur" type="range" min="6" max="16" step="0.5" value="9" oninput="document.getElementById('v-durlbl').textContent=(+this.value).toFixed(1)"></div>
@@ -1040,6 +955,13 @@ function vDefaultsFor(style){
  const LIST={P1:['Your copies','Your voice notes','All searchable'],P2:['Hit the hotkey','Pick it','Pasted'],P3:['Runs on your device','Voice never leaves','Clear it anytime'],P4:['Clipboard history','Local dictation','Search by meaning']}[pil];
  const STAT={P1:'One place',P2:'2 keys',P3:'0 uploads',P4:'€0'}[pil];
  const QAA={P1:'One searchable Timeline.',P2:'Two keystrokes.',P3:'It never leaves your device.',P4:'Everything local is free.'}[pil];
+ if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(style)>=0){
+   if(style==='sl_price')return {p1:'to start.',p2:'VoxClip Plus is optional — €6.99/mo for cloud features.',i1:'€0',i2:'',i3:'',tag:"Free where it's local."};
+   if(style==='sl_trust')return {p1:'Nothing leaves your device.',p2:'Local-first. Your voice stays on your machine.',i1:'',i2:'',i3:'',tag:'Local. Private. Yours.'};
+   if(style==='sl_cta')return {p1:hook||'Your clipboard and your voice, in one place.',p2:'free',i1:'',i2:'',i3:'',tag:'One keystroke away.'};
+   if(style==='sl_switch')return {p1:'',p2:'One place. One search.',i1:'',i2:'',i3:'',tag:pay};
+   return {p1:hook||'Everything you copy or say',p2:'in one place — free.',i1:'Clipboard history',i2:'Voice dictation',i3:'One searchable Timeline',tag:pay};
+ }
  if(style==='kinetic'||KFAM.indexOf(style)>=0||SFAM.indexOf(style)>=0||PROFAM.indexOf(style)>=0){const L=hookToLines(hook);return {p1:L[0]||'You copy this.',p2:L[1]||'You say that.',p3:L[2]||'',p4:pay,tag:pay};}
  if(style==='before')return {q:'that address',res:'Prinsengracht 263, Amsterdam',tag:hook||pay};
  if(style==='stat'||style==='gradientstat'||NFAM.indexOf(style)>=0)return {big:STAT,sub:hook||cap,tag:pay};
@@ -1056,6 +978,7 @@ function vDefaultsFor(style){
 function vFieldsHTML(st){
  const FI=(id,lab,v)=>`<div class="field"><label>${lab}</label><input id="v-${id}" value="${(v||'').replace(/"/g,'&quot;')}"></div>`;
  const d=vDefaultsFor(st);
+ if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(st)>=0)return FI('p1','Grote regel',d.p1)+FI('p2','Ondertekst',d.p2)+FI('i1','Punt 1 / groot getal',d.i1)+FI('i2','Punt 2',d.i2)+FI('i3','Punt 3',d.i3)+FI('tag','Outro-tagline',d.tag);
  if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0)return FI('p1','Regel 1',d.p1)+FI('p2','Regel 2',d.p2)+FI('p3','Regel 3',d.p3)+FI('p4','Regel 4 (accent)',d.p4)+FI('tag','Outro-tagline',d.tag);
  if(st==='before')return FI('q','Zoekopdracht',d.q)+FI('res','Resultaat',d.res)+FI('tag','Outro-tagline',d.tag);
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return FI('big','Grote tekst',d.big)+FI('sub','Ondertekst',d.sub)+FI('tag','Outro-tagline',d.tag);
@@ -1157,6 +1080,7 @@ function vFrame(ctx,t,c){
  if(NFAM.indexOf(c.style)>=0)return vFrameNumber(ctx,t,c);
  if(KFAM.indexOf(c.style)>=0)return vFrameKineticVar(ctx,t,c);
  if(DFAM.indexOf(c.style)>=0)return vFrameDemoScene(ctx,t,c);
+ if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(c.style)>=0)return vFrameSales(ctx,t,c);
  return vFrameDemo(ctx,t,c);
 }
 function vFrameComingSoon(ctx,t,c){const W=1080,H=1920,OUT=4,content=Math.max(2,c.dur-OUT);
@@ -1367,6 +1291,64 @@ function vFramePro(ctx,t,c){
  ctx.globalAlpha=1;
  if(st==='pro_editorial'||st==='pro_minimal'){const uw=lerp(0,300,eo(Math.min(1,(lts-0.25)/0.4)))*out;ctx.fillStyle=TEALc;rr(ctx,align==='left'?X:X-uw/2,y0+(lines.length-1)*lh+fs*0.72,uw,8,4);ctx.fill();}
  for(let k=0;k<phr.length;k++){const cx=W/2-(phr.length*34)/2+k*34+17;ctx.fillStyle=k<=idx?TEALc:(light?'#d6dbe2':'#333c49');rr(ctx,cx-11,1750,22,6,3);ctx.fill();}
+ ctx.textAlign='center';
+}
+// ===== SALES / VERKOOP FAMILY =====
+const SLFAM=['sl_free','sl_stack','sl_switch','sl_cta','sl_trust','sl_price'];
+function slCheck(ctx,x,y,r,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=Math.max(4,r*0.28);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(x-r*0.55,y+r*0.05);ctx.lineTo(x-r*0.12,y+r*0.5);ctx.lineTo(x+r*0.6,y-r*0.5);ctx.stroke();ctx.restore();}
+function slTealBg(ctx){const W=1080,H=1920;const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0f8f84');g.addColorStop(1,'#0b6f65');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+function vFrameSales(ctx,t,c){
+ const W=1080,H=1920,OUT=4,content=Math.max(2,c.dur-OUT);const st=c.style;
+ const tag=c.tag||"Free where it's local.";
+ const light=(st==='sl_stack'||st==='sl_price');
+ if(t>=content){vOutro(ctx,t-content,tag,!light);return;}
+ if(st==='sl_cta')slTealBg(ctx);else if(light)lightBg(ctx);else darkBg(ctx);
+ const ink=light?INKc:'#fff';
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ const P1=(c.p1||'Everything you copy or say'),P2=(c.p2||'in one place — free.');
+ if(st==='sl_free'){
+   const ap=eo(Math.min(1,t/0.5));
+   slCheck(ctx,W/2,H/2-360,90,TEALc);
+   ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="800 140px 'Space Grotesk',Arial";
+   let lines=wrapText(ctx,P1,W-160);const lh=150;let y=H/2-lines.length*lh/2+40;
+   lines.forEach((ln,i)=>ctx.fillText(ln,W/2,y+i*lh));
+   ctx.fillStyle=TEALc;ctx.font="700 74px 'Space Grotesk',Arial";ctx.fillText(P2,W/2,y+lines.length*lh+30);
+   ctx.globalAlpha=1;
+ } else if(st==='sl_stack'){
+   ctx.fillStyle=INKc;ctx.font="800 84px 'Space Grotesk',Arial";
+   let tl=wrapText(ctx,P1,W-160);tl.forEach((ln,i)=>ctx.fillText(ln,W/2,280+i*92));
+   const items=[c.i1||'Clipboard history',c.i2||'Voice dictation',c.i3||'One searchable Timeline'].filter(Boolean);
+   const seg=content/(items.length+1);ctx.textAlign='left';
+   items.forEach((it,i)=>{const ap=eo(Math.min(1,(t-seg*(i+0.3))/0.5));if(ap<=0)return;ctx.globalAlpha=ap;const y=640+i*220,x=160;
+     ctx.fillStyle=BANDc;rr(ctx,x-40,y-80,W-2*(x-40),150,24);ctx.fill();
+     slCheck(ctx,x+30,y-5,44,TEALDc);
+     ctx.fillStyle=INKc;ctx.font="600 58px 'Space Grotesk',Arial";ctx.fillText(it,x+110,y-5);ctx.globalAlpha=1;});
+   ctx.textAlign='center';
+ } else if(st==='sl_switch'){
+   const half=content/2;const fade=t<half?1:eo(Math.max(0,1-(t-half)/0.6));
+   ctx.globalAlpha=fade;ctx.fillStyle='#8b93a1';ctx.font="600 70px 'Space Grotesk',Arial";
+   ctx.fillText('clipboard app',W/2,H/2-280);ctx.fillText('dictation app',W/2,H/2-170);ctx.globalAlpha=1;
+   if(t>half*0.7){const ap=eo(Math.min(1,(t-half*0.7)/0.5));ctx.globalAlpha=ap;ctx.fillStyle=TEALc;ctx.font="700 72px 'Space Grotesk',Arial";ctx.fillText('↓',W/2,H/2-40);ctx.globalAlpha=1;}
+   if(t>half){const ap=eo(Math.min(1,(t-half)/0.5));ctx.globalAlpha=ap;chipC(ctx,W/2-215,H/2+150,80);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.font="800 96px 'Space Grotesk',Arial";ctx.fillText('VoxClip',W/2-150,H/2+150);ctx.textAlign='center';ctx.fillStyle=TEALc;ctx.font="600 52px 'Space Grotesk',Arial";ctx.fillText(P2,W/2,H/2+320);ctx.globalAlpha=1;}
+ } else if(st==='sl_cta'){
+   const bx=110,by=H/2-430,bw=W-220,bh=860;ctx.fillStyle='#fff';rr(ctx,bx,by,bw,bh,40);ctx.fill();
+   chipC(ctx,W/2-205,by+150,80);ctx.fillStyle=INKc;ctx.textAlign='left';ctx.font="800 96px 'Space Grotesk',Arial";ctx.fillText('VoxClip',W/2-140,by+150);
+   ctx.textAlign='center';ctx.fillStyle=INKc;ctx.font="700 70px 'Space Grotesk',Arial";
+   let lines=wrapText(ctx,P1,bw-120);lines.forEach((ln,i)=>ctx.fillText(ln,W/2,by+350+i*80));
+   const pulse=1+Math.sin(t*3)*0.02,pw=560*pulse,ph=130,px=W/2-pw/2,py=by+bh-250;
+   ctx.fillStyle=TEALDc;rr(ctx,px,py,pw,ph,ph/2);ctx.fill();ctx.fillStyle='#fff';ctx.font="700 56px 'Space Grotesk',Arial";ctx.fillText('Download free',W/2,py+ph/2);
+   ctx.fillStyle=GREYc;ctx.font="500 44px 'Space Grotesk',Arial";ctx.fillText('Mac & Windows · '+P2,W/2,py+ph+66);
+ } else if(st==='sl_trust'){
+   const cx=W/2,cy=H/2-220,ap=eo(Math.min(1,t/0.5));ctx.globalAlpha=ap;
+   ctx.strokeStyle=TEALc;ctx.lineWidth=16;ctx.beginPath();ctx.arc(cx,cy-30,70,Math.PI,2*Math.PI);ctx.stroke();
+   ctx.fillStyle=TEALc;rr(ctx,cx-95,cy-30,190,150,26);ctx.fill();ctx.globalAlpha=1;
+   ctx.fillStyle=ink;ctx.font="800 92px 'Space Grotesk',Arial";let lines=wrapText(ctx,P1,W-180);lines.forEach((ln,i)=>ctx.fillText(ln,W/2,H/2+90+i*102));
+   ctx.fillStyle=TEALc;ctx.font="600 54px 'Space Grotesk',Arial";ctx.fillText(P2,W/2,H/2+90+lines.length*102+36);
+ } else if(st==='sl_price'){
+   ctx.fillStyle=INKc;ctx.font="800 300px 'Space Grotesk',Arial";ctx.fillText(c.i1||'€0',W/2,H/2-200);
+   ctx.fillStyle=TEALDc;ctx.font="700 72px 'Space Grotesk',Arial";ctx.fillText(P1,W/2,H/2+50);
+   ctx.fillStyle=GREYc;ctx.font="500 50px 'Space Grotesk',Arial";let lines=wrapText(ctx,P2,W-200);lines.forEach((ln,i)=>ctx.fillText(ln,W/2,H/2+170+i*62));
+ }
  ctx.textAlign='center';
 }
 function vFrameBefore(ctx,t,c){
@@ -1717,6 +1699,7 @@ function agentLocalReply(text){const t=text.toLowerCase(),u=AGENT.user||'',has=(
  return {reply:u+', dat snap ik in de gratis modus nog niet helemaal. Probeer bijvoorbeeld: "maak een insta-video over privacy", "maak mijn weekschema", "schrijf een linkedin-post" of "wat doen mijn concurrenten?".',action:null};}
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
+ if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(st)>=0)return [F('p1','Grote regel'),F('p2','Ondertekst'),F('i1','Punt 1 / groot getal'),F('i2','Punt 2'),F('i3','Punt 3'),F('tag','Outro-tagline')];
  if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0)return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
  if(st==='before')return [F('q','Zoekopdracht'),F('res','Resultaat'),F('tag','Outro-tagline')];
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return [F('big','Grote tekst'),F('sub','Ondertekst'),F('tag','Outro-tagline')];
@@ -1906,7 +1889,57 @@ const RS_MONITOR=[
  ['Hacker News — zoek “dictation”','https://hn.algolia.com/?q=dictation'],
  ['Google Trends — clipboard manager','https://trends.google.com/trends/explore?q=clipboard%20manager']
 ];
+/*AUDIENCE_LIVE_START*/
+const AUDIENCE_LIVE={updated:"2026-08-10",linkedin:{followers:0,country:[],jobfunction:[],seniority:[],industry:[]},instagram:{age:[],gender:[]},tiktok:{gender:[],country:[]}};
+/*AUDIENCE_LIVE_END*/
+function rsBars(list,accent){
+ if(!list||!list.length)return '<div class="small" style="color:var(--grey)">nog geen data</div>';
+ const max=Math.max(1,...list.map(x=>+x[1]||0));
+ return list.slice(0,6).map(function(x){const v=+x[1]||0,w=Math.round(100*v/max);
+  return '<div style="margin:5px 0"><div style="display:flex;justify-content:space-between;font-size:12px"><span>'+String(x[0]).replace(/</g,'&lt;')+'</span><b>'+v.toLocaleString('nl-NL')+'</b></div><div style="background:var(--line);border-radius:5px;height:8px;margin-top:2px"><div style="background:'+(accent||'var(--teal)')+';height:8px;border-radius:5px;width:'+w+'%"></div></div></div>';
+ }).join('');
+}
+function renderAudience(){
+ const el=document.getElementById('rs-audience');if(!el)return;
+ const A=AUDIENCE_LIVE,L=A.linkedin||{};
+ const has=(L.country&&L.country.length)||(L.jobfunction&&L.jobfunction.length)||(A.instagram&&A.instagram.age&&A.instagram.age.length);
+ if(!has){el.innerHTML='<div class="callout warm">Nog geen doelgroep-data. Zodra je wat volgers hebt, vult dit zich automatisch: LinkedIn geeft land, functie, senioriteit en sector van je volgers; Instagram/TikTok geven leeftijd en geslacht. <span class="small">Laatste sync: '+A.updated+'.</span></div>';return;}
+ let h='<div class="grid">';
+ h+='<div class="card linkedin" style="border-left-color:#0A66C2"><h3>LinkedIn-volgers</h3>'
+   +'<div class="rw"><span class="k">Top landen</span><div class="v">'+rsBars(L.country,'#0A66C2')+'</div></div>'
+   +'<div class="rw"><span class="k">Functie</span><div class="v">'+rsBars(L.jobfunction,'#0A66C2')+'</div></div>'
+   +'<div class="rw"><span class="k">Senioriteit</span><div class="v">'+rsBars(L.seniority,'#0A66C2')+'</div></div>'
+   +'<div class="rw"><span class="k">Sector</span><div class="v">'+rsBars(L.industry,'#0A66C2')+'</div></div></div>';
+ h+='<div class="card instagram" style="border-left-color:#C13584"><h3>Instagram / TikTok</h3>'
+   +'<div class="rw"><span class="k">Leeftijd (IG)</span><div class="v">'+rsBars(A.instagram.age,'#C13584')+'</div></div>'
+   +'<div class="rw"><span class="k">Geslacht (IG)</span><div class="v">'+rsBars(A.instagram.gender,'#C13584')+'</div></div>'
+   +'<div class="rw"><span class="k">TikTok geslacht</span><div class="v">'+rsBars(A.tiktok.gender,'#111')+'</div></div></div></div>';
+ // fit-check advies
+ const topFn=(L.jobfunction&&L.jobfunction[0])?String(L.jobfunction[0][0]).toLowerCase():'';
+ const fit=/found|owner|market|media|content|program|operations|entrepr|creativ|art|design|consult/.test(topFn);
+ h+='<div class="callout'+(fit?'':' warm')+'" style="margin-top:6px"><b>Past dit bij je doel?</b> Je mikt op solo-pro\'s/makers/zzp die veel kopiëren én dicteren. '+(fit?'Je grootste groep (<b>'+String((L.jobfunction[0]||[])[0]||'')+'</b>) past daar goed bij — meer van dezelfde toon en onderwerpen.':'Kijk of je grootste groepen echt bij dat profiel passen; zo niet, verschuif je onderwerpen en voorbeelden richting solo-makers en privacy.')+'</div>';
+ el.innerHTML=h;
+}
+function renderPostAnalysis(){
+ const el=document.getElementById('rs-postanalysis');if(!el)return;
+ const posts=(typeof POSTS_LIVE!=='undefined'?(POSTS_LIVE.posts||[]):[]).slice();
+ if(!posts.length){el.innerHTML='<div class="callout">Nog geen posts om te analyseren. Zodra je plaatst en de dagelijkse sync draait, geeft de studio hier advies op basis van wat het best werkt.</div>';return;}
+ posts.sort((a,b)=>bdEngRate(b)-bdEngRate(a));
+ const top=posts[0],worst=posts[posts.length-1];
+ const byPlat={};posts.forEach(p=>{(byPlat[p.plat]=byPlat[p.plat]||[]).push(bdEngRate(p));});
+ let bestPlat='',bestAvg=-1;Object.keys(byPlat).forEach(k=>{const a=byPlat[k].reduce((x,y)=>x+y,0)/byPlat[k].length;if(a>bestAvg){bestAvg=a;bestPlat=k;}});
+ const pln=(BD_PLAT[bestPlat]||{n:bestPlat}).n;
+ let h='<div class="stat-row"><div class="statbox"><div class="n">'+bdEngRate(top)+'%</div><div class="l">beste post (engagement)</div></div><div class="statbox"><div class="n">'+pln+'</div><div class="l">sterkste platform</div></div><div class="statbox"><div class="n">'+posts.length+'</div><div class="l">posts geanalyseerd</div></div></div>';
+ h+='<div class="callout"><b>Wat werkt:</b> "'+String(top.title||'—').replace(/</g,'&lt;')+'" ('+(BD_PLAT[top.plat]||{n:top.plat}).n+') scoort het hoogst met '+bdEngRate(top)+'% engagement. Maak meer in dezelfde stijl en toon.</div>';
+ if(worst&&worst!==top)h+='<div class="callout warm"><b>Wat kan beter:</b> "'+String(worst.title||'—').replace(/</g,'&lt;')+'" bleef achter ('+bdEngRate(worst)+'%). Check je eerste 3 seconden (haak) en of het één helder idee toont.</div>';
+ h+='<div class="card"><h3>3 concrete tips</h3><ul class="small">'
+   +'<li>Zet de \'aha\' in de eerste 3 seconden — toon meteen het plakken/terugvinden, niet eerst uitleg.</li>'
+   +'<li>Eén idee per video. Kalm en simpel wint van druk en snel.</li>'
+   +'<li>Leun op je sterkste platform ('+pln+') en herhaal de best presterende onderwerpen.</li></ul></div>';
+ el.innerHTML=h;
+}
 function renderResearch(){
+ renderAudience();renderPostAnalysis();
  const p=document.getElementById('rs-personas');
  if(p)p.innerHTML='<div class="grid">'+RS_PERSONAS.map(x=>'<div class="card"><h3>'+x.n+'</h3><div class="rw"><div class="v">'+x.d+'</div></div></div>').join('')+'</div>';
  const c=document.getElementById('rs-compets');
@@ -1927,13 +1960,60 @@ function saveResearchNotes(){const n=document.getElementById('rs-notes');if(n){t
 function dashStats(){
  const el=document.getElementById('dash-stats');if(!el)return;
  const posts=saved().length, res=results().length;
- el.innerHTML=`<div class="statbox"><div class="n">9</div><div class="l">videostijlen</div></div>
-  <div class="statbox"><div class="n">5</div><div class="l">kanalen + ads & e-mail</div></div>
+ el.innerHTML=`<div class="statbox"><div class="n">60+</div><div class="l">videostijlen</div></div>
+  <div class="statbox"><div class="n">3</div><div class="l">platforms live gekoppeld</div></div>
   <div class="statbox"><div class="n">${posts}</div><div class="l">opgeslagen posts</div></div>
   <div class="statbox"><div class="n">${res}</div><div class="l">gelogde resultaten</div></div>`;
 }
 
-// ================= ADS =================
+// ================= ADS — betaalde posts (auto) =================
+/*ADS_LIVE_START*/
+const ADS_LIVE={updated:"2026-08-10",ads:[]};
+/*ADS_LIVE_END*/
+const AD_PLAT={tiktok:{n:'TikTok Ads',c:'#111'},meta:{n:'Meta (FB/IG)',c:'#C13584'},linkedin:{n:'LinkedIn Ads',c:'#0A66C2'}};
+function adNum(n){n=Number(n)||0;return n>=1000?n.toLocaleString('nl-NL'):String(n);}
+function adEur(n){n=Number(n)||0;return '€'+n.toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function adCPC(a){const c=+a.clicks||0;return c?(+a.spend||0)/c:0;}
+function adCard(a){
+ const pl=AD_PLAT[a.plat]||{n:a.plat||'—',c:'#5A6272'};
+ const title=(a.title||'Advertentie').toString().replace(/</g,'&lt;');
+ return '<div class="bd-post" style="border:1px solid var(--line);border-left:4px solid '+pl.c+';border-radius:12px;padding:12px 14px;margin:8px 0;background:#fff">'+
+  '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">'+
+   '<div><span style="font-size:11px;font-weight:800;color:#fff;background:'+pl.c+';padding:2px 9px;border-radius:20px">'+pl.n+'</span> <b style="font-size:14px">'+title+'</b><div class="small" style="color:var(--grey);margin-top:2px">'+(a.date||'')+'</div></div>'+
+   '<div class="small" style="text-align:right;color:var(--teal-deep);white-space:nowrap">'+adEur(adCPC(a))+' / klik</div>'+
+  '</div>'+
+  '<div class="stat-row" style="margin-top:10px">'+
+   '<div class="statbox"><div class="n">'+adEur(a.spend||0)+'</div><div class="l">uitgegeven</div></div>'+
+   '<div class="statbox"><div class="n">'+adNum(a.impressions||0)+'</div><div class="l">vertoningen</div></div>'+
+   '<div class="statbox"><div class="n">'+adNum(a.clicks||0)+'</div><div class="l">kliks</div></div>'+
+   '<div class="statbox"><div class="n">'+adNum(a.results||0)+'</div><div class="l">resultaten</div></div>'+
+  '</div></div>';
+}
+function renderAds(){
+ const out=document.getElementById('ad-out');if(!out)return;
+ if(!document.getElementById('ad-copy-out').innerHTML)buildAds();
+ const all=(ADS_LIVE.ads||[]).slice();
+ const q=((document.getElementById('ad-search')||{}).value||'').toLowerCase().trim();
+ const fp=(document.getElementById('ad-filter')||{}).value||'';
+ const sort=(document.getElementById('ad-sort')||{}).value||'spend';
+ let ads=all.filter(a=>(!fp||a.plat===fp)&&(!q||(a.title||'').toLowerCase().indexOf(q)>=0||(a.plat||'').indexOf(q)>=0));
+ ads.sort(function(a,b){
+  if(sort==='clicks')return (+b.clicks||0)-(+a.clicks||0);
+  if(sort==='impr')return (+b.impressions||0)-(+a.impressions||0);
+  if(sort==='cpc')return adCPC(a)-adCPC(b);
+  return (+b.spend||0)-(+a.spend||0);
+ });
+ const cnt=document.getElementById('ad-count');if(cnt)cnt.textContent=all.length?(ads.length+' van '+all.length+' ads'):'';
+ const sm=document.getElementById('ad-summary');
+ if(sm){
+  if(all.length){
+   const tSpend=all.reduce((s,a)=>s+(+a.spend||0),0),tClicks=all.reduce((s,a)=>s+(+a.clicks||0),0),tImpr=all.reduce((s,a)=>s+(+a.impressions||0),0),tRes=all.reduce((s,a)=>s+(+a.results||0),0);
+   sm.innerHTML='<div class="stat-row"><div class="statbox"><div class="n">'+adEur(tSpend)+'</div><div class="l">totaal uitgegeven</div></div><div class="statbox"><div class="n">'+adNum(tImpr)+'</div><div class="l">vertoningen</div></div><div class="statbox"><div class="n">'+adNum(tClicks)+'</div><div class="l">kliks</div></div><div class="statbox"><div class="n">'+(tClicks?adEur(tSpend/tClicks):'—')+'</div><div class="l">gem. kosten/klik</div></div></div>';
+  } else sm.innerHTML='';
+ }
+ if(!all.length){out.innerHTML='<div class="callout warm">Nog geen advertenties. Zodra je een betaalde campagne draait én je ad-account (TikTok Ads, Meta of LinkedIn Ads) gekoppeld is, verschijnen je ads hier automatisch met uitgaven, vertoningen, kliks en resultaat. <br><span class="small">Wil je een ad-account koppelen? Zeg "koppel mijn ad-account", dan geef ik je de koppellink. Laatste sync: '+ADS_LIVE.updated+'.</span></div>';return;}
+ out.innerHTML=ads.length?ads.map(adCard).join(''):'<div class="callout">Geen ads gevonden voor deze zoekopdracht/filter.</div>';
+}
 function buildAds(){
  const pil=val('ad-pillar')||'P1',per=val('ad-persona')||'mees';
  const hook=pick(SHORT_HOOKS[pil]).replace(/[“”"]/g,'');
@@ -1953,7 +2033,7 @@ function buildAds(){
   <div class="rw"><span class="k">Description ${cbtn('Free · Mac & Windows · local-first')}</span><div class="v">Free · Mac & Windows · local-first</div></div>
   <div class="rw"><span class="k">CTA-knop</span><div class="v">Download</div></div>
   <div class="rw"><span class="k">Creatief</span><div class="v small">Gebruik je beste organische video (Spark Ad). Persona: ${per==='sanne'?'Sanne':'Mees'}.</div></div></div>`;
- document.getElementById('ad-out').innerHTML=h;
+ document.getElementById('ad-copy-out').innerHTML=h;
 }
 
 function adToVideo(){const pil=val('ad-pillar')||'P1',per=val('ad-persona')||'mees';loadPostIntoGenerator(buildPost('tiktok',pil,per,FEATURES[pil][0][1]));}
@@ -2031,26 +2111,46 @@ function renderPlan2(){const out=document.getElementById('plan2-out');if(!out)re
  const LLMS=["# VoxClip","","> "+ENT,"","## Free vs paid","- Free (on-device): clipboard history, local dictation, one searchable Timeline including search by meaning, snippets & templates, the Quick-picker, privacy controls.","- VoxClip Plus (cloud, €6.99/mo or €59/yr, 7-day trial): encrypted cross-device sync, \"talk to your stash\", AI transforms, Enhance, extended retention.","","## Facts","- Platforms: macOS 12+, Windows 10+. No Linux, no mobile.","- Download: https://voxclip.it","- Not voxclip.dev (an unrelated open-source CLI tool)."].join("\n");
  const funnel=[
   ["1","Aandacht trekken","Korte demo-video's & posts die het 'aha' tonen → TikTok, Reels, Shorts, LinkedIn.","go('gen')","🎬"],
-  ["2","Eén campagne, alle kanalen","Eén onderwerp, meteen klaar voor elk platform.","go('camp')","★"],
+  ["2","Je week plannen","Eén klik = je hele week aan posts, klaar per platform.","go('coach')","🗓️"],
   ["3","Lanceren","Product Hunt, Show HN, Reddit, directories — je eerste 100–1000 gebruikers.","go('launch')","🚀"],
   ["4","Gevonden worden (GEO)","Teksten voor je site zodat Google én AI-zoekmachines je vinden. (Onderaan.)","planGeoScroll()","🔎"],
   ["5","Gratis → Plus (verdienen)","E-mails die de daggewoonte omzetten naar betaalde cloud (Plus).","go('email')","✉️"],
-  ["6","Meten & verdubbelen","Zie welke video/kanaal downloads oplevert; doe daar meer van.","go('results')","📊"]
+  ["6","Meten & verdubbelen","Zie in het Dashboard welke post het beste doet; doe daar meer van.","go('board')","📊"]
  ];
  let h='<h3 style="margin-top:6px">De verkoopmachine — klik op een stap</h3><div class="dash">';
  funnel.forEach(function(f){h+='<button class="tile" onclick="'+f[3]+'"><div class="ic">'+f[4]+'</div><div class="tt">'+f[0]+'. '+f[1]+'</div><div class="td">'+f[2]+'</div></button>';});
  h+='</div>';
  h+='<h3 style="margin-top:22px">Je merkboodschap (overal identiek gebruiken)</h3><div class="card" style="border-left-color:var(--teal)"><div class="rw"><span class="k">De één-zin '+cbtn(ENT)+'</span><div class="v">'+ENT+'</div></div><div class="rw"><span class="k">Homepage H1 '+cbtn("Your clipboard and your voice, in one place.")+'</span><div class="v">Your clipboard and your voice, in one place.</div></div></div>';
+ // Doel & cijfers
+ h+='<h3 style="margin-top:22px">🎯 Doel &amp; cijfers — waar stuur je op</h3><div class="callout">Voor een gratis app is de echte motor <b>downloads → dagelijks gebruik → Plus</b>. Stuur op deze paar getallen, niet op likes alleen.</div>'
+  +'<div class="dash">'
+  +'<button class="tile" onclick="go(\'board\')"><div class="ic">👀</div><div class="tt">Bereik</div><div class="td">Views + impressies per platform. Doel: elke maand omhoog. Zie Dashboard.</div></button>'
+  +'<button class="tile" onclick="go(\'results\')"><div class="ic">⬇️</div><div class="tt">Downloads</div><div class="td">De belangrijkste stap. Meet per platform welke posts downloads opleveren.</div></button>'
+  +'<button class="tile" onclick="go(\'email\')"><div class="ic">🔁</div><div class="tt">Activatie</div><div class="td">% nieuwe gebruikers dat de hotkey binnen 2 min gebruikt. Onboarding-mail helpt.</div></button>'
+  +'<button class="tile" onclick="go(\'email\')"><div class="ic">💶</div><div class="tt">Gratis → Plus</div><div class="td">% dat naar Plus gaat (sync, talk-to-your-stash). €6,99/mnd of €59/jr.</div></button>'
+  +'</div>';
+ // Kanaalstrategie
+ h+='<h3 style="margin-top:22px">📡 Kanaalstrategie — waar je wint</h3>'
+  +'<div class="card"><div class="rw"><span class="k">TikTok / Reels / Shorts</span><div class="v small">Korte demo\'s met het \'aha\' in 3 seconden. Doel: bereik + nieuwsgierigheid. 4–5×/week.</div></div>'
+  +'<div class="rw"><span class="k">LinkedIn</span><div class="v small">Jouw verhaal als maker + waarom lokaal/privacy. Doel: vertrouwen + eerste zakelijke gebruikers. 2–3×/week.</div></div>'
+  +'<div class="rw"><span class="k">Reddit / communities</span><div class="v small">Waarde-eerst, geen spam. Deel in r/productivity, r/macapps, r/clipboard-achtige plekken bij een concrete vraag.</div></div>'
+  +'<div class="rw"><span class="k">Directories</span><div class="v small">AlternativeTo, SaaSHub, Uneed, Product Hunt. Eenmalig opzetten = doorlopend vindbaar.</div></div>'
+  +'<div class="rw"><span class="k">Zoek + AI (GEO)</span><div class="v small">De \'vs\'- en privacy-pagina\'s + llms.txt. Doel: gevonden worden als mensen actief zoeken.</div></div></div>';
+ // Prijs & aanbod
+ h+='<h3 style="margin-top:22px">💶 Prijs &amp; aanbod (eerlijk kader)</h3>'
+  +'<div class="card"><div class="rw"><span class="k">Gratis (op je toestel)</span><div class="v small">Clipboard-history, lokale dictatie, één doorzoekbare Timeline incl. zoeken op betekenis, snippets &amp; templates, Quick-picker, privacycontroles. Dit is het échte product — vier dat het gratis is.</div></div>'
+  +'<div class="rw"><span class="k">VoxClip Plus — €6,99/mnd · €59/jr</span><div class="v small">De cloud-dingen: versleutelde sync (Mac↔Windows), \'talk to your stash\', AI-transforms bij plakken, Enhance, langere bewaartijd. 7 dagen gratis proberen.</div></div>'
+  +'<div class="rw"><span class="k">De lijn</span><div class="v">Draait het op je toestel? Gratis. Heeft het onze servers nodig? Betaald.</div></div></div>';
  const PH=[
-  ["A","Positionering & boodschap","Wat een top-bureau eerst doet: één scherpe boodschap en één doelgroep vastnagelen.",[["pa1","Één-zin vastleggen en overal identiek gebruiken"],["pa2","Beachhead kiezen: solo-makers/zzp die veel kopiëren én dicteren"],["pa3","De 5-seconden-'aha' bepalen (\"plak wat je vanochtend kopieerde\")"]],[["Merk-check openen","go('check')"]]],
+  ["A","Positionering & boodschap","Wat een top-bureau eerst doet: één scherpe boodschap en één doelgroep vastnagelen.",[["pa1","Één-zin vastleggen en overal identiek gebruiken"],["pa2","Beachhead kiezen: solo-makers/zzp die veel kopiëren én dicteren"],["pa3","De 5-seconden-'aha' bepalen (\"plak wat je vanochtend kopieerde\")"]],[["Video maken","go('gen')"]]],
   ["B","Merk & website","Vertrouwen en vindbaarheid: boodschap op de site, GEO, en de installer signen.",[["pb1","Homepage-H1 + antwoordblok plaatsen"],["pb2","GEO op de site: FAQ + schema + llms.txt"],["pb3","Installer laten code-signen (grootste conversie-lek)"],["pb4","Vergelijkingspagina 'vs Paste/Maccy/Wispr' live"]],[["GEO-teksten hieronder","planGeoScroll()"]]],
-  ["C","Assets maken","De content die verkoopt: video's, screenshots, one-pager.",[["pc1","5 demo-video's genereren (Timeline, Hotkey, Zoeken, Dicteren, Before/after)"],["pc2","Nette screenshots + het logo klaar"],["pc3","Korte one-pager / press-kit"]],[["Video maken","go('gen')"],["Video-ideeën","go('ideas')"]]],
+  ["C","Assets maken","De content die verkoopt: video's, screenshots, one-pager.",[["pc1","5 demo-video's genereren (Timeline, Hotkey, Zoeken, Dicteren, Before/after)"],["pc2","Nette screenshots + het logo klaar"],["pc3","Korte one-pager / press-kit"]],[["Video maken","go('gen')"]]],
   ["D","Doelgroep & kanalen","Waar je publiek zit en hoe je het bereikt.",[["pd1","Kies je 3 kanalen (TikTok/Reels/LinkedIn)"],["pd2","Zoek 5–10 relevante communities/subreddits"],["pd3","Zet een wachtlijst/e-mailopt-in op de site"]],[["Onderzoek","go('research')"]]],
   ["E","Pre-launch","Alles scherp zetten en momentum opbouwen vóór dag 1.",[["pe1","Launchdatum kiezen (di–do)"],["pe2","5–10 supporters opwarmen (echte mensen)"],["pe3","Product Hunt-teksten + assets klaar"]],[["Launch-playbook","go('launch')"]]],
   ["F","Launch (de week)","Je eerste 100–1000 gebruikers in één intense week.",[["pf1","Di: Product Hunt + Show HN + socials + launch-mail"],["pf2","Wo: 2–3 subreddits (waarde-eerst)"],["pf3","Do: directories + 5–10 creators mailen"],["pf4","Vr: cijfers verzamelen + 'zo ging het'-post"]],[["Launch-playbook","go('launch')"],["Launch-mail","go('email')"]]],
-  ["G","Groei-loop","Het ritme dat je maand na maand laat groeien.",[["pg1","3–5 demo-video's per week naar je niche"],["pg2","1 GEO-pagina per week"],["pg3","Wekelijkse e-mail naar je lijst"],["pg4","Vraag blije gebruikers om reviews/shares"]],[["Planner","go('plan')"],["Video maken","go('gen')"]]],
+  ["G","Groei-loop","Het ritme dat je maand na maand laat groeien.",[["pg1","3–5 demo-video's per week naar je niche"],["pg2","1 GEO-pagina per week"],["pg3","Wekelijkse e-mail naar je lijst"],["pg4","Vraag blije gebruikers om reviews/shares"]],[["Mijn week","go('coach')"],["Video maken","go('gen')"]]],
   ["H","Verdienen (Plus)","Van gratis gewoonte naar betaalde cloud — hier verdien je.",[["ph1","Onboarding-mails die de daggewoonte opbouwen"],["ph2","Upsell-mails over Plus (sync, talk-to-your-stash)"],["ph3","Toon de Plus-'wow' in de app op het juiste moment"]],[["E-mail","go('email')"]]],
-  ["I","Meten & optimaliseren","Zien wat werkt en verdubbelen.",[["pi1","Tracking-links per kanaal maken"],["pi2","Wekelijks: welke video/kanaal levert downloads?"],["pi3","Doe meer van de winnaars, laat de rest vallen"]],[["Resultaten","go('results')"],["Dashboard","go('board')"]]]
+  ["I","Meten & optimaliseren","Zien wat werkt en verdubbelen.",[["pi1","Post consequent — Dashboard vult zich per post automatisch"],["pi2","Wekelijks: welke post/kanaal presteert het best?"],["pi3","Doe meer van de winnaars, laat de rest vallen"]],[["Resultaten","go('results')"],["Dashboard","go('board')"]]]
  ];
  let total=0;PH.forEach(function(p){total+=p[3].length;});const done=planDone();let doneN=0;PH.forEach(function(p){p[3].forEach(function(t){if(done[t[0]])doneN++;});});
  h+='<h3 style="margin-top:22px">Lancering — van A tot Z</h3>';
@@ -2067,72 +2167,57 @@ function renderPlan2(){const out=document.getElementById('plan2-out');if(!out)re
  out.innerHTML=h;
 }
 
-// ================= DASHBOARD BORD (kanban) =================
-function boardData(){try{return JSON.parse(localStorage.getItem('voxBoard')||'{}');}catch(e){return {};}}
-function setBoard(d){try{localStorage.setItem('voxBoard',JSON.stringify(d));}catch(e){}}
-function boardStats(){try{return JSON.parse(localStorage.getItem('voxBoardStats')||'{}');}catch(e){return {};}}
-function setBoardStats(s){try{localStorage.setItem('voxBoardStats',JSON.stringify(s));}catch(e){}}
-function bdTitle(r){const t=(r.text||'').split('\n').map(x=>x.trim()).filter(Boolean)[0]||'Video';return t.replace(/^[#>\-*\s]+/,'').slice(0,52);}
-function bdCardHTML(r,plat,isTop){
- const hasVid=!!r.video;
- const poster='<div class="bd-poster">'+bdTitle(r).replace(/</g,'&lt;')+'</div>';
- const mm='onmousedown="event.stopPropagation()"';
- if(!plat){return '<div class="bd-card" draggable="true" data-id="'+r.id+'">'+
-   '<div class="bd-cardtop">'+(hasVid?'<button class="bd-mini" '+mm+' onclick="bdPreview('+r.id+')" title="Bekijk">▶</button>':'')+'<button class="bd-mini del" '+mm+' onclick="bdDeleteVideo('+r.id+')" title="Definitief verwijderen">🗑</button></div>'+
-   poster+'<div class="small" style="color:var(--grey)">van '+r.channel+' · '+r.date+'</div></div>';}
- const st=boardStats(),s=st[plat+':'+r.id]||{};
- const eng=(+s.views>0)?Math.round(1000*((+s.likes||0)+(+s.comments||0))/(+s.views))/10:0;
- return '<div class="bd-card'+(isTop?' top':'')+'" draggable="true" data-id="'+r.id+'">'+
-   '<button class="bd-rm" '+mm+' onclick="bdRemove(\''+plat+'\','+r.id+')" title="Uit deze kolom halen">✕</button>'+
-   (hasVid?'<button class="bd-mini" '+mm+' style="position:absolute;top:8px;left:8px" onclick="bdPreview('+r.id+')" title="Bekijk">▶</button>':'')+
-   (isTop?'<div class="pill" style="margin:22px 0 6px">★ Beste</div>':'<div style="height:14px"></div>')+poster+
-   '<div class="bd-stats">'+
-     '<div><label>Views</label><input type="number" min="0" value="'+(+s.views||0)+'" onchange="bdStat(\''+plat+'\','+r.id+',\'views\',this.value)"></div>'+
-     '<div><label>Likes</label><input type="number" min="0" value="'+(+s.likes||0)+'" onchange="bdStat(\''+plat+'\','+r.id+',\'likes\',this.value)"></div>'+
-     '<div><label>Reacties</label><input type="number" min="0" value="'+(+s.comments||0)+'" onchange="bdStat(\''+plat+'\','+r.id+',\'comments\',this.value)"></div>'+
-   '</div>'+
-   '<div class="small" style="margin-top:6px;color:var(--teal-deep)">Engagement: '+eng+'%</div></div>';
+// ================= DASHBOARD — POSTS PER PLATFORM (auto) =================
+/*POSTS_LIVE_START*/
+const POSTS_LIVE={updated:"2026-08-10",posts:[]};
+/*POSTS_LIVE_END*/
+const BD_PLAT={tiktok:{n:'TikTok',c:'#111'},instagram:{n:'Instagram',c:'#C13584'},linkedin:{n:'LinkedIn',c:'#0A66C2'}};
+function bdNum(n){n=Number(n)||0;return n>=1000?n.toLocaleString('nl-NL'):String(n);}
+function bdViews(p){return (+p.views||0)||(+p.reach||0)||(+p.impressions||0);}
+function bdEng(p){return (+p.likes||0)+(+p.comments||0)+(+p.shares||0);}
+function bdEngRate(p){const v=bdViews(p);return v?Math.round(1000*bdEng(p)/v)/10:0;}
+function bdPostCard(p){
+ const pl=BD_PLAT[p.plat]||{n:p.plat||'—',c:'#5A6272'};
+ const title=(p.title||'Post').toString().replace(/</g,'&lt;');
+ const link=p.url?'<a href="'+String(p.url).replace(/"/g,'&quot;')+'" target="_blank" rel="noopener" class="small" style="color:var(--teal-deep)">open ↗</a>':'';
+ const vlabel=(p.plat==='linkedin')?'impressies':'views';
+ return '<div class="bd-post" style="border:1px solid var(--line);border-left:4px solid '+pl.c+';border-radius:12px;padding:12px 14px;margin:8px 0;background:#fff">'+
+  '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">'+
+   '<div><span style="font-size:11px;font-weight:800;color:#fff;background:'+pl.c+';padding:2px 9px;border-radius:20px">'+pl.n+'</span> <b style="font-size:14px">'+title+'</b><div class="small" style="color:var(--grey);margin-top:2px">'+(p.date||'')+(link?' · '+link:'')+'</div></div>'+
+   '<div class="small" style="text-align:right;color:var(--teal-deep);white-space:nowrap">'+bdEngRate(p)+'% eng.</div>'+
+  '</div>'+
+  '<div class="stat-row" style="margin-top:10px">'+
+   '<div class="statbox"><div class="n">'+bdNum(bdViews(p))+'</div><div class="l">'+vlabel+'</div></div>'+
+   '<div class="statbox"><div class="n">'+bdNum(p.likes||0)+'</div><div class="l">likes</div></div>'+
+   '<div class="statbox"><div class="n">'+bdNum(p.comments||0)+'</div><div class="l">reacties</div></div>'+
+   '<div class="statbox"><div class="n">'+bdNum(bdEng(p))+'</div><div class="l">engagement</div></div>'+
+  '</div></div>';
 }
-let bdPrevAnim=0;
 function renderBoard(){
- const sv=saved();const tray=document.getElementById('bd-tray');if(!tray)return;
+ const out=document.getElementById('bd-out');if(!out)return;
+ const all=(POSTS_LIVE.posts||[]).slice();
  const q=((document.getElementById('bd-search')||{}).value||'').toLowerCase().trim();
- const fch=(document.getElementById('bd-filter')||{}).value||'';
- let tsv=sv.filter(r=>(!fch||r.channel===fch)&&(!q||bdTitle(r).toLowerCase().indexOf(q)>=0||(r.channel||'').indexOf(q)>=0));
- const cap=48,shown=tsv.slice(0,cap);
- const cnt=document.getElementById('bd-count');if(cnt)cnt.textContent=sv.length?(tsv.length+' van '+sv.length+(tsv.length>cap?' · eerste '+cap+' getoond':'')):'';
- if(!sv.length)tray.innerHTML='<div class="bd-empty" style="flex:1">Nog geen opgeslagen video’s. Maak er een in de Generator en klik “💾 Bewaar post (incl. video)”.</div>';
- else tray.innerHTML=shown.length?shown.map(r=>bdCardHTML(r,null)).join(''):'<div class="bd-empty" style="flex:1">Geen video’s gevonden voor deze zoekopdracht/filter.</div>';
- const d=boardData(),st=boardStats();
- ['tiktok','instagram','linkedin'].forEach(function(p){
-  const col=document.getElementById('bd-'+p);if(!col)return;
-  const items=(d[p]||[]).map(id=>sv.find(x=>x.id===id)).filter(Boolean);
-  let topId=null,topV=-1;items.forEach(r=>{const v=+((st[p+':'+r.id]||{}).views||0);if(v>topV){topV=v;topId=r.id;}});
-  col.innerHTML=items.length?items.map(r=>bdCardHTML(r,p,r.id===topId&&topV>0)).join(''):'<div class="bd-empty">Sleep hier een video naartoe</div>';
+ const fp=(document.getElementById('bd-filter')||{}).value||'';
+ const sort=(document.getElementById('bd-sort')||{}).value||'date';
+ let posts=all.filter(p=>(!fp||p.plat===fp)&&(!q||(p.title||'').toLowerCase().indexOf(q)>=0||(p.plat||'').indexOf(q)>=0));
+ posts.sort(function(a,b){
+  if(sort==='views')return bdViews(b)-bdViews(a);
+  if(sort==='eng')return bdEng(b)-bdEng(a);
+  if(sort==='er')return bdEngRate(b)-bdEngRate(a);
+  return String(b.date||'').localeCompare(String(a.date||''));
  });
- bdBind();
+ const cnt=document.getElementById('bd-count');if(cnt)cnt.textContent=all.length?(posts.length+' van '+all.length+' posts'):'';
+ const sm=document.getElementById('bd-summary');
+ if(sm){
+  if(all.length){
+   const byP={tiktok:0,instagram:0,linkedin:0};all.forEach(p=>{byP[p.plat]=(byP[p.plat]||0)+1;});
+   let best=null;all.forEach(p=>{if(!best||bdViews(p)>bdViews(best))best=p;});
+   sm.innerHTML='<div class="stat-row"><div class="statbox"><div class="n">'+all.length+'</div><div class="l">posts totaal</div></div><div class="statbox"><div class="n">'+byP.tiktok+'</div><div class="l">TikTok</div></div><div class="statbox"><div class="n">'+byP.instagram+'</div><div class="l">Instagram</div></div><div class="statbox"><div class="n">'+byP.linkedin+'</div><div class="l">LinkedIn</div></div></div>'+(best&&bdViews(best)?'<div class="callout" style="margin-top:8px"><b>Best presterende post:</b> '+(best.title||'—').toString().replace(/</g,'&lt;')+' ('+(BD_PLAT[best.plat]||{n:best.plat}).n+') — '+bdNum(bdViews(best))+' '+(best.plat==='linkedin'?'impressies':'views')+'. Maak hier meer van.</div>':'');
+  } else sm.innerHTML='';
+ }
+ if(!all.length){out.innerHTML='<div class="callout warm">Nog geen posts binnen. Zodra je op TikTok, Instagram of LinkedIn plaatst, verschijnen je posts hier automatisch met hun cijfers — de studio synct dagelijks. Je hoeft niets in te vullen.<br><span class="small">Laatste sync: '+POSTS_LIVE.updated+'.</span></div>';return;}
+ out.innerHTML=posts.length?posts.map(bdPostCard).join(''):'<div class="callout">Geen posts gevonden voor deze zoekopdracht/filter.</div>';
 }
-function bdBind(){
- document.querySelectorAll('#board .bd-card').forEach(function(c){
-  c.ondragstart=function(e){e.dataTransfer.setData('text/plain',c.dataset.id);e.dataTransfer.effectAllowed='copy';};
- });
- ['tiktok','instagram','linkedin'].forEach(function(p){const col=document.getElementById('bd-'+p);if(!col)return;
-  col.ondragover=function(e){e.preventDefault();col.classList.add('over');};
-  col.ondragleave=function(){col.classList.remove('over');};
-  col.ondrop=function(e){e.preventDefault();col.classList.remove('over');const id=+e.dataTransfer.getData('text/plain');if(id)bdAdd(p,id);};
- });
-}
-function bdAdd(plat,id){const d=boardData();d[plat]=d[plat]||[];if(!d[plat].includes(id))d[plat].push(id);setBoard(d);renderBoard();}
-function bdRemove(plat,id){const d=boardData();d[plat]=(d[plat]||[]).filter(x=>x!==id);setBoard(d);const st=boardStats();delete st[plat+':'+id];setBoardStats(st);renderBoard();}
-function bdStat(plat,id,field,val){const st=boardStats(),k=plat+':'+id;st[k]=st[k]||{};st[k][field]=+val||0;setBoardStats(st);renderBoard();}
-function bdPreview(id){const r=saved().find(x=>x.id===id);if(!r||!r.video){alert('Deze post heeft geen video om te bekijken.');return;}
- const m=document.getElementById('bdprev');if(m)m.classList.add('open');
- const cv=document.getElementById('bdprevcv');if(!cv)return;const ctx=cv.getContext('2d');cancelAnimationFrame(bdPrevAnim);const cfg=r.video;let st=null;
- (function loop(now){if(st===null)st=now;const dur=+cfg.dur||9;const t=((now-st)/1000)%dur;vFrameFX(ctx,t,cfg);bdPrevAnim=requestAnimationFrame(loop);})(performance.now());}
-function bdPrevClose(){cancelAnimationFrame(bdPrevAnim);const m=document.getElementById('bdprev');if(m)m.classList.remove('open');}
-function bdDeleteVideo(id){if(!confirm('Deze video definitief verwijderen uit Opgeslagen? (verdwijnt ook van het bord)'))return;
- setSaved(saved().filter(x=>x.id!==id));const d=boardData();['tiktok','instagram','linkedin'].forEach(p=>{d[p]=(d[p]||[]).filter(x=>x!==id);});setBoard(d);
- const bs=boardStats();['tiktok','instagram','linkedin'].forEach(p=>delete bs[p+':'+id]);setBoardStats(bs);renderBoard();}
 
 // ================= RESULTS TRACKER =================
 const CT_NS='voxclip';
@@ -2341,7 +2426,20 @@ function buildWeek(){
 function loadWeek(){const s=localStorage.getItem('voxWeek');if(s){try{WEEK=JSON.parse(s);renderWeek();return;}catch(e){}}buildWeek();}
 function renderWeek(){
  if(!WEEK)return;const vids=WEEK.vids;const dow={0:'zo',1:'ma',2:'di',3:'wo',4:'do',5:'vr',6:'za'};const order=[1,2,3,4,5];
+ const totalPosts=WEEK.posts.length;
  let html=`<div class="callout"><b>📌 Opgeslagen week van ${WEEK.date}.</b> Blijft staan tot je op ‘Genereer nieuwe week’ drukt — zo zie je altijd wat je deze week moet doen. <button class="btn ghost" style="margin-left:8px;padding:6px 12px" onclick="buildWeek()">🔄 Genereer nieuwe week</button></div>`;
+ // Week-doelen & focus
+ const focusPil=vids.length?PILLAR_LABEL[vids[0].pil]:PILLAR_LABEL.P1;
+ html+=`<div class="step"><div><span class="num">🎯</span><h3>Deze week — doelen &amp; focus</h3></div>
+  <div class="stat-row" style="margin:10px 0">
+    <div class="statbox"><div class="n">${totalPosts}</div><div class="l">posts te plaatsen</div></div>
+    <div class="statbox"><div class="n">${vids.length}</div><div class="l">video's op te nemen</div></div>
+    <div class="statbox"><div class="n">${Math.max(1,Math.round(totalPosts*0.6))}</div><div class="l">streef-reacties/dag</div></div>
+    <div class="statbox"><div class="n">1</div><div class="l">winnaar herhalen</div></div>
+  </div>
+  <p class="small" style="margin:6px 0"><b>Rode draad deze week:</b> ${focusPil}. Houd elke post kalm en simpel — één idee per video.</p>
+  <div class="callout"><b>Ritme dat werkt:</b> 1 post per werkdag (ma→vr). Neem maandag alle video's in één sessie op, plan de rest, en post daarna dagelijks. Reageer 20–30 min/dag op comments in je eigen rustige stem.</div>
+  <div class="callout warm"><b>Meten:</b> je hoeft niets bij te houden — open <b>Dashboard</b> voor je posts per platform en <b>Resultaten</b> voor de totalen. Beide vullen zich automatisch. Vrijdag: kijk welke post won en maak daar volgende week meer van.</div></div>`;
  html+=`<div class="step"><div><span class="num">1</span><h3>Record these demos (±${vids.length*4} min total)</h3></div><p class="small" style="margin:8px 0">One clean screen recording per video. Follow the script; you don't need to be on camera.</p>`;
  vids.forEach((v,i)=>{const f=FEATURES[v.pil][0][1];html+=`<div class="callout"><b>Recording ${i+1} — ${PILLAR_LABEL[v.pil]}</b> (${v.ch})<br>${scriptShort(f)}</div>`;});
  html+='</div>';
@@ -2406,10 +2504,8 @@ function voiceCheck(){
 }
 
 // init
-generateOne();loadWeek();renderLib();cmFill();loadCampaign();buildAds();buildEmail();renderResults();dashStats();
-document.getElementById('p-date').valueAsDate=new Date();
+generateOne();loadWeek();buildAds();buildEmail();renderResults();dashStats();
 try{document.getElementById('r-date').valueAsDate=new Date();}catch(e){}
-buildLinks();
 try{const L=VOXLOGO.src;document.getElementById('hdrlogo').src=L;document.getElementById('herologo').src=L;var gl=document.getElementById('gatelogo');if(gl)gl.src=L;}catch(e){}
 </script>
 </body>
