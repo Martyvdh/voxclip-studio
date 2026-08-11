@@ -936,6 +936,30 @@ function videoEditorHTML(){
          <button class="btn ghost" type="button" onclick="voClearCustom()" style="margin:0">wissen</button>
          <span id="vo-audio-lbl" class="small" style="color:var(--teal-deep)"></span>
        </div>
+       <details style="margin-top:8px" ontoggle="if(this.open)vfInit()"><summary style="cursor:pointer;font-weight:600">🎙️ Neem je eigen stem op &amp; fix 'm (stem-studio)</summary>
+         <div style="margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--paper)">
+           <div class="btnrow"><button class="btn" type="button" id="vr-rec" onclick="vfRecToggle()">● Opnemen</button><button class="btn ghost" type="button" onclick="vfPlay()">▶ Beluister met fix</button></div>
+           <p class="small" style="margin:6px 0">Neem je stem op (of gebruik het ingeladen bestand hierboven), kies een stijl, en de studio maakt 'm mooier: ruis weg, warmer/helderder, compressie en galm.</p>
+           <div class="fxchips">
+             <button type="button" class="fxchip" onclick="vfPreset('natural')">Natuurlijk</button>
+             <button type="button" class="fxchip" onclick="vfPreset('podcast')">Podcast</button>
+             <button type="button" class="fxchip" onclick="vfPreset('warm')">Warm / diep</button>
+             <button type="button" class="fxchip" onclick="vfPreset('bright')">Helder</button>
+             <button type="button" class="fxchip" onclick="vfPreset('radio')">Radio</button>
+             <button type="button" class="fxchip" onclick="vfPreset('phone')">Telefoon</button>
+           </div>
+           <div class="field"><label>Toonhoogte <span id="vfl-pitch">0</span> (halve tonen)</label><input id="vf-pitch" type="range" min="-6" max="6" step="1" value="0" oninput="vfSync()"></div>
+           <div class="field"><label>Warmte <span id="vfl-warm">0</span></label><input id="vf-warm" type="range" min="-6" max="12" step="1" value="0" oninput="vfSync()"></div>
+           <div class="field"><label>Helderheid <span id="vfl-bright">1</span></label><input id="vf-bright" type="range" min="-6" max="12" step="1" value="1" oninput="vfSync()"></div>
+           <div class="field"><label>Aanwezigheid <span id="vfl-presence">1</span></label><input id="vf-presence" type="range" min="0" max="8" step="1" value="1" oninput="vfSync()"></div>
+           <div class="field"><label>Ruis weg <span id="vfl-denoise">20</span></label><input id="vf-denoise" type="range" min="0" max="100" step="1" value="20" oninput="vfSync()"></div>
+           <div class="field"><label>Compressie <span id="vfl-comp">20</span></label><input id="vf-comp" type="range" min="0" max="100" step="1" value="20" oninput="vfSync()"></div>
+           <div class="field"><label>Galm <span id="vfl-reverb">0</span></label><input id="vf-reverb" type="range" min="0" max="100" step="1" value="0" oninput="vfSync()"></div>
+           <div class="field"><label>Volume <span id="vfl-vol">100</span></label><input id="vf-vol" type="range" min="50" max="160" step="1" value="100" oninput="vfSync()"></div>
+           <div class="btnrow"><button class="btn" type="button" onclick="vfUse()">✓ Gebruik deze stem in de video</button></div>
+           <p class="small" id="vf-status" style="margin-top:6px;color:var(--teal-deep)"></p>
+         </div>
+       </details>
        <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> = de systeemstem van je Mac (alleen preview). <b>“In de video bakken”</b> gebruikt een échte neurale stem (Kokoro) die in je browser draait en de stem natuurlijk in de mp4 zet — de eerste keer laadt het stem-model even (internet nodig), daarna gaat het snel. Liever een specifieke stem? Laad dan je eigen audiobestand in; dat komt gegarandeerd mee in de video.</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
@@ -1041,9 +1065,60 @@ async function msSpeakBuffer(text,gender,status){
 function voLoadCustom(e){const f=e&&e.target&&e.target.files&&e.target.files[0];const lab=document.getElementById('vo-audio-lbl');
  if(!f){window.VO_CUSTOM=null;if(lab)lab.textContent='';return;}
  audioEnsure();const rd=new FileReader();
- rd.onload=function(){AC.decodeAudioData(rd.result).then(function(buf){window.VO_CUSTOM=buf;if(lab)lab.textContent='✓ '+f.name+' geladen — komt in de video';}).catch(function(){window.VO_CUSTOM=null;if(lab)lab.textContent='Kon dit audiobestand niet lezen (gebruik mp3 of wav).';});};
+ rd.onload=function(){AC.decodeAudioData(rd.result).then(function(buf){window.VO_CUSTOM=buf;VF.raw=buf;if(lab)lab.textContent='✓ '+f.name+' geladen — komt in de video (open de stem-studio om \'m te fixen)';}).catch(function(){window.VO_CUSTOM=null;if(lab)lab.textContent='Kon dit audiobestand niet lezen (gebruik mp3 of wav).';});};
  rd.readAsArrayBuffer(f);}
-function voClearCustom(){window.VO_CUSTOM=null;const i=document.getElementById('vo-audio');if(i)i.value='';const lab=document.getElementById('vo-audio-lbl');if(lab)lab.textContent='';}
+function voClearCustom(){window.VO_CUSTOM=null;VF.raw=null;const i=document.getElementById('vo-audio');if(i)i.value='';const lab=document.getElementById('vo-audio-lbl');if(lab)lab.textContent='';}
+// ================= STEM-STUDIO (neem op & fix) =================
+const VF={raw:null,out:null,settings:{pitch:0,warm:0,bright:1,presence:1,denoise:20,comp:20,reverb:0,vol:100},_recInit:false};
+let _vfRec=null,_vfChunks=[];
+function vfStatus(t){const el=document.getElementById('vf-status');if(el)el.innerHTML=t;}
+function vfInit(){if(VF._recInit)return;VF._recInit=true;vfSyncLabels();}
+function vfSyncLabels(){['pitch','warm','bright','presence','denoise','comp','reverb','vol'].forEach(function(k){const e=document.getElementById('vf-'+k),l=document.getElementById('vfl-'+k);if(e)e.value=VF.settings[k];if(l)l.textContent=VF.settings[k];});}
+function vfSync(){['pitch','warm','bright','presence','denoise','comp','reverb','vol'].forEach(function(k){const e=document.getElementById('vf-'+k);if(e)VF.settings[k]=+e.value;const l=document.getElementById('vfl-'+k);if(l&&e)l.textContent=e.value;});}
+function vfPreset(name){const P={
+  natural:{pitch:0,warm:0,bright:1,presence:1,denoise:20,comp:20,reverb:0,vol:100},
+  podcast:{pitch:0,warm:4,bright:2,presence:3,denoise:40,comp:55,reverb:8,vol:112},
+  warm:{pitch:-2,warm:8,bright:-2,presence:0,denoise:30,comp:40,reverb:10,vol:106},
+  bright:{pitch:0,warm:-1,bright:6,presence:4,denoise:35,comp:35,reverb:5,vol:106},
+  radio:{pitch:-1,warm:5,bright:3,presence:5,denoise:45,comp:70,reverb:6,vol:118},
+  phone:{pitch:0,warm:-4,bright:-3,presence:6,denoise:75,comp:60,reverb:0,vol:112}
+}[name]||{};VF.settings=Object.assign({},VF.settings,P);vfSyncLabels();vfStatus('Stijl “'+name+'” ingesteld. Klik ▶ Beluister of ✓ Gebruik in de video.');}
+function vfIR(ctx,dur,decay){const rate=ctx.sampleRate,len=Math.max(1,Math.floor(rate*dur)),b=ctx.createBuffer(2,len,rate);for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return b;}
+async function vfRecToggle(){const btn=document.getElementById('vr-rec');
+ if(_vfRec){try{_vfRec.stop();}catch(e){}return;}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){vfStatus('Opnemen kan niet in deze browser. Laad anders een audiobestand in hierboven.');return;}
+ let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}
+ catch(e){vfStatus('Microfoon geblokkeerd. Op een los bestand (file://) staat de mic uit — gebruik de online versie van de studio, of laad een opname als mp3/wav in hierboven.');return;}
+ _vfChunks=[];let mr;try{mr=new MediaRecorder(stream);}catch(e){vfStatus('Opnemen niet ondersteund. Laad een audiobestand in.');stream.getTracks().forEach(t=>t.stop());return;}
+ _vfRec=mr;mr.ondataavailable=function(e){if(e.data&&e.data.size)_vfChunks.push(e.data);};
+ mr.onstop=async function(){stream.getTracks().forEach(t=>t.stop());_vfRec=null;if(btn)btn.textContent='● Opnemen';
+   try{const blob=new Blob(_vfChunks);const ab=await blob.arrayBuffer();audioEnsure();VF.raw=await AC.decodeAudioData(ab);vfStatus('✓ Opname klaar ('+VF.raw.duration.toFixed(1)+'s). Kies een stijl en klik ✓ Gebruik in de video.');}
+   catch(e){vfStatus('Kon de opname niet verwerken. Probeer opnieuw.');}};
+ mr.start();if(btn)btn.textContent='■ Stop';vfStatus('● Opnemen… spreek je tekst rustig in. Klik ■ Stop als je klaar bent.');}
+async function vfProcess(){
+ if(!VF.raw)throw new Error('Nog geen stem. Neem eerst op, of laad een audiobestand in.');
+ const s=VF.settings,sr=VF.raw.sampleRate,rate=Math.pow(2,(s.pitch||0)/12);
+ const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+ const len=Math.ceil(VF.raw.length/rate)+Math.floor(sr*0.6);
+ const off=new OC(1,len,sr);
+ const src=off.createBufferSource();src.buffer=VF.raw;src.playbackRate.value=rate;
+ const hp=off.createBiquadFilter();hp.type='highpass';hp.frequency.value=60+(s.denoise||0)*1.6;hp.Q.value=0.7;
+ const low=off.createBiquadFilter();low.type='lowshelf';low.frequency.value=240;low.gain.value=s.warm||0;
+ const high=off.createBiquadFilter();high.type='highshelf';high.frequency.value=3600;high.gain.value=s.bright||0;
+ const pres=off.createBiquadFilter();pres.type='peaking';pres.frequency.value=2600;pres.Q.value=1.1;pres.gain.value=s.presence||0;
+ if(s.bright<-1){const lp=off.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3400;pres.connect(lp);var chainEnd=lp;}
+ const comp=off.createDynamicsCompressor();comp.threshold.value=-18-(s.comp||0)/100*14;comp.knee.value=22;comp.ratio.value=1.5+(s.comp||0)/100*6;comp.attack.value=0.006;comp.release.value=0.22;
+ const dry=off.createGain(),outg=off.createGain();dry.gain.value=1;outg.gain.value=(s.vol||100)/100*1.5;
+ src.connect(hp);hp.connect(low);low.connect(high);high.connect(pres);
+ const preComp=(typeof chainEnd!=='undefined')?chainEnd:pres;preComp.connect(comp);
+ comp.connect(dry);dry.connect(outg);
+ if((s.reverb||0)>0){const conv=off.createConvolver();conv.buffer=vfIR(off,1.8,3.0);const wet=off.createGain();wet.gain.value=(s.reverb/100)*0.55;comp.connect(conv);conv.connect(wet);wet.connect(outg);}
+ outg.connect(off.destination);src.start(0);
+ const rendered=await off.startRendering();
+ audioEnsure();const buf=AC.createBuffer(1,rendered.length,rendered.sampleRate);buf.getChannelData(0).set(rendered.getChannelData(0));
+ VF.out=buf;return buf;}
+async function vfPlay(){try{vfStatus('Bezig met oppoetsen…');const buf=await vfProcess();audioEnsure();const s=AC.createBufferSource();s.buffer=buf;s.connect(AC.destination);s.start();vfStatus('▶ Zo klinkt je stem met deze stijl.');}catch(e){vfStatus(e.message||'Er ging iets mis.');}}
+async function vfUse(){try{vfStatus('Bezig met oppoetsen…');const buf=await vfProcess();window.VO_CUSTOM=buf;const lab=document.getElementById('vo-audio-lbl');if(lab)lab.textContent='✓ jouw eigen stem (gefixt) — komt in de video';vfStatus('✓ Ingesteld! Klik nu op “Genereer video” — je eigen stem zit dan in de mp4.');}catch(e){vfStatus(e.message||'Er ging iets mis.');}}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
  const ch=document.getElementById('g-channel').value,per=document.getElementById('g-persona').value,pil=document.getElementById('g-pillar').value;
