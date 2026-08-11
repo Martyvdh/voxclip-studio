@@ -500,6 +500,8 @@ table{border-radius:12px;box-shadow:var(--shadow-sm)}
 <section id="gen" class="tab">
   <h2>Generator + video-editor</h2>
   <p class="hint">Genereer een post (Engels). Bij TikTok/Instagram kun je de video eronder aanpassen (tekst, snelheid), downloaden én de post opslaan.</p>
+  <div class="callout" style="border-left-color:var(--teal)"><b>🎥 Klaar-om-te-downloaden uitleg-video.</b> Eén klik zet alles voor je klaar — de uitleg-stijl "waarom je het nodig hebt", de tekst, kalme muziek en de lange outro. Daarna hoef je alleen op <b>Genereer video</b> te drukken.
+    <div class="btnrow" style="margin-top:8px"><button class="btn big" onclick="buildExplainerVideo()">🎥 Maak mijn uitleg-video</button></div></div>
   <div class="grid">
     <div class="field"><label>Kanaal</label>
       <select id="g-channel" onchange="generateOne()">
@@ -1225,6 +1227,22 @@ function generateOne(){
  else html+=`<div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post</button></div><p class="small" id="v-msg"></p>`;
  document.getElementById('g-out').innerHTML=html;
  if(hasVideo){window.curPillar=pil;vStyleChange();voLoadVoices();}
+}
+function buildExplainerVideo(){
+ try{document.getElementById('g-channel').value='tiktok';}catch(e){}
+ generateOne();
+ const set=function(id,v){const e=document.getElementById(id);if(e)e.value=v;};
+ set('v-style','ex_pitch');
+ if(typeof vStyleChange==='function')vStyleChange();
+ set('v-p1','You copy and speak all day.');
+ set('v-p4','Try it free.');
+ set('v-tag','One keystroke away.');
+ set('v-dur','18');const dl=document.getElementById('v-durlbl');if(dl)dl.textContent='18.0';
+ try{const mi=TUNES.findIndex(function(x){return x.name==='Modern kalm';});if(mi>=0){MUSIC.tune=String(mi);const ms=document.getElementById('fx-music');if(ms)ms.value=String(mi);}}catch(e){}
+ if(typeof vAutoPlay==='function')vAutoPlay();
+ go('gen');
+ setTimeout(function(){const b=document.getElementById('vrecbtn');if(b){b.scrollIntoView({behavior:'smooth',block:'center'});}
+   alert('Je uitleg-video staat klaar 🎥\n\nStijl: "Uitleg — volledige pitch"\nDuur: 18 sec (incl. lange outro)\nMuziek: Modern kalm\n\nKlik nu op de knop "🎬 Genereer video" om \'m te downloaden als mp4.');},350);
 }
 
 // ================= CANVAS VIDEO ENGINE =================
