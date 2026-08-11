@@ -1256,7 +1256,8 @@ let OUTRO=6;/* langere outro overal */
 try{if(document.fonts&&document.fonts.load){document.fonts.load("700 120px 'Space Grotesk'");document.fonts.load("500 44px 'Space Grotesk'");document.fonts.load("800 56px 'Space Grotesk'");}}catch(e){}
 function rr(ctx,x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);}else{ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
-function eo(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,3);}
+function eo(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,5);}/* easeOutQuint — snappier, premiumer */
+function eob(t){t=Math.max(0,Math.min(1,t));const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}/* overshoot */
 function darkBg(ctx){const W=1080,H=1920;const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#171c26');g.addColorStop(.55,'#12161d');g.addColorStop(1,'#0d1015');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);const v=ctx.createRadialGradient(W/2,H*0.42,H*0.18,W/2,H*0.5,H*0.72);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.42)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
 function lightBg(ctx){const W=1080,H=1920;const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#FCFCFA');g.addColorStop(1,'#ECEFF3');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);const v=ctx.createRadialGradient(W/2,H*0.4,H*0.25,W/2,H*0.5,H*0.78);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(20,24,31,.06)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
 function lerp(a,b,t){return a+(b-a)*t;}
@@ -1934,16 +1935,19 @@ async function vRecord(){
 let advAnim=0,advPaused=false,advManualT=null,ADV_STYLE='kinetic';
 // ---- FX engine (color grade, effects, motion) ----
 let VFX=fxDefaults();let _vfxBackup=null,_fxCanvas=null,_fxNoise=null;
-function fxDefaults(){return {bright:100,contrast:103,sat:105,hue:0,blur:0,sepia:0,gray:0,vignette:16,grain:0,scan:false,glow:false,upper:false,reverse:false,inA:'fade',outA:'fade',fps:30};}
+function fxDefaults(){return {bright:101,contrast:107,sat:110,hue:0,blur:0,sepia:0,gray:0,vignette:22,grain:7,scan:false,glow:false,upper:false,reverse:false,inA:'fade',outA:'fade',fps:30,bloom:true,toplight:true,push:true};}
 function _fxGet(){if(!_fxCanvas){_fxCanvas=document.createElement('canvas');_fxCanvas.width=1080;_fxCanvas.height=1920;}return _fxCanvas;}
 function _fxNoiseTile(){if(_fxNoise)return _fxNoise;const n=document.createElement('canvas');n.width=n.height=160;const c=n.getContext('2d');const img=c.createImageData(160,160);for(let i=0;i<img.data.length;i+=4){const v=Math.random()*255;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255;}c.putImageData(img,0,0);_fxNoise=n;return n;}
 function fxActive(){return VFX.bright!=100||VFX.contrast!=100||VFX.sat!=100||VFX.hue||VFX.blur||VFX.sepia||VFX.gray||VFX.vignette||VFX.grain||VFX.scan||VFX.glow||VFX.upper||VFX.reverse||VFX.inA!=='none'||VFX.outA!=='none';}
 function fxFilterStr(){const f=[];if(VFX.bright!=100)f.push('brightness('+(VFX.bright/100)+')');if(VFX.contrast!=100)f.push('contrast('+(VFX.contrast/100)+')');if(VFX.sat!=100)f.push('saturate('+(VFX.sat/100)+')');if(VFX.hue)f.push('hue-rotate('+VFX.hue+'deg)');if(VFX.blur)f.push('blur('+VFX.blur+'px)');if(VFX.sepia)f.push('sepia('+VFX.sepia+')');if(VFX.gray)f.push('grayscale('+VFX.gray+')');return f.length?f.join(' '):'none';}
-function fxAnim(t,dur){let alpha=1,scale=1,tx=0;const inD=0.55;if(VFX.inA!=='none'&&t<inD){const p=sm(t/inD);if(VFX.inA==='fade')alpha=p;if(VFX.inA==='zoom'){alpha=p;scale=lerp(1.12,1,p);}if(VFX.inA==='slide'){alpha=p;tx=lerp(140,0,p);}}const outD=0.5;if(VFX.outA!=='none'&&t>dur-outD){const p=sm((dur-t)/outD);if(VFX.outA==='fade')alpha=Math.min(alpha,p);if(VFX.outA==='zoom'){alpha=Math.min(alpha,p);scale=lerp(1.12,1,p);}}return {alpha:alpha,scale:scale,tx:tx};}
+function fxAnim(t,dur){let alpha=1,scale=1,tx=0;const inD=0.55;if(VFX.inA!=='none'&&t<inD){const p=sm(t/inD);if(VFX.inA==='fade')alpha=p;if(VFX.inA==='zoom'){alpha=p;scale=lerp(1.12,1,p);}if(VFX.inA==='slide'){alpha=p;tx=lerp(140,0,p);}}const outD=0.5;if(VFX.outA!=='none'&&t>dur-outD){const p=sm((dur-t)/outD);if(VFX.outA==='fade')alpha=Math.min(alpha,p);if(VFX.outA==='zoom'){alpha=Math.min(alpha,p);scale=lerp(1.12,1,p);}}
+ if(VFX.push){const kb=1+0.05*sm(Math.min(1,t/Math.max(1,dur)));scale=Math.max(scale,scale*kb);}
+ return {alpha:alpha,scale:scale,tx:tx};}
 function fxOverlays(octx){const W=1080,H=1920;
  if(VFX.grain){octx.save();octx.globalAlpha=Math.min(.5,VFX.grain/100*.6);const nt=_fxNoiseTile();const ox=Math.random()*160,oy=Math.random()*160;for(let x=-160;x<W;x+=160)for(let y=-160;y<H;y+=160)octx.drawImage(nt,x-ox,y-oy);octx.restore();}
  if(VFX.scan){octx.save();octx.globalAlpha=.12;octx.fillStyle='#000';for(let y=0;y<H;y+=4)octx.fillRect(0,y,W,2);octx.restore();}
- if(VFX.vignette){octx.save();const g=octx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,H*0.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+(VFX.vignette/100*0.85)+')');octx.fillStyle=g;octx.fillRect(0,0,W,H);octx.restore();}}
+ if(VFX.vignette){octx.save();const g=octx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,H*0.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+(VFX.vignette/100*0.85)+')');octx.fillStyle=g;octx.fillRect(0,0,W,H);octx.restore();}
+ if(VFX.toplight){octx.save();const tg=octx.createRadialGradient(W/2,-120,80,W/2,H*0.28,H*0.72);tg.addColorStop(0,'rgba(255,255,255,0.07)');tg.addColorStop(1,'rgba(255,255,255,0)');octx.fillStyle=tg;octx.fillRect(0,0,W,H);octx.restore();}}
 function vFrameFX(ctx,t,c){if(!fxActive())return vFrame(ctx,t,c);const W=1080,H=1920;let tt=VFX.reverse?Math.max(0,c.dur-t):t;let cc=c;
  if(VFX.upper){cc=Object.assign({},c);['h1','h2','hw','i1','i2','i3','pay','p1','p2','p3','p4','q','res','tag','big','sub','title','quote','a','trigger','expanded','badge','head'].forEach(k=>{if(cc[k])cc[k]=String(cc[k]).toUpperCase();});}
  const off=_fxGet(),octx=off.getContext('2d');octx.setTransform(1,0,0,1,0,0);octx.globalAlpha=1;octx.filter='none';octx.clearRect(0,0,W,H);
@@ -1953,7 +1957,9 @@ function vFrameFX(ctx,t,c){if(!fxActive())return vFrame(ctx,t,c);const W=1080,H=
  const a=fxAnim(t,c.dur);ctx.save();ctx.filter=fxFilterStr();ctx.globalAlpha=a.alpha;
  if(a.scale!==1){ctx.translate(W/2,H/2);ctx.scale(a.scale,a.scale);ctx.translate(-W/2,-H/2);}
  if(a.tx)ctx.translate(a.tx,0);
- ctx.drawImage(off,0,0);ctx.restore();ctx.filter='none';ctx.globalAlpha=1;}
+ ctx.drawImage(off,0,0);ctx.restore();ctx.filter='none';ctx.globalAlpha=1;
+ // cinematische bloom: zachte, licht vergrote, wazige kopie in 'lighter' → glans op heldere delen
+ if(VFX.bloom){try{ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=0.13*a.alpha;ctx.filter='blur(9px)';ctx.translate(W/2,H/2);ctx.scale(a.scale*1.015,a.scale*1.015);ctx.translate(-W/2,-H/2);ctx.drawImage(off,0,0);ctx.restore();ctx.filter='none';ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';}catch(e){ctx.filter='none';ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';}}}
 function fxControlsHTML(){
  const chip=(id,l)=>'<button type="button" class="fxchip" onclick="fxPreset(\''+id+'\')">'+l+'</button>';
  const sl=(id,l,min,max,step,v)=>'<div class="field"><label>'+l+' <span id="fxl-'+id+'">'+v+'</span></label><input id="fx-'+id+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+v+'" oninput="fxSync()"></div>';
