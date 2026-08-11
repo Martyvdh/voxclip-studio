@@ -848,6 +848,28 @@ function videoEditorHTML(){
          <option value="ex_problem">Uitleg — probleem → oplossing</option>
          <option value="ex_benefits">Uitleg — 3 redenen</option>
          <option value="ex_tour">Uitleg — mini producttour</option>
+         <option value="ex_compare">Uitleg — vs andere apps</option>
+         <option value="ex_privacy">Uitleg — privacy / lokaal</option>
+         <option value="ex_founder">Uitleg — makersverhaal</option>
+         <option value="ex_usecase">Uitleg — dag in je leven</option>
+         <option value="ex_switch">Uitleg — waarom overstappen</option>
+       </optgroup>
+       <optgroup label="🔠 Typografie">
+         <option value="tx_hero">Tekst — hero</option>
+         <option value="tx_underline">Tekst — onderstreept</option>
+         <option value="tx_boxed">Tekst — kader</option>
+         <option value="tx_stagger">Tekst — versprongen</option>
+         <option value="tx_gradient">Tekst — gradient</option>
+         <option value="tx_mono">Tekst — mono (code)</option>
+         <option value="tx_serif">Tekst — serif (elegant)</option>
+         <option value="tx_outline">Tekst — outline</option>
+         <option value="tx_caps">Tekst — hoofdletters gespreid</option>
+         <option value="tx_centerline">Tekst — middenlijn</option>
+         <option value="tx_kicker">Tekst — kicker + titel</option>
+         <option value="tx_hilite">Tekst — highlight-marker</option>
+         <option value="tx_bigword">Tekst — één groot woord</option>
+         <option value="tx_twoline">Tekst — twee regels</option>
+         <option value="tx_quote2">Tekst — quote</option>
        </optgroup>
        <optgroup label="⭐ Verkoop — laat mensen het willen">
          <option value="sl_free">Verkoop — 'Free' onthulling</option>
@@ -935,6 +957,14 @@ function videoEditorHTML(){
          <option value="ci_fog">Cinematic — mist</option>
          <option value="ci_wave">Cinematic — waveform (stem)</option>
          <option value="ci_orbit">Cinematic — orbit-deeltjes</option>
+         <option value="ci_rays">Cinematic — lichtstralen (radiaal)</option>
+         <option value="ci_ripple">Cinematic — rimpels</option>
+         <option value="ci_aurora">Cinematic — aurora golven</option>
+         <option value="ci_grid">Cinematic — bewegend raster</option>
+         <option value="ci_confetti">Cinematic — confetti</option>
+         <option value="ci_pulse">Cinematic — puls</option>
+         <option value="ci_scan2">Cinematic — scanlijn</option>
+         <option value="ci_glowdots">Cinematic — glow-stippen</option>
        </optgroup>
        <optgroup label="🎞️ Motion (bewegende tekst)">
          <option value="mo_scale">Motion — inzoomen</option>
@@ -948,6 +978,15 @@ function videoEditorHTML(){
          <option value="mo_ticker">Motion — marquee ticker</option>
          <option value="mo_wipeword">Motion — woord voor woord</option>
          <option value="mo_reveal3">Motion — 3 regels + stippen</option>
+         <option value="mo_pop">Motion — pop (overshoot)</option>
+         <option value="mo_slideL">Motion — slide van links</option>
+         <option value="mo_slideR">Motion — slide van rechts</option>
+         <option value="mo_bounce">Motion — bounce</option>
+         <option value="mo_cursor">Motion — typcursor</option>
+         <option value="mo_fall">Motion — woorden vallen</option>
+         <option value="mo_zoomo">Motion — uitzoomen</option>
+         <option value="mo_swap">Motion — wissel (2 zinnen)</option>
+         <option value="mo_wipeup">Motion — wipe omhoog</option>
        </optgroup>
        <optgroup label="⭐ Merk (premium)">
          <option value="br_card">Merk — product-kaart</option>
@@ -962,6 +1001,14 @@ function videoEditorHTML(){
          <option value="br_shine">Merk — shine-sweep tekst</option>
          <option value="br_lowerthird">Merk — lower-third balk</option>
          <option value="br_price2">Merk — prijs (Free vs Plus)</option>
+         <option value="br_tickerbar">Merk — ticker-balk</option>
+         <option value="br_statcard">Merk — stat-kaart</option>
+         <option value="br_logointro">Merk — logo-intro</option>
+         <option value="br_gradtext">Merk — gradient-tekst</option>
+         <option value="br_split2">Merk — diagonale split</option>
+         <option value="br_checklist">Merk — checklist</option>
+         <option value="br_badge2">Merk — badge/lint</option>
+         <option value="br_urlbar">Merk — adresbalk (url)</option>
        </optgroup>
        <optgroup label="➕ Extra">
          <option value="list">Lijst — 3 dingen</option>
@@ -1040,7 +1087,7 @@ function vDefaultsFor(style){
    if(style==='sl_switch')return {p1:'',p2:'One place. One search.',i1:'',i2:'',i3:'',tag:pay};
    return {p1:hook||'Everything you copy or say',p2:'in one place — free.',i1:'Clipboard history',i2:'Voice dictation',i3:'One searchable Timeline',tag:pay};
  }
- if(style==='kinetic'||KFAM.indexOf(style)>=0||SFAM.indexOf(style)>=0||PROFAM.indexOf(style)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(style)>=0||MOFAM.indexOf(style)>=0||BRFAM.indexOf(style)>=0||EXFAM.indexOf(style)>=0))){const L=hookToLines(hook);return {p1:L[0]||'You copy this.',p2:L[1]||'You say that.',p3:L[2]||'',p4:pay,tag:pay};}
+ if(style==='kinetic'||KFAM.indexOf(style)>=0||SFAM.indexOf(style)>=0||PROFAM.indexOf(style)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(style)>=0||MOFAM.indexOf(style)>=0||BRFAM.indexOf(style)>=0||EXFAM.indexOf(style)>=0||TXFAM.indexOf(style)>=0))){const L=hookToLines(hook);return {p1:L[0]||'You copy this.',p2:L[1]||'You say that.',p3:L[2]||'',p4:pay,tag:pay};}
  if(style==='before')return {q:'that address',res:'Prinsengracht 263, Amsterdam',tag:hook||pay};
  if(style==='stat'||style==='gradientstat'||NFAM.indexOf(style)>=0)return {big:STAT,sub:hook||cap,tag:pay};
  if(style==='list')return {title:hook||'3 things VoxClip does',i1:LIST[0],i2:LIST[1],i3:LIST[2],tag:pay};
@@ -1057,7 +1104,7 @@ function vFieldsHTML(st){
  const FI=(id,lab,v)=>`<div class="field"><label>${lab}</label><input id="v-${id}" value="${(v||'').replace(/"/g,'&quot;')}"></div>`;
  const d=vDefaultsFor(st);
  if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(st)>=0)return FI('p1','Grote regel',d.p1)+FI('p2','Ondertekst',d.p2)+FI('i1','Punt 1 / groot getal',d.i1)+FI('i2','Punt 2',d.i2)+FI('i3','Punt 3',d.i3)+FI('tag','Outro-tagline',d.tag);
- if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(st)>=0||MOFAM.indexOf(st)>=0||BRFAM.indexOf(st)>=0||EXFAM.indexOf(st)>=0)))return FI('p1','Regel 1',d.p1)+FI('p2','Regel 2',d.p2)+FI('p3','Regel 3',d.p3)+FI('p4','Regel 4 (accent)',d.p4)+FI('tag','Outro-tagline',d.tag);
+ if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(st)>=0||MOFAM.indexOf(st)>=0||BRFAM.indexOf(st)>=0||EXFAM.indexOf(st)>=0||TXFAM.indexOf(st)>=0)))return FI('p1','Regel 1',d.p1)+FI('p2','Regel 2',d.p2)+FI('p3','Regel 3',d.p3)+FI('p4','Regel 4 (accent)',d.p4)+FI('tag','Outro-tagline',d.tag);
  if(st==='before')return FI('q','Zoekopdracht',d.q)+FI('res','Resultaat',d.res)+FI('tag','Outro-tagline',d.tag);
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return FI('big','Grote tekst',d.big)+FI('sub','Ondertekst',d.sub)+FI('tag','Outro-tagline',d.tag);
  if(st==='list')return FI('title','Titel',d.title)+FI('i1','Punt 1',d.i1)+FI('i2','Punt 2',d.i2)+FI('i3','Punt 3',d.i3)+FI('tag','Outro-tagline',d.tag);
@@ -1234,6 +1281,7 @@ function vFrame(ctx,t,c){
  if(typeof MOFAM!=='undefined'&&MOFAM.indexOf(c.style)>=0)return vFrameMo(ctx,t,c);
  if(typeof BRFAM!=='undefined'&&BRFAM.indexOf(c.style)>=0)return vFrameBr(ctx,t,c);
  if(typeof EXFAM!=='undefined'&&EXFAM.indexOf(c.style)>=0)return vFrameExplain(ctx,t,c);
+ if(typeof TXFAM!=='undefined'&&TXFAM.indexOf(c.style)>=0)return vFrameTx(ctx,t,c);
  return vFrameDemo(ctx,t,c);
 }
 function vFrameComingSoon(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.dur-OUT);
@@ -1505,10 +1553,13 @@ function vFrameSales(ctx,t,c){
  ctx.textAlign='center';
 }
 // ===== PREMIUM FAMILIES: CINEMATIC / MOTION / BRAND =====
-const CINE=['ci_flare','ci_bokeh','ci_parallax','ci_beam','ci_grain','ci_duotone','ci_spotlight','ci_mesh','ci_stars','ci_fog','ci_wave','ci_orbit'];
-const MOFAM=['mo_scale','mo_rise','mo_flip','mo_mask','mo_split','mo_track','mo_stamp','mo_grid','mo_ticker','mo_wipeword','mo_reveal3'];
-const BRFAM=['br_card','br_glow','br_wordmark','br_badgefree','br_keycap','br_ring','br_quote','br_cta','br_end','br_shine','br_lowerthird','br_price2'];
-const EXFAM=['ex_pitch','ex_why','ex_problem','ex_benefits','ex_tour'];
+const CINE=['ci_flare','ci_bokeh','ci_parallax','ci_beam','ci_grain','ci_duotone','ci_spotlight','ci_mesh','ci_stars','ci_fog','ci_wave','ci_orbit','ci_rays','ci_ripple','ci_aurora','ci_grid','ci_confetti','ci_pulse','ci_scan2','ci_glowdots'];
+const MOFAM=['mo_scale','mo_rise','mo_flip','mo_mask','mo_split','mo_track','mo_stamp','mo_grid','mo_ticker','mo_wipeword','mo_reveal3','mo_pop','mo_slideL','mo_slideR','mo_bounce','mo_cursor','mo_fall','mo_zoomo','mo_swap','mo_wipeup'];
+const BRFAM=['br_card','br_glow','br_wordmark','br_badgefree','br_keycap','br_ring','br_quote','br_cta','br_end','br_shine','br_lowerthird','br_price2','br_tickerbar','br_statcard','br_logointro','br_gradtext','br_split2','br_checklist','br_badge2','br_urlbar'];
+const EXFAM=['ex_pitch','ex_why','ex_problem','ex_benefits','ex_tour','ex_compare','ex_privacy','ex_founder','ex_usecase','ex_switch'];
+const TXFAM=['tx_hero','tx_underline','tx_boxed','tx_stagger','tx_gradient','tx_mono','tx_serif','tx_outline','tx_caps','tx_centerline','tx_kicker','tx_hilite','tx_bigword','tx_twoline','tx_quote2'];
+const V_STANDALONE=['kinetic','demo','before','stat','gradientstat','list','quote','qa','typed','compare','announce','comingsoon'];
+function styleCount(){try{return V_STANDALONE.length+KFAM.length+SFAM.length+NFAM.length+PROFAM.length+DFAM.length+SLFAM.length+CINE.length+MOFAM.length+BRFAM.length+EXFAM.length+TXFAM.length;}catch(e){return 150;}}
 function _tLines(c){return [c.p1,c.p2,c.p3].filter(function(x){return x&&(''+x).length;});}
 function _cineText(ctx,t,c,dark){const W=1080,H=1920;const lines=_tLines(c);if(!lines.length)return;ctx.textAlign='center';ctx.textBaseline='middle';
  const joined=lines.join(' ');const fs=joined.length<22?106:(joined.length<40?84:66);const lh=fs*1.2,total=lines.length*lh,y0=H/2-total/2;
@@ -1529,6 +1580,14 @@ function vFrameCine(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.
  else if(st==='ci_fog'){for(let i=0;i<3;i++){const y=H*0.5+Math.sin(t*0.5+i*2)*220;const g=ctx.createRadialGradient(W/2,y,50,W/2,y,620);g.addColorStop(0,'rgba(120,140,150,.08)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}}
  else if(st==='ci_wave'){ctx.strokeStyle='rgba(18,179,166,.55)';ctx.lineWidth=6;ctx.beginPath();for(let x=0;x<=W;x+=8){const y=H*0.5+Math.sin(x*0.012+t*3)*90*Math.sin(t*0.5+x*0.002);x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=4;ctx.beginPath();for(let x=0;x<=W;x+=8){const y=H*0.5+Math.cos(x*0.01+t*2)*60;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();}
  else if(st==='ci_orbit'){for(let i=0;i<12;i++){const a=t*0.8+i*(Math.PI*2/12),r=250+40*Math.sin(t+i),x=W/2+Math.cos(a)*r,y=H*0.4+Math.sin(a)*r*0.62;ctx.globalAlpha=0.5;ctx.fillStyle=i%2?TEALc:'#fff';ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.fill();}ctx.globalAlpha=1;}
+ else if(st==='ci_rays'){ctx.save();ctx.translate(W/2,H*0.4);for(let i=0;i<16;i++){ctx.rotate(Math.PI*2/16);ctx.globalAlpha=0.05+0.04*Math.abs(Math.sin(t+i));const g=ctx.createLinearGradient(0,0,0,-900);g.addColorStop(0,'rgba(18,179,166,.25)');g.addColorStop(1,'rgba(18,179,166,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-30,0);ctx.lineTo(30,0);ctx.lineTo(90,-900);ctx.lineTo(-90,-900);ctx.closePath();ctx.fill();}ctx.restore();ctx.globalAlpha=1;}
+ else if(st==='ci_ripple'){for(let i=0;i<5;i++){const r=((t*160+i*160)%900);ctx.globalAlpha=Math.max(0,0.3*(1-r/900));ctx.strokeStyle=TEALc;ctx.lineWidth=4;ctx.beginPath();ctx.arc(W/2,H*0.42,r,0,7);ctx.stroke();}ctx.globalAlpha=1;}
+ else if(st==='ci_aurora'){for(let i=0;i<3;i++){const g=ctx.createLinearGradient(0,H*0.2+i*160,W,H*0.5+i*160);g.addColorStop(0,'rgba(18,179,166,0)');g.addColorStop(0.5,'rgba(18,179,166,'+(0.10+0.05*Math.sin(t+i))+')');g.addColorStop(1,'rgba(60,120,140,0)');ctx.save();ctx.translate(0,Math.sin(t*0.6+i)*40);ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,H*0.35+i*120);for(let x=0;x<=W;x+=40)ctx.lineTo(x,H*0.35+i*120+Math.sin(x*0.008+t+i)*60);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();ctx.restore();}}
+ else if(st==='ci_grid'){ctx.strokeStyle='rgba(18,179,166,.12)';ctx.lineWidth=2;const off=(t*40)%80;for(let x=-off;x<W;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=-off;y<H;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+ else if(st==='ci_confetti'){for(let i=0;i<40;i++){const x=(i*137)%W,y=((i*89)%H+t*120*(0.4+(i%5)*0.15))%H,a=t*3+i;ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.globalAlpha=.5;ctx.fillStyle=[TEALc,'#fff','#0B7A6E'][i%3];ctx.fillRect(-6,-3,12,6);ctx.restore();}ctx.globalAlpha=1;}
+ else if(st==='ci_pulse'){const r=200+120*Math.abs(Math.sin(t*1.6));const g=ctx.createRadialGradient(W/2,H*0.4,r*0.4,W/2,H*0.4,r+200);g.addColorStop(0,'rgba(18,179,166,.22)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+ else if(st==='ci_scan2'){const y=(t*300)%H;const g=ctx.createLinearGradient(0,y-120,0,y+120);g.addColorStop(0,'rgba(18,179,166,0)');g.addColorStop(.5,'rgba(18,179,166,.2)');g.addColorStop(1,'rgba(18,179,166,0)');ctx.fillStyle=g;ctx.fillRect(0,y-120,W,240);}
+ else if(st==='ci_glowdots'){for(let i=0;i<24;i++){const x=(i*211)%W,y=(i*157)%H,pu=0.4+0.6*Math.abs(Math.sin(t*2+i));ctx.globalAlpha=0.4*pu;const g=ctx.createRadialGradient(x,y,0,x,y,40);g.addColorStop(0,'rgba(18,179,166,.5)');g.addColorStop(1,'rgba(18,179,166,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,40,0,7);ctx.fill();}ctx.globalAlpha=1;}
  ctx.restore();_cineText(ctx,t,c,true);}
 function vFrameMo(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.dur-OUT),st=c.style;
  const light=(st==='mo_mask'||st==='mo_grid');
@@ -1547,6 +1606,15 @@ function vFrameMo(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.du
  else if(st==='mo_ticker'){const s=(joined+'   •   ').repeat(4);ctx.fillStyle='rgba(255,255,255,.14)';ctx.font="800 120px 'Space Grotesk',Arial";const off=(t*160)%(ctx.measureText(joined+'   •   ').width);ctx.textAlign='left';ctx.fillText(s,-off,H*0.32);ctx.fillText(s,-off,H*0.68);ctx.textAlign='center';ctx.fillStyle=TEALc;ctx.font="800 96px 'Space Grotesk',Arial";const ap=eo(Math.min(1,t/0.6));ctx.globalAlpha=ap;ctx.fillText(c.p4||lines[0]||'',W/2,H/2);ctx.globalAlpha=1;}
  else if(st==='mo_wipeword'){const ws=joined.split(' ');const seg=content/(ws.length+1);ctx.font="700 "+fs+"px 'Space Grotesk',Arial";let widths=ws.map(w=>ctx.measureText(w+' ').width);let tw=widths.reduce((a,b)=>a+b,0);let x=W/2-tw/2;ws.forEach(function(w,i){const ap=eo(Math.min(1,(t-seg*i)/0.4));ctx.globalAlpha=Math.max(0,ap);ctx.fillStyle=ink;ctx.textAlign='left';ctx.fillText(w,x,H/2);x+=widths[i];});ctx.globalAlpha=1;ctx.textAlign='center';}
  else if(st==='mo_reveal3'){const items=lines.length?lines:[joined];const per=content/(items.length+0.5);items.forEach(function(ln,i){const ap=eo(Math.min(1,(t-i*per*0.8)/0.5));if(ap<=0)return;ctx.globalAlpha=ap;ctx.fillStyle=i===items.length-1?TEALc:ink;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";ctx.fillText(ln,W/2,y0+i*lh+lh/2+lerp(40,0,ap));});for(let k=0;k<items.length;k++){const on=t>k*per*0.8;ctx.fillStyle=on?TEALc:'#333c49';ctx.beginPath();ctx.arc(W/2-(items.length*30)/2+k*30+15,H-260,7,0,7);ctx.fill();}ctx.globalAlpha=1;}
+ else if(st==='mo_pop'){lines.forEach(function(ln,i){const lt=t-i*0.2,ap=Math.min(1,lt/0.3);if(ap<=0)return;const sc=lt<0.3?lerp(1.4,0.96,eo(ap)):(0.96+0.04*eo(Math.min(1,(lt-0.3)/0.2)));ctx.save();ctx.translate(W/2,y0+i*lh+lh/2);ctx.scale(sc,sc);ctx.globalAlpha=Math.min(1,ap*1.5);ctx.fillStyle=i===lines.length-1?TEALc:ink;ctx.font="800 "+fs+"px 'Space Grotesk',Arial";ctx.fillText(ln,0,0);ctx.restore();});ctx.globalAlpha=1;}
+ else if(st==='mo_slideL'){const ap=eo(Math.min(1,t/0.6)),dx=lerp(-500,0,ap);ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";lines.forEach((ln,i)=>ctx.fillText(ln,W/2+dx,y0+i*lh+lh/2));ctx.globalAlpha=1;}
+ else if(st==='mo_slideR'){const ap=eo(Math.min(1,t/0.6)),dx=lerp(500,0,ap);ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";lines.forEach((ln,i)=>ctx.fillText(ln,W/2+dx,y0+i*lh+lh/2));ctx.globalAlpha=1;}
+ else if(st==='mo_bounce'){const p=Math.min(1,t/0.8);let yy;if(p<1){const b=1-Math.pow(1-p,2);yy=lerp(-400,0,b)+(p>0.7?Math.sin((p-0.7)*20)*30*(1-p):0);}else yy=0;ctx.globalAlpha=Math.min(1,t/0.3);ctx.fillStyle=ink;ctx.font="800 "+fs+"px 'Space Grotesk',Arial";lines.forEach((ln,i)=>ctx.fillText(ln,W/2,y0+i*lh+lh/2+yy));ctx.globalAlpha=1;}
+ else if(st==='mo_cursor'){const s=joined;const n=Math.floor(Math.max(0,t)/0.06);const shown=s.slice(0,n);ctx.fillStyle=ink;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";ctx.fillText(shown,W/2,H/2);if(n<=s.length&&Math.floor(t*2)%2===0){const w=ctx.measureText(shown).width;ctx.fillStyle=TEALc;ctx.fillRect(W/2+w/2+8,H/2-fs/2,6,fs);}}
+ else if(st==='mo_fall'){const ws=joined.split(' ');ctx.font="700 "+fs+"px 'Space Grotesk',Arial";let widths=ws.map(w=>ctx.measureText(w+' ').width),tw=widths.reduce((a,b)=>a+b,0),x=W/2-tw/2;ws.forEach(function(w,i){const lt=t-i*0.15,ap=Math.min(1,lt/0.4);if(ap>0){const yy=lerp(-300,0,eo(ap));ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.textAlign='left';ctx.fillText(w,x,H/2+yy);}x+=widths[i];});ctx.globalAlpha=1;ctx.textAlign='center';}
+ else if(st==='mo_zoomo'){const ap=eo(Math.min(1,t/0.7)),sc=lerp(1.6,1,ap);ctx.save();ctx.translate(W/2,H/2);ctx.scale(sc,sc);ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="800 "+fs+"px 'Space Grotesk',Arial";lines.forEach((ln,i)=>ctx.fillText(ln,0,-total/2+i*lh+lh/2));ctx.restore();ctx.globalAlpha=1;}
+ else if(st==='mo_swap'){const half=content/2;let show,acc;if(t<half){show=lines[0]||joined;acc=false;}else{show=lines[1]||lines[0]||joined;acc=true;}const local=t<half?t:(t-half);const ap=eo(Math.min(1,local/0.4))*(local>half-0.4?eo(Math.max(0,(half-local)/0.4)):1);ctx.globalAlpha=ap;ctx.fillStyle=acc?TEALc:ink;ctx.font="800 "+fs+"px 'Space Grotesk',Arial";ctx.fillText(show,W/2,H/2+lerp(30,0,ap));ctx.globalAlpha=1;}
+ else if(st==='mo_wipeup'){ctx.save();ctx.beginPath();ctx.rect(0,0,W,H/2+total/2);ctx.clip();const ap=eo(Math.min(1,t/0.7));ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="800 "+fs+"px 'Space Grotesk',Arial";lines.forEach((ln,i)=>ctx.fillText(ln,W/2,y0+i*lh+lh/2+lerp(120,0,ap)));ctx.restore();ctx.globalAlpha=1;}
  // shared accent for non-special
  if(['mo_scale','mo_rise','mo_flip','mo_stamp'].indexOf(st)>=0&&c.p4){const ap=eo(Math.min(1,(t-lines.length*0.22-0.2)/0.5));if(ap>0){ctx.globalAlpha=ap;ctx.fillStyle=TEALc;ctx.font="700 "+Math.round(fs*0.55)+"px 'Space Grotesk',Arial";ctx.fillText(c.p4,W/2,y0+total+fs*0.5);ctx.globalAlpha=1;}}}
 function vFrameBr(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.dur-OUT),st=c.style;
@@ -1573,6 +1641,14 @@ function vFrameBr(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.du
    const px=90+cw+80;ctx.fillStyle=INKc;rr(ctx,px,cardsY,cw,ch,28);ctx.fill();ctx.fillStyle='#fff';ctx.font="800 58px 'Space Grotesk',Arial";ctx.fillText('Plus',px+cw/2,cardsY+78);ctx.fillStyle=TEALc;ctx.font="800 72px 'Space Grotesk',Arial";ctx.fillText('€6.99',px+cw/2,cardsY+190);
    ctx.fillStyle='#AEB6C2';ctx.font="500 37px 'Space Grotesk',Arial";['Encrypted sync','Talk to your stash','AI transforms','Extended history'].forEach((l,i)=>ctx.fillText(l,px+cw/2,cardsY+310+i*72));
    ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font="600 46px 'Space Grotesk',Arial";ctx.fillText(c.p1||'Free where it runs on your device.',W/2,cardsY+ch+80);}
+ else if(st==='br_tickerbar'){ctx.fillStyle='#fff';ctx.font="700 84px 'Space Grotesk',Arial";const ls=wrapText(ctx,title||'One place for everything.',W-180);ls.forEach((l,i)=>ctx.fillText(l,W/2,H/2-100+i*96));const bar=H-220;ctx.fillStyle=TEALDc;ctx.fillRect(0,bar,W,120);ctx.fillStyle='#fff';ctx.font="700 52px 'Space Grotesk',Arial";ctx.textAlign='left';const msg='VoxClip · free · Mac & Windows · clipboard + dictation · ';const one=ctx.measureText(msg).width;const off=(t*140)%one;for(let x=-off;x<W;x+=one)ctx.fillText(msg,x,bar+62);ctx.textAlign='center';}
+ else if(st==='br_statcard'){const bx=120,by=H/2-320,bw=W-240,bh=640;ctx.globalAlpha=ap;ctx.fillStyle=light?'#fff':'#1b2230';rr(ctx,bx,by,bw,bh,32);ctx.fill();ctx.fillStyle=TEALc;ctx.font="800 220px 'Space Grotesk',Arial";ctx.fillText(c.p1||'0',W/2,by+250);ctx.fillStyle=ink;ctx.font="600 56px 'Space Grotesk',Arial";const ls=wrapText(ctx,c.p2||'uploads. Ever. It stays on your Mac.',bw-100);ls.forEach((l,i)=>ctx.fillText(l,W/2,by+430+i*66));ctx.globalAlpha=1;}
+ else if(st==='br_logointro'){const s=eo(Math.min(1,t/0.6));ctx.save();ctx.translate(W/2,H*0.4);ctx.scale(lerp(0.4,1,s),lerp(0.4,1,s));ctx.globalAlpha=s;chipC(ctx,0,0,120);ctx.restore();ctx.globalAlpha=1;const s2=eo(Math.min(1,(t-0.5)/0.5));if(s2>0){ctx.globalAlpha=s2;ctx.fillStyle=ink;ctx.font="800 120px 'Space Grotesk',Arial";ctx.fillText('VoxClip',W/2,H*0.58);ctx.fillStyle=TEALc;ctx.font="600 52px 'Space Grotesk',Arial";ctx.fillText(title||'Copy and voice, one place.',W/2,H*0.66);ctx.globalAlpha=1;}}
+ else if(st==='br_gradtext'){ctx.font="800 118px 'Space Grotesk',Arial";const ls=wrapText(ctx,title||'One keystroke away.',W-160);const g=ctx.createLinearGradient(0,H/2-200,W,H/2+200);g.addColorStop(0,'#12B3A6');g.addColorStop(1,'#7fe0d6');ctx.fillStyle=g;const yy=H/2-(ls.length-1)*66;ls.forEach((l,i)=>ctx.fillText(l,W/2,yy+i*132));}
+ else if(st==='br_split2'){ctx.fillStyle='rgba(18,179,166,.14)';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(W,0);ctx.lineTo(0,H);ctx.closePath();ctx.fill();ctx.globalAlpha=ap;ctx.fillStyle='#fff';ctx.font="800 96px 'Space Grotesk',Arial";const ls=wrapText(ctx,title||'Two apps, one Timeline.',W-180);ls.forEach((l,i)=>ctx.fillText(l,W/2,H/2-(ls.length-1)*54+i*108));ctx.globalAlpha=1;}
+ else if(st==='br_checklist'){const items=[c.p1,c.p2,c.p3].filter(x=>x&&(''+x).length);if(!items.length){items.push('One place');items.push('Instant recall');items.push('Local & free');}ctx.textAlign='left';const per=content/(items.length+1);items.forEach(function(it,i){const ia=eo(Math.min(1,(t-i*per*0.6)/0.5));if(ia<=0)return;ctx.globalAlpha=ia;const y=H/2-((items.length-1)*130)/2+i*130,x=180;slCheck(ctx,x,y,44,TEALc);ctx.fillStyle=ink;ctx.font="700 60px 'Space Grotesk',Arial";ctx.fillText(it,x+90,y);ctx.globalAlpha=1;});ctx.textAlign='center';}
+ else if(st==='br_badge2'){ctx.save();ctx.translate(W/2,H*0.32);ctx.rotate(-0.06);ctx.fillStyle=TEALc;rr(ctx,-220,-70,440,140,20);ctx.fill();ctx.fillStyle='#fff';ctx.font="800 84px 'Space Grotesk',Arial";ctx.fillText(c.p4||'NEW',0,0);ctx.restore();ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 72px 'Space Grotesk',Arial";const ls=wrapText(ctx,title||'Something new in VoxClip.',W-180);ls.forEach((l,i)=>ctx.fillText(l,W/2,H*0.56+i*82));ctx.globalAlpha=1;}
+ else if(st==='br_urlbar'){const bx=140,by=H*0.36,bw=W-280,bh=120;ctx.fillStyle=light?'#fff':'#232b39';rr(ctx,bx,by,bw,bh,60);ctx.fill();ctx.fillStyle=TEALc;ctx.beginPath();ctx.arc(bx+70,by+bh/2,16,0,7);ctx.fill();ctx.fillStyle=ink;ctx.textAlign='left';ctx.font="600 56px 'Space Grotesk',Arial";const typed='voxclip.it'.slice(0,Math.max(0,Math.floor(t/0.12)));ctx.fillText(typed,bx+120,by+bh/2);ctx.textAlign='center';ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 68px 'Space Grotesk',Arial";const ls=wrapText(ctx,title||'Download free — Mac & Windows.',W-200);ls.forEach((l,i)=>ctx.fillText(l,W/2,by+bh+140+i*78));ctx.globalAlpha=1;}
  ctx.textAlign='center';}
 // ===== EXPLAINER (uitleg-video: waarom je het nodig hebt) =====
 function _exFit(ctx,text,max,base){let fs=base;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";let l=wrapText(ctx,text,max);while(l.length>3&&fs>44){fs-=6;ctx.font="700 "+fs+"px 'Space Grotesk',Arial";l=wrapText(ctx,text,max);}return {fs:fs,lines:l};}
@@ -1616,6 +1692,31 @@ function vFrameExplain(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(3
    {d:2.2,f:(x,lt,dd)=>{lightBg(x);appTop(x,'',true);appRow(x,470,'SPOKE','Draft the reply to Sarah','Voice · now',true);dcap(x,'speak — also kept');}},
    {d:2.2,f:(x,lt,dd)=>{lightBg(x);appTop(x,'notary',true);appRow(x,470,'SPOKE','Call the notary at 3','Voice · 2m',true);dcap(x,'search everything');}},
    {d:2.2,f:(x,lt,dd)=>{lightBg(x);appTop(x,'',true);appRow(x,470,'RICH TEXT','Prinsengracht 263','Safari · 5m',true);dcap(x,'paste in two keys');}}];
+ else if(st==='ex_compare')scenes=[
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'Clipboard apps remember copies.','Dictation apps remember your voice.',true);}},
+   {d:2.2,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'You use both. All day.','So you switch, and you lose things.',true);}},
+   {d:2.6,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'VoxClip does both.','One searchable Timeline — copy + voice.',true);}},
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P4||'One search. Everything.','',true);}}];
+ else if(st==='ex_privacy')scenes=[
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'Where does your stuff go?','With most apps — to their cloud.',true);}},
+   {d:2.4,f:(x,lt,dd)=>{darkBg(x);_exBenefit(x,lt,dd,'🔒','Nowhere','VoxClip is local-first. Your voice never leaves your Mac.');}},
+   {d:2.4,f:(x,lt,dd)=>{darkBg(x);_exChecks(x,lt,dd,'Private by default',['Runs on your device','Dictation audio stays local','You choose what, if anything, syncs']);}},
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P4||'Local. Private. Yours.','',true);}}];
+ else if(st==='ex_founder')scenes=[
+   {d:2.4,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'We copy and speak all day —','same habit, two apps.',true);}},
+   {d:2.4,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'So we built VoxClip.','One Timeline for both, local-first.',true);}},
+   {d:2.2,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'Free where it runs on your device.','Cloud is the only paid part.',true);}},
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P4||'Would love your honest feedback.','voxclip.it',true);}}];
+ else if(st==='ex_usecase')scenes=[
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'8:59 — you copy an address.','9:01 — you dictate a reminder.',true);}},
+   {d:2.2,f:(x,lt,dd)=>{lightBg(x);appTop(x,'',true);appRow(x,470,'RICH TEXT','Prinsengracht 263, Amsterdam','Safari · 8:59',true);appRow(x,600,'SPOKE','Call the notary at 3','Voice · 9:01',false);dcap(x,'both, kept automatically');}},
+   {d:2.2,f:(x,lt,dd)=>{lightBg(x);appTop(x,'notary',true);appRow(x,470,'SPOKE','Call the notary at 3','Voice · 9:01',true);dcap(x,'11:00 — recall in one search');}},
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P4||'Your whole day, one keystroke away.','',true);}}];
+ else if(st==='ex_switch')scenes=[
+   {d:1.8,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'Using Paste? Maccy? Wispr?','',true);}},
+   {d:2.4,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'Great tools — but half the picture.','Clipboard OR dictation, not both.',true);}},
+   {d:2.6,f:(x,lt,dd)=>{darkBg(x);_exChecks(x,lt,dd,'Why switch',['One place for copy + voice','Local-first & private','Free where it runs on your device']);}},
+   {d:2.0,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P4||'Try VoxClip free.','voxclip.it',true);}}];
  else scenes=[
    {d:1.8,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,P1||'You copy and speak all day.','',true);}},
    {d:2.2,f:(x,lt,dd)=>{darkBg(x);_exBig(x,lt,dd,'And you lose half of it.','Copy here, dictate there — two apps.',true);}},
@@ -1625,6 +1726,31 @@ function vFrameExplain(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(3
  const tot=scenes.reduce((s,x)=>s+x.d,0),scale=content/tot;let acc=0;
  for(const sc of scenes){const start=acc*scale,dd=sc.d*scale;acc+=sc.d;if(t>=start&&t<start+dd){sc.f(ctx,t-start,dd);return;}}
  scenes[scenes.length-1].f(ctx,1,1);}
+// ===== TYPOGRAFIE-FAMILIE (15 tekststijlen) =====
+function vFrameTx(ctx,t,c){const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.dur-OUT),st=c.style;
+ const light=['tx_boxed','tx_hilite','tx_mono','tx_centerline','tx_kicker'].indexOf(st)>=0;
+ if(t>=content){vOutro(ctx,t-content,c.tag||'',!light);return;}
+ if(light)lightBg(ctx);else darkBg(ctx);const ink=light?INKc:'#fff';
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ const lines=_tLines(c),joined=lines.join(' '),acc=c.p4||'';const ap=eo(Math.min(1,t/0.6));
+ const F=_exFit(ctx,joined,W-150,116),lh=F.fs*1.14,total=F.lines.length*lh,y0=H/2-total/2;
+ function drawLines(font,color,dy){ctx.font=font;ctx.fillStyle=color;F.lines.forEach((l,i)=>ctx.fillText(l,W/2,y0+i*lh+lh/2+(dy||0)));}
+ if(st==='tx_hero'){ctx.globalAlpha=ap;drawLines("800 "+F.fs+"px 'Space Grotesk',Arial",ink,lerp(34,0,ap));ctx.globalAlpha=1;if(acc){const a2=eo(Math.min(1,(t-0.4)/0.5));ctx.globalAlpha=a2;ctx.fillStyle=TEALc;ctx.font="700 "+Math.round(F.fs*0.55)+"px 'Space Grotesk',Arial";ctx.fillText(acc,W/2,y0+total+F.fs*0.5);ctx.globalAlpha=1;}}
+ else if(st==='tx_underline'){drawLines("800 "+F.fs+"px 'Space Grotesk',Arial",ink,0);const uw=lerp(0,F.lines.length?Math.min(560,W-200):300,eo(Math.min(1,t/0.8)));ctx.fillStyle=TEALc;rr(ctx,W/2-uw/2,y0+total+20,uw,14,7);ctx.fill();}
+ else if(st==='tx_boxed'){const pad=60,bw=Math.min(W-120,700),bh=total+120;ctx.strokeStyle=TEALc;ctx.lineWidth=6;rr(ctx,W/2-bw/2,H/2-bh/2,bw,bh,24);ctx.stroke();ctx.globalAlpha=ap;drawLines("800 "+F.fs+"px 'Space Grotesk',Arial",INKc,0);ctx.globalAlpha=1;}
+ else if(st==='tx_stagger'){F.lines.forEach(function(l,i){const a=eo(Math.min(1,(t-i*0.2)/0.5));if(a<=0)return;ctx.globalAlpha=a;ctx.fillStyle=i%2?TEALc:ink;ctx.font="800 "+F.fs+"px 'Space Grotesk',Arial";ctx.fillText(l,W/2+lerp(i%2?300:-300,0,a),y0+i*lh+lh/2);});ctx.globalAlpha=1;}
+ else if(st==='tx_gradient'){const g=ctx.createLinearGradient(0,y0,W,y0+total);g.addColorStop(0,'#12B3A6');g.addColorStop(1,'#8fe8de');ctx.globalAlpha=ap;drawLines("800 "+F.fs+"px 'Space Grotesk',Arial",g,0);ctx.globalAlpha=1;}
+ else if(st==='tx_mono'){const M=_exFit(ctx,joined,W-150,92);const lh2=M.fs*1.25,y2=H/2-(M.lines.length*lh2)/2;ctx.globalAlpha=ap;ctx.fillStyle=INKc;ctx.font=M.fs+"px 'DejaVu Sans Mono',monospace";M.lines.forEach((l,i)=>ctx.fillText(l,W/2,y2+i*lh2+lh2/2));ctx.globalAlpha=1;ctx.fillStyle=TEALDc;ctx.fillRect(W/2-140,y2-40,280,5);}
+ else if(st==='tx_serif'){const S=_exFit(ctx,joined,W-160,110);const lh2=S.fs*1.18,y2=H/2-(S.lines.length*lh2)/2;ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 "+S.fs+"px Georgia,serif";S.lines.forEach((l,i)=>ctx.fillText(l,W/2,y2+i*lh2+lh2/2));ctx.globalAlpha=1;}
+ else if(st==='tx_outline'){ctx.globalAlpha=ap;ctx.font="800 "+F.fs+"px 'Space Grotesk',Arial";ctx.lineWidth=3;ctx.strokeStyle=TEALc;F.lines.forEach((l,i)=>{ctx.strokeText(l,W/2,y0+i*lh+lh/2);});ctx.fillStyle=TEALc;ctx.globalAlpha=ap*0.15;F.lines.forEach((l,i)=>ctx.fillText(l,W/2,y0+i*lh+lh/2));ctx.globalAlpha=1;}
+ else if(st==='tx_caps'){const up=joined.toUpperCase();const C=_exFit(ctx,up,W-160,86);const lh2=C.fs*1.3,y2=H/2-(C.lines.length*lh2)/2;ctx.globalAlpha=ap;ctx.fillStyle=ink;C.lines.forEach(function(l,i){ctx.font="800 "+C.fs+"px 'Space Grotesk',Arial";const sp=C.fs*0.16;let tw=0;for(const ch of l)tw+=ctx.measureText(ch).width+sp;let x=W/2-tw/2;for(const ch of l){ctx.fillText(ch,x+ctx.measureText(ch).width/2,y2+i*lh2+lh2/2);x+=ctx.measureText(ch).width+sp;}});ctx.globalAlpha=1;}
+ else if(st==='tx_centerline'){ctx.fillStyle=LINEc;ctx.fillRect(0,H/2,W,3);ctx.globalAlpha=ap;ctx.fillStyle=INKc;ctx.font="800 "+F.fs+"px 'Space Grotesk',Arial";ctx.textBaseline='bottom';ctx.fillText(F.lines[0]||'',W/2,H/2-24);ctx.textBaseline='top';ctx.fillStyle=TEALDc;ctx.fillText(F.lines[1]||acc||'',W/2,H/2+24);ctx.textBaseline='middle';ctx.globalAlpha=1;}
+ else if(st==='tx_kicker'){const k=(acc||'VOXCLIP').toUpperCase();ctx.globalAlpha=ap;ctx.fillStyle=TEALDc;ctx.font="700 44px 'Space Grotesk',Arial";ctx.fillText(k,W/2,y0-70);ctx.fillStyle=INKc;drawLines("800 "+F.fs+"px 'Space Grotesk',Arial",INKc,0);ctx.globalAlpha=1;}
+ else if(st==='tx_hilite'){const idx=Math.max(0,F.lines.length-1);ctx.font="800 "+F.fs+"px 'Space Grotesk',Arial";F.lines.forEach(function(l,i){if(i===idx){const w=ctx.measureText(l).width;ctx.fillStyle=TEALc;const hw=lerp(0,w+40,eo(Math.min(1,t/0.7)));ctx.fillRect(W/2-w/2-20,y0+i*lh+lh/2-F.fs*0.5,hw,F.fs);}ctx.fillStyle=i===idx?'#fff':INKc;ctx.fillText(l,W/2,y0+i*lh+lh/2);});}
+ else if(st==='tx_bigword'){const ws=joined.split(' ');const big=ws[0]||'One';const rest=ws.slice(1).join(' ');ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="800 200px 'Space Grotesk',Arial";ctx.fillText(big,W/2,H/2-60);ctx.fillStyle=TEALc;ctx.font="600 64px 'Space Grotesk',Arial";const ls=wrapText(ctx,rest,W-200);ls.forEach((l,i)=>ctx.fillText(l,W/2,H/2+120+i*74));ctx.globalAlpha=1;}
+ else if(st==='tx_twoline'){ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="800 120px 'Space Grotesk',Arial";const l1=wrapText(ctx,lines[0]||joined,W-160);l1.forEach((l,i)=>ctx.fillText(l,W/2,H/2-120+i*128));ctx.fillStyle=TEALc;const l2=wrapText(ctx,lines[1]||acc||'',W-160);l2.forEach((l,i)=>ctx.fillText(l,W/2,H/2+120+i*128));ctx.globalAlpha=1;}
+ else if(st==='tx_quote2'){ctx.fillStyle='rgba(18,179,166,.28)';ctx.font="800 320px Georgia,serif";ctx.fillText('“',W/2,H*0.28);ctx.globalAlpha=ap;ctx.fillStyle=ink;ctx.font="700 84px Georgia,serif";const ls=wrapText(ctx,joined,W-220);ls.forEach((l,i)=>ctx.fillText(l,W/2,H/2+i*100));ctx.fillStyle=TEALc;ctx.font="600 46px 'Space Grotesk',Arial";ctx.fillText('— '+(acc||'VoxClip'),W/2,H/2+ls.length*100+30);ctx.globalAlpha=1;}
+ ctx.textAlign='center';}
 function vFrameBefore(ctx,t,c){
  const W=1080,H=1920,OUT=OUTRO,content=Math.max(2,c.dur-OUT);
  if(t>=content){vOutro(ctx,t-content,c.tag||"Stop hunting. Start finding.",false);return;}
@@ -1994,7 +2120,7 @@ function agentLocalReply(text){const t=text.toLowerCase(),u=AGENT.user||'',has=(
 function advFieldDefs(st){
  const F=(id,l)=>[id,l];
  if(typeof SLFAM!=='undefined'&&SLFAM.indexOf(st)>=0)return [F('p1','Grote regel'),F('p2','Ondertekst'),F('i1','Punt 1 / groot getal'),F('i2','Punt 2'),F('i3','Punt 3'),F('tag','Outro-tagline')];
- if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(st)>=0||MOFAM.indexOf(st)>=0||BRFAM.indexOf(st)>=0||EXFAM.indexOf(st)>=0)))return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
+ if(st==='kinetic'||KFAM.indexOf(st)>=0||SFAM.indexOf(st)>=0||PROFAM.indexOf(st)>=0||(typeof CINE!=='undefined'&&(CINE.indexOf(st)>=0||MOFAM.indexOf(st)>=0||BRFAM.indexOf(st)>=0||EXFAM.indexOf(st)>=0||TXFAM.indexOf(st)>=0)))return [F('p1','Regel 1'),F('p2','Regel 2'),F('p3','Regel 3'),F('p4','Regel 4 (accent)'),F('tag','Outro-tagline')];
  if(st==='before')return [F('q','Zoekopdracht'),F('res','Resultaat'),F('tag','Outro-tagline')];
  if(st==='stat'||st==='gradientstat'||NFAM.indexOf(st)>=0)return [F('big','Grote tekst'),F('sub','Ondertekst'),F('tag','Outro-tagline')];
  if(st==='list')return [F('title','Titel'),F('i1','Punt 1'),F('i2','Punt 2'),F('i3','Punt 3'),F('tag','Outro-tagline')];
@@ -2254,7 +2380,7 @@ function saveResearchNotes(){const n=document.getElementById('rs-notes');if(n){t
 function dashStats(){
  const el=document.getElementById('dash-stats');if(!el)return;
  const posts=saved().length, res=results().length;
- el.innerHTML=`<div class="statbox"><div class="n">60+</div><div class="l">videostijlen</div></div>
+ el.innerHTML=`<div class="statbox"><div class="n">${(typeof styleCount==='function'?styleCount():150)}</div><div class="l">videostijlen</div></div>
   <div class="statbox"><div class="n">3</div><div class="l">platforms live gekoppeld</div></div>
   <div class="statbox"><div class="n">${posts}</div><div class="l">opgeslagen posts</div></div>
   <div class="statbox"><div class="n">${res}</div><div class="l">gelogde resultaten</div></div>`;
