@@ -930,7 +930,8 @@ function videoEditorHTML(){
          <select id="vo-voice" style="width:auto;flex:1;min-width:130px"></select>
          <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor (preview)</button>
        </div>
-       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> laat je horen hoe je tekst klinkt met een natuurlijke man/vrouw-stem. Die stem in de gedownloade video krijgen kan de browser niet — plak je tekst gratis in <b>CapCut → Text-to-speech</b> (echte stemmen) voor de definitieve video.</p></div>
+       <label class="fxtog" style="margin-top:8px"><input id="vo-bake" type="checkbox"> Stem <b>in de video bakken</b> (komt mee in de mp4)</label>
+       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> gebruikt de natuurlijke systeemstem van je Mac (klinkt het mooist, maar die kán de browser niet meenemen in het bestand). Vink <b>“in de video bakken”</b> aan om een duidelijke ingebouwde stem écht in de mp4 te zetten — die is iets computerachtiger, maar zit gegarandeerd in de download. Wil je een 100% natuurlijke stem in de video, dan kan dat gratis via <b>CapCut → Text-to-speech</b>.</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
    </div>
@@ -1005,19 +1006,28 @@ function voToggle(){const btn=document.getElementById('vo-btn');if(!window.speec
  const g=(document.getElementById('vo-gender')||{}).value;if(g==='none'){alert('Kies eerst Vrouw of Man.');return;}
  const txt=voText();if(!txt)return;const u=new SpeechSynthesisUtterance(txt);const vs=speechSynthesis.getVoices();const sel=document.getElementById('vo-voice');if(sel&&vs[+sel.value])u.voice=vs[+sel.value];u.rate=1.0;u.pitch=g==='female'?1.06:0.9;
  u.onend=function(){_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor (preview)';};_voSpeaking=true;if(btn)btn.textContent='⏸ Stop';speechSynthesis.speak(u);}
-// ---- Bakbare computerstem (meSpeak/eSpeak WASM) → mixt in de video-export ----
+// ---- Bakbare computerstem (meSpeak/eSpeak) → mixt in de video-export ----
 let _msReady=null;
-function msEnsure(){if(_msReady)return _msReady;_msReady=new Promise(function(res,rej){
- const CFG='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/src/mespeak_config.json',VOI='https://cdn.jsdelivr.net/npm/mespeak@2.0.2/voices/en/en.json';
- function go(){try{if(!window.meSpeak){rej(new Error('meSpeak niet geladen'));return;}meSpeak.loadConfig(CFG);meSpeak.loadVoice(VOI,function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}}
- if(window.meSpeak){go();return;}
- var s=document.createElement('script');s.src='https://www.masswerk.at/mespeak/mespeak.js';s.onload=go;s.onerror=function(){rej(new Error('TTS laden mislukt (internet nodig)'));};document.head.appendChild(s);
-});return _msReady;}
+function _msScript(src){return new Promise(function(res,rej){if(window.meSpeak)return res();var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('stem-engine laden mislukt'));};document.head.appendChild(s);});}
+function _msJSON(url){return fetch(url,{mode:'cors',cache:'force-cache'}).then(function(r){if(!r.ok)throw new Error('stembestand downloaden mislukt');return r.json();});}
+function msEnsure(){if(_msReady)return _msReady;_msReady=(async function(){
+ // 1) engine (self-contained browser build, zet window.meSpeak)
+ try{await _msScript('https://www.masswerk.at/mespeak/mespeak.js');}catch(e){await _msScript('https://cdn.jsdelivr.net/gh/masswerk/mespeak@master/mespeak.js');}
+ if(!window.meSpeak||typeof meSpeak.speak!=='function')throw new Error('stem-engine niet beschikbaar (internet nodig)');
+ // 2) config + voice als object inladen (CORS-vriendelijk via jsDelivr)
+ const cfg=await _msJSON('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/src/mespeak_config.json');
+ const voi=await _msJSON('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/voices/en/en.json');
+ meSpeak.loadConfig(cfg);
+ await new Promise(function(res,rej){try{meSpeak.loadVoice(voi,function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}});
+})().catch(function(e){_msReady=null;throw e;});return _msReady;}
 async function msSpeakBuffer(text,gender){await msEnsure();audioEnsure();
- const opts={rawdata:true,speed:165,pitch:gender==='male'?28:66,amplitude:100};
+ const opts={rawdata:'ArrayBuffer',speed:165,pitch:gender==='male'?30:64,amplitude:100};
  let data;try{data=meSpeak.speak(text,opts);}catch(e){throw new Error('spraak genereren mislukt');}
  if(!data)throw new Error('geen audio');
- const ab=data.buffer?data.buffer.slice(data.byteOffset||0,(data.byteOffset||0)+data.byteLength):data;
+ let ab;
+ if(data instanceof ArrayBuffer)ab=data;
+ else if(data&&data.buffer)ab=data.buffer.slice(data.byteOffset||0,(data.byteOffset||0)+data.byteLength);
+ else ab=data;
  return await AC.decodeAudioData(ab);}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
@@ -1483,7 +1493,7 @@ async function vRecord(){
  const bake=!!(document.getElementById('vo-bake')&&document.getElementById('vo-bake').checked)&&g!=='none';
  const hasMusic=(MUSIC.tune!=='none'&&MUSIC.tune!=null&&TUNES[+MUSIC.tune]);
  const needAudio=hasMusic||bake;
- let mime='';const list=needAudio?['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+ let mime='';const list=needAudio?['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
  list.forEach(m=>{if(!mime&&MediaRecorder.isTypeSupported(m))mime=m;});
  if(!mime){alert('Deze browser kan geen video opnemen. Gebruik Chrome of Edge.');return;}
  let voiceBuf=null;
@@ -1551,7 +1561,7 @@ function fxControlsHTML(){
   +'<div class="advsec">🎵 Muziek onder de video</div>'
   +'<div class="field"><label>Deuntje (past bij het merk)</label><select id="fx-music" onchange="musicPick()"><option value="none"'+(MUSIC.tune==='none'?' selected':'')+'>Geen muziek</option>'+TUNES.map((t,i)=>'<option value="'+i+'"'+(MUSIC.tune==i?' selected':'')+'>'+(i+1)+'. '+t.name+'</option>').join('')+'</select></div>'
   +'<div class="btnrow"><button type="button" class="btn ghost" id="fx-musicbtn" onclick="musicToggle()" style="flex:1;text-align:center">▶ Beluister</button></div>'
-  +'<p class="small" style="color:#6b7688;margin-top:6px">De gekozen muziek komt automatisch mee in de gedownloade video (.webm).</p>'
+  +'<p class="small" style="color:#6b7688;margin-top:6px">De gekozen muziek komt automatisch mee in de gedownloade video (.mp4). De onderste 6 deuntjes (Lo-fi beat t/m Chill beat) hebben een 🥁 beat.</p>'
   +'<div class="advsec">⚙️ Export</div>'
   +opt('fps','Framerate',[['24','24 fps (film)'],['30','30 fps (standaard)'],['60','60 fps (vloeiend)']],String(VFX.fps))
   +'<div class="advbtns" style="margin-top:8px"><button type="button" class="btn ghost" onclick="fxReset()" style="flex:1;text-align:center">↺ Effecten resetten</button></div>';
@@ -1581,6 +1591,10 @@ function AP(s){return s.split('').map(c=>c==='.'?null:parseInt(c,36));}
 function mkVoice(dry,wet,freq,t0,dur,wave,peak,atk,rel,cut,vib){const o1=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();o1.type=wave;o2.type=wave;o1.frequency.value=freq;o2.frequency.value=freq;o1.detune.value=-7;o2.detune.value=7;f.type='lowpass';f.frequency.value=cut||2400;f.Q.value=0.3;g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(peak,t0+atk);const s=Math.max(t0+atk,t0+dur-rel);g.gain.setValueAtTime(peak,s);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);o1.connect(f);o2.connect(f);f.connect(g);g.connect(dry);if(wet)g.connect(wet);if(vib){const lfo=AC.createOscillator(),la=AC.createGain();lfo.frequency.value=5.3;la.gain.value=vib;lfo.connect(la);la.connect(o1.detune);la.connect(o2.detune);lfo.start(t0);lfo.stop(t0+dur+0.05);}o1.start(t0);o2.start(t0);o1.stop(t0+dur+0.05);o2.stop(t0+dur+0.05);}
 function mkHat(dry,t0,peak){const n=AC.createBufferSource(),len=Math.floor(AC.sampleRate*0.03),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;n.buffer=b;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=9000;f.Q.value=1.2;const g=AC.createGain();g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.05);n.connect(f).connect(g).connect(dry);n.start(t0);n.stop(t0+0.07);}
 function makeIR(dur,decay){const rate=AC.sampleRate,len=Math.max(1,Math.floor(rate*dur)),b=AC.createBuffer(2,len,rate);for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return b;}
+function mkHat2(dry,t0,peak,dur){const n=AC.createBufferSource(),len=Math.floor(AC.sampleRate*(dur||0.03)),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;n.buffer=b;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=AC.createGain();g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.05));n.connect(f).connect(g).connect(dry);n.start(t0);n.stop(t0+(dur||0.05)+0.02);}
+function mkKick(dry,t0,peak){const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(150,t0);o.frequency.exponentialRampToValueAtTime(46,t0+0.11);g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(peak,t0+0.005);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.24);o.connect(g).connect(dry);o.start(t0);o.stop(t0+0.26);}
+function mkSnare(dry,t0,peak){const n=AC.createBufferSource(),len=Math.floor(AC.sampleRate*0.2),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.4);n.buffer=b;const hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=1500;const g=AC.createGain();g.gain.setValueAtTime(peak,t0);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.18);n.connect(hp).connect(g).connect(dry);n.start(t0);n.stop(t0+0.2);
+ const o=AC.createOscillator(),og=AC.createGain();o.type='triangle';o.frequency.setValueAtTime(185,t0);og.gain.setValueAtTime(peak*0.45,t0);og.gain.exponentialRampToValueAtTime(0.0001,t0+0.12);o.connect(og).connect(dry);o.start(t0);o.stop(t0+0.14);}
 const TUNES=[
  {name:'Kalm',bpm:72,master:.42,rvb:.30,cut:5200,prog:[[60,64,67],[55,59,62],[57,60,64],[53,57,60]],pad:{wave:'sine',gain:.085,cut:1900},arp:{wave:'triangle',gain:.045,len:.5,cut:3000,pat:AP('0...2...a...1...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
  {name:'Lofi',bpm:70,master:.42,rvb:.32,cut:4600,prog:[[57,60,64],[53,57,60],[60,64,67],[55,59,62]],pad:{wave:'sine',gain:.085,cut:1700},arp:{wave:'triangle',gain:.045,len:.5,cut:2700,pat:AP('0..2..1..a..2...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')},hat:{gain:.012,pat:P('....x.......x...')}},
@@ -1597,7 +1611,14 @@ const TUNES=[
  {name:'Puls',bpm:90,master:.42,rvb:.28,cut:5200,prog:[[55,59,62],[59,62,66],[57,60,64],[62,66,69]],pad:{wave:'triangle',gain:.055,cut:2000},arp:{wave:'triangle',gain:.05,len:.25,cut:3400,pat:AP('0.a.1.a.2.a.1.a.')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
  {name:'Chill (lofi)',bpm:72,master:.42,rvb:.34,cut:4400,prog:[[53,57,60,64],[57,60,64,67],[55,58,62,65],[52,55,59,62]],pad:{wave:'sine',gain:.08,cut:1700},arp:{wave:'triangle',gain:.045,len:.5,cut:2700,pat:AP('0..2..1..a..2...')},bass:{wave:'sine',gain:.05,cut:550,pat:P('x.......x.......')},hat:{gain:.012,pat:P('....x.......x...')}},
  {name:'Zonnig',bpm:88,master:.42,rvb:.28,cut:5400,prog:[[62,66,69],[59,62,66],[67,71,74],[57,60,64]],pad:{wave:'triangle',gain:.06,cut:2100},arp:{wave:'triangle',gain:.05,len:.35,cut:3400,pat:AP('0..a..1..2..a...')},bass:{wave:'sine',gain:.05,cut:600,pat:P('x.......x.......')}},
- {name:'Nacht',bpm:64,master:.42,rvb:.42,cut:4000,prog:[[52,55,59],[50,53,57],[48,52,55],[47,50,54]],pad:{wave:'sine',gain:.10,cut:1500},arp:{wave:'sine',gain:.045,len:.9,cut:2400,pat:AP('a.......1.......')},bass:{wave:'sine',gain:.055,cut:500,pat:P('x.......x.......')}}
+ {name:'Nacht',bpm:64,master:.42,rvb:.42,cut:4000,prog:[[52,55,59],[50,53,57],[48,52,55],[47,50,54]],pad:{wave:'sine',gain:.10,cut:1500},arp:{wave:'sine',gain:.045,len:.9,cut:2400,pat:AP('a.......1.......')},bass:{wave:'sine',gain:.055,cut:500,pat:P('x.......x.......')}},
+ // ---- Met beat ----
+ {name:'Lo-fi beat',bpm:80,master:.46,rvb:.20,cut:7200,lead:false,prog:[[57,60,64,67],[53,57,60,64],[55,58,62,65],[52,55,59,62]],pad:{wave:'sine',gain:.075,cut:1700},arp:{wave:'triangle',gain:.04,len:.5,cut:2700,pat:AP('0..2..1..a..2...')},bass:{wave:'sine',gain:.06,cut:600,pat:P('x.....x.x.......')},drums:{swing:true,kgain:.9,sgain:.42,hgain:.045,kick:P('x.......x.....x.'),snare:P('....x.......x...'),hat:P('..x...x...x...x.')}},
+ {name:'Boom bap (hiphop)',bpm:90,master:.47,rvb:.18,cut:8200,lead:false,prog:[[45,57,60,64],[43,55,58,62],[41,53,57,60],[46,58,62,65]],pad:{wave:'triangle',gain:.05,cut:1800},bass:{wave:'sine',gain:.07,cut:650,pat:P('x.....x...x.....')},drums:{kgain:1.0,sgain:.5,hgain:.05,kick:P('x.....x...x.....'),snare:P('....x.......x...'),hat:P('x.x.x.x.x.x.x.x.')}},
+ {name:'House-puls',bpm:120,master:.46,rvb:.20,cut:9000,lead:false,prog:[[57,60,64],[62,65,69],[59,62,66],[64,67,71]],pad:{wave:'triangle',gain:.055,cut:2100},bass:{wave:'sine',gain:.06,cut:700,pat:P('x...x...x...x...')},drums:{kgain:.95,sgain:.4,hgain:.05,kick:P('x...x...x...x...'),snare:P('....x.......x...'),hat:P('..x...x...x...x.'),ohat:P('......x.......x.')}},
+ {name:'Trap-lite',bpm:72,master:.46,rvb:.22,cut:9000,lead:false,prog:[[52,55,59,62],[50,53,57,60],[48,51,55,58],[53,56,60,63]],pad:{wave:'sine',gain:.07,cut:1600},bass:{wave:'sine',gain:.07,cut:520,pat:P('x.......x..x....')},drums:{kgain:.95,sgain:.45,hgain:.04,kick:P('x......x..x.....'),snare:P('........x.......'),hat:P('x.x.xxx.x.x.xx.x')}},
+ {name:'Upbeat pop',bpm:104,master:.46,rvb:.22,cut:8500,prog:[[60,64,67],[65,69,72],[57,60,64],[62,66,69]],pad:{wave:'triangle',gain:.06,cut:2100},arp:{wave:'triangle',gain:.045,len:.3,cut:3300,pat:AP('0..a..1..2..a...')},bass:{wave:'sine',gain:.06,cut:650,pat:P('x.......x.......')},drums:{kgain:.9,sgain:.45,hgain:.05,kick:P('x.......x.......'),snare:P('....x.......x...'),hat:P('x.x.x.x.x.x.x.x.')}},
+ {name:'Chill beat',bpm:84,master:.46,rvb:.24,cut:7200,lead:false,prog:[[53,57,60,64],[57,60,64,67],[55,58,62,65],[52,55,59,62]],pad:{wave:'sine',gain:.08,cut:1700},arp:{wave:'triangle',gain:.04,len:.5,cut:2700,pat:AP('0..2..1..a......')},bass:{wave:'sine',gain:.06,cut:600,pat:P('x.....x.x.......')},drums:{swing:true,kgain:.85,sgain:.4,hgain:.045,kick:P('x.......x...x...'),snare:P('....x.......x...'),hat:P('..x.x...x.x...x.')}}
 ];
 function startTune(preset,dests){audioEnsure();if(!AC)return function(){};
  const out=AC.createGain();out.gain.value=preset.master||.42;
@@ -1610,6 +1631,11 @@ function startTune(preset,dests){audioEnsure();if(!AC)return function(){};
  const spb=60/preset.bpm/4;let step=0,bar=0,next=AC.currentTime+0.1,stopped=false;
  function schedStep(t){const ch=preset.prog[bar%preset.prog.length];
   if(preset.pad&&step===0)ch.forEach((m,k)=>mkVoice(dry,wet,_n2f(m),t,spb*16*0.98,preset.pad.wave,preset.pad.gain*(k===0?1:.7),0.35,0.9,preset.pad.cut||1900));
+  if(preset.drums){const D=preset.drums,sw=(D.swing&&(step%2===1))?spb*0.055:0,tt=t+sw;
+   if(D.kick&&D.kick[step])mkKick(dry,tt,D.kgain||0.9);
+   if(D.snare&&D.snare[step])mkSnare(dry,tt,D.sgain||0.5);
+   if(D.hat&&D.hat[step])mkHat(dry,tt,D.hgain||0.05);
+   if(D.ohat&&D.ohat[step])mkHat2(dry,tt,(D.hgain||0.05)*1.1,0.11);}
   if(preset.hat&&preset.hat.pat[step])mkHat(dry,t,preset.hat.gain);
   if(preset.bass&&preset.bass.pat[step])mkVoice(dry,wet,_n2f(ch[0]-12),t,spb*2.4,preset.bass.wave,preset.bass.gain,0.02,0.2,preset.bass.cut||600);
   if(preset.arp&&preset.arp.pat[step]!=null){let idx=preset.arp.pat[step],oct=0;if(idx>=10){oct=12;idx-=10;}const L=preset.arp.len;mkVoice(dry,wet,_n2f(ch[idx%ch.length]+12+oct),t,spb*(L*3+1),preset.arp.wave,preset.arp.gain,0.01,spb*L*2+0.05,preset.arp.cut||3000);}
