@@ -930,8 +930,13 @@ function videoEditorHTML(){
          <select id="vo-voice" style="width:auto;flex:1;min-width:130px"></select>
          <button class="btn ghost" type="button" onclick="voToggle()" id="vo-btn">🔊 Lees voor (preview)</button>
        </div>
-       <label class="fxtog" style="margin-top:8px"><input id="vo-bake" type="checkbox"> Stem <b>in de video bakken</b> (komt mee in de mp4)</label>
-       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> gebruikt de natuurlijke systeemstem van je Mac (klinkt het mooist, maar die kán de browser niet meenemen in het bestand). Vink <b>“in de video bakken”</b> aan om een duidelijke ingebouwde stem écht in de mp4 te zetten — die is iets computerachtiger, maar zit gegarandeerd in de download. Wil je een 100% natuurlijke stem in de video, dan kan dat gratis via <b>CapCut → Text-to-speech</b>.</p></div>
+       <label class="fxtog" style="margin-top:8px"><input id="vo-bake" type="checkbox"> Natuurlijke stem <b>in de video bakken</b> (neuraal — komt mee in de mp4)</label>
+       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+         <label class="btn ghost" style="cursor:pointer;display:inline-block;margin:0">🎵 Of laad je eigen voice-over (mp3/wav)<input id="vo-audio" type="file" accept="audio/*" style="display:none" onchange="voLoadCustom(event)"></label>
+         <button class="btn ghost" type="button" onclick="voClearCustom()" style="margin:0">wissen</button>
+         <span id="vo-audio-lbl" class="small" style="color:var(--teal-deep)"></span>
+       </div>
+       <p class="small" id="vo-note" style="margin-top:6px"><b>Lees voor</b> = de systeemstem van je Mac (alleen preview). <b>“In de video bakken”</b> gebruikt een échte neurale stem (Kokoro) die in je browser draait en de stem natuurlijk in de mp4 zet — de eerste keer laadt het stem-model even (internet nodig), daarna gaat het snel. Liever een specifieke stem? Laad dan je eigen audiobestand in; dat komt gegarandeerd mee in de video.</p></div>
      <div class="btnrow"><button class="btn" onclick="savePost()">💾 Bewaar post (incl. video)</button></div>
      <p class="small" id="v-msg"></p>
    </div>
@@ -1006,29 +1011,39 @@ function voToggle(){const btn=document.getElementById('vo-btn');if(!window.speec
  const g=(document.getElementById('vo-gender')||{}).value;if(g==='none'){alert('Kies eerst Vrouw of Man.');return;}
  const txt=voText();if(!txt)return;const u=new SpeechSynthesisUtterance(txt);const vs=speechSynthesis.getVoices();const sel=document.getElementById('vo-voice');if(sel&&vs[+sel.value])u.voice=vs[+sel.value];u.rate=1.0;u.pitch=g==='female'?1.06:0.9;
  u.onend=function(){_voSpeaking=false;if(btn)btn.textContent='🔊 Lees voor (preview)';};_voSpeaking=true;if(btn)btn.textContent='⏸ Stop';speechSynthesis.speak(u);}
-// ---- Bakbare computerstem (meSpeak/eSpeak) → mixt in de video-export ----
-let _msReady=null;
-function _msScript(src){return new Promise(function(res,rej){if(window.meSpeak)return res();var s=document.createElement('script');s.src=src;s.onload=function(){res();};s.onerror=function(){rej(new Error('stem-engine laden mislukt'));};document.head.appendChild(s);});}
-function _msJSON(url){return fetch(url,{mode:'cors',cache:'force-cache'}).then(function(r){if(!r.ok)throw new Error('stembestand downloaden mislukt');return r.json();});}
-function msEnsure(){if(_msReady)return _msReady;_msReady=(async function(){
- // 1) engine (self-contained browser build, zet window.meSpeak)
- try{await _msScript('https://www.masswerk.at/mespeak/mespeak.js');}catch(e){await _msScript('https://cdn.jsdelivr.net/gh/masswerk/mespeak@master/mespeak.js');}
- if(!window.meSpeak||typeof meSpeak.speak!=='function')throw new Error('stem-engine niet beschikbaar (internet nodig)');
- // 2) config + voice als object inladen (CORS-vriendelijk via jsDelivr)
- const cfg=await _msJSON('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/src/mespeak_config.json');
- const voi=await _msJSON('https://cdn.jsdelivr.net/npm/mespeak@2.0.2/voices/en/en.json');
- meSpeak.loadConfig(cfg);
- await new Promise(function(res,rej){try{meSpeak.loadVoice(voi,function(ok){ok?res():rej(new Error('stem laden mislukt'));});}catch(e){rej(e);}});
-})().catch(function(e){_msReady=null;throw e;});return _msReady;}
-async function msSpeakBuffer(text,gender){await msEnsure();audioEnsure();
- const opts={rawdata:'ArrayBuffer',speed:165,pitch:gender==='male'?30:64,amplitude:100};
- let data;try{data=meSpeak.speak(text,opts);}catch(e){throw new Error('spraak genereren mislukt');}
- if(!data)throw new Error('geen audio');
- let ab;
- if(data instanceof ArrayBuffer)ab=data;
- else if(data&&data.buffer)ab=data.buffer.slice(data.byteOffset||0,(data.byteOffset||0)+data.byteLength);
- else ab=data;
- return await AC.decodeAudioData(ab);}
+// ---- Natuurlijke stem (Kokoro neural TTS, draait in de browser) → bakt in de mp4 ----
+let _kokoro=null,_kokoroLoading=null;
+function kokoroEnsure(status){
+ if(_kokoro)return Promise.resolve(_kokoro);
+ if(_kokoroLoading)return _kokoroLoading;
+ _kokoroLoading=(async function(){
+   if(status)status('Stem-model laden… (de eerste keer ~30–60s, internet nodig; daarna zit \'ie in je cache)');
+   let mod;
+   try{mod=await import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.0/+esm');}
+   catch(e){try{mod=await import('https://esm.sh/kokoro-js@1.2.0');}catch(e2){throw new Error('stem-bibliotheek laden mislukt (internet nodig)');}}
+   const KokoroTTS=mod.KokoroTTS||(mod.default&&mod.default.KokoroTTS);
+   if(!KokoroTTS)throw new Error('stem-bibliotheek niet beschikbaar');
+   const tts=await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',{dtype:'q8'});
+   _kokoro=tts;return tts;
+ })().catch(function(e){_kokoroLoading=null;throw e;});
+ return _kokoroLoading;
+}
+async function msSpeakBuffer(text,gender,status){
+ const tts=await kokoroEnsure(status);audioEnsure();
+ if(status)status('Stem genereren…');
+ const voice=(gender==='male')?'am_michael':'af_bella';
+ const out=await tts.generate(text,{voice:voice});
+ const samples=out.audio||out.data||out;const sr=out.sampling_rate||out.sampleRate||24000;
+ const buf=AC.createBuffer(1,samples.length,sr);buf.getChannelData(0).set(samples);
+ return buf;
+}
+// ---- Eigen voice-over inladen (mp3/wav) → 100% betrouwbaar ----
+function voLoadCustom(e){const f=e&&e.target&&e.target.files&&e.target.files[0];const lab=document.getElementById('vo-audio-lbl');
+ if(!f){window.VO_CUSTOM=null;if(lab)lab.textContent='';return;}
+ audioEnsure();const rd=new FileReader();
+ rd.onload=function(){AC.decodeAudioData(rd.result).then(function(buf){window.VO_CUSTOM=buf;if(lab)lab.textContent='✓ '+f.name+' geladen — komt in de video';}).catch(function(){window.VO_CUSTOM=null;if(lab)lab.textContent='Kon dit audiobestand niet lezen (gebruik mp3 of wav).';});};
+ rd.readAsArrayBuffer(f);}
+function voClearCustom(){window.VO_CUSTOM=null;const i=document.getElementById('vo-audio');if(i)i.value='';const lab=document.getElementById('vo-audio-lbl');if(lab)lab.textContent='';}
 function generateOne(){
  if(typeof vAnim!=='undefined')cancelAnimationFrame(vAnim);
  const ch=document.getElementById('g-channel').value,per=document.getElementById('g-persona').value,pil=document.getElementById('g-pillar').value;
@@ -1490,15 +1505,19 @@ async function vRecord(){
  const msg=document.getElementById('v-msg');
  if(!window.MediaRecorder){alert('Video opnemen werkt niet in deze browser. Open dit bestand in Google Chrome of Microsoft Edge — daar werkt de download wél.');return;}
  const g=(document.getElementById('vo-gender')||{}).value||'none';
- const bake=!!(document.getElementById('vo-bake')&&document.getElementById('vo-bake').checked)&&g!=='none';
+ const custom=window.VO_CUSTOM||null;
+ const bake=!!custom||(!!(document.getElementById('vo-bake')&&document.getElementById('vo-bake').checked)&&g!=='none');
  const hasMusic=(MUSIC.tune!=='none'&&MUSIC.tune!=null&&TUNES[+MUSIC.tune]);
  const needAudio=hasMusic||bake;
  let mime='';const list=needAudio?['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
  list.forEach(m=>{if(!mime&&MediaRecorder.isTypeSupported(m))mime=m;});
  if(!mime){alert('Deze browser kan geen video opnemen. Gebruik Chrome of Edge.');return;}
  let voiceBuf=null;
- if(bake){btn.disabled=true;if(msg)msg.innerHTML='<b>Stem voorbereiden…</b> (eerste keer duurt even, internet nodig)';
-   try{voiceBuf=await msSpeakBuffer(voText(),g);}catch(e){voiceBuf=null;if(msg)msg.innerHTML='<span style="color:var(--warn)">Stem inbakken lukte niet: '+(e.message||e)+'. Video wordt zonder stem opgenomen.</span>';}
+ if(bake){btn.disabled=true;
+   try{
+     if(custom){voiceBuf=custom;}
+     else{voiceBuf=await msSpeakBuffer(voText(),g,function(s){if(msg)msg.innerHTML='<b>'+s+'</b>';});}
+   }catch(e){voiceBuf=null;if(msg)msg.innerHTML='<span style="color:var(--warn)">Stem inbakken lukte niet: '+(e.message||e)+'. De video wordt zonder stem opgenomen — of laad je eigen audio in (mp3/wav).</span>';}
  }
  if(voiceBuf)c.dur=Math.max(c.dur,voiceBuf.duration+0.6);
  let stream,rec,stopMusic=null;
